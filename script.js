@@ -1,4 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Обработчик формы для редиректа на mailto
+    const contactForm = document.getElementById('contact-form');
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Предотвращаем стандартную отправку формы
+
+        // Получаем данные из формы
+        const name = contactForm.querySelector('input[name="name"]').value;
+        const phone = contactForm.querySelector('input[name="phone"]').value;
+        const message = contactForm.querySelector('textarea[name="message"]').value;
+
+        // Формируем тело письма
+        const subject = encodeURIComponent('Заявка с сайта: Монтаж плоских кровель');
+        const body = encodeURIComponent(`Имя: ${name}\nТелефон: ${phone}\nСообщение: ${message}`);
+
+        // Укажите ваш email
+        const email = 'dmali@mail.ru';
+
+        // Создаем mailto ссылку и перенаправляем
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    });
     // Калькулятор
     const selectDisplay = document.getElementById('service-select');
     const selectedValue = document.getElementById('selected-value');
