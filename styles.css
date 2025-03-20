@@ -453,47 +453,45 @@ footer {
 }
 
 .extra-services {
-    margin-top: 30px;
-    text-align: center;
+    margin-top: 20px;
+    text-align: left;
+    padding: 15px;
+    background-color: #f9f9f9; /* Легкий фон для выделения */
+    border-radius: 5px;
 }
 
 .extra-services h3 {
-    font-size: 1.5em;
+    font-size: 1.4em;
     color: #333;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
 .extra-services ul {
     list-style: none;
     padding: 0;
-    margin: 0 0 15px 0;
+    margin: 0;
 }
 
 .extra-services ul li {
     font-size: 1.1em;
     color: #555;
-    margin: 10px 0;
-    padding-left: 30px;
-    position: relative;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
 }
 
-.extra-services ul li:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background-size: contain;
+.extra-services ul li .icon {
+    margin-right: 10px;
+    font-size: 1.2em;
+    color: #2a7ae2; /* Цвет акцента, можно подстроить под твой дизайн */
 }
 
-.extra-services ul li:nth-child(1):before {
-    content: '⚡'; /* Иконка для электросварки */
-}
-
-.extra-services ul li:nth-child(2):before {
-    content: '🚚'; /* Иконка для погрузки */
+.extra-services p {
+    font-size: 1em;
+    color: #666;
+    margin-top: 10px;
+    font-style: italic;
 }
 
 .extra-services p {
