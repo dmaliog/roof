@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const message = contactForm.querySelector('textarea[name="message"]').value;
         const subject = encodeURIComponent('Заявка с сайта: Монтаж плоских кровель');
         const body = encodeURIComponent(`Имя: ${name}\nТелефон: ${phone}\nСообщение: ${message}`);
-        const email = 'dmali@mail.ru';
+        const email = 'ekbroof@mail.ru';
         window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     });
 
