@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCostElement.textContent = `${totalCost.toFixed(2)} ₽`;
     }
 
-    // Слайдер с исправлением последней точки и стрелки
+    // Слайдер с исправлением поведения точек на компьютере
     function initSlider(sliderClass, isGallery = false) {
         const slider = document.querySelector(sliderClass);
         if (!slider) return;
@@ -129,14 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const wrapperWidth = wrapper.offsetWidth;
             const totalWidth = track.scrollWidth;
             let itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            let maxIndex = items.length - 1; // Максимальный индекс — последний элемент
-
-            if (isGallery) {
-                // Для галереи maxIndex остаётся количеством элементов минус 1
-            } else {
-                // Для услуг maxIndex — это последний элемент, который полностью виден
-                maxIndex = Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
-            }
+            let maxIndex = isGallery ? items.length - 1 : Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
 
             if (index > maxIndex) index = maxIndex;
             if (index < 0) index = 0;
@@ -172,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             updateDots(maxIndex, isGallery);
 
-            // Точное управление видимостью кнопок
             prevBtn.style.display = index === 0 ? 'none' : 'flex';
             nextBtn.style.display = index === maxIndex ? 'none' : 'flex';
         }
@@ -188,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (isGallery) {
-                // Для галереи показываем точку для каждого элемента
                 for (let i = 0; i <= maxIndex; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
@@ -203,21 +194,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Для услуг показываем точки с учётом логики
-            if (maxIndex <= 5 || index < 5) {
-                for (let i = 0; i <= Math.min(5, maxIndex); i++) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('slider-dot');
-                    if (i === index) dot.classList.add('active');
-                    dot.addEventListener('click', () => {
-                        index = i;
-                        isDotClicked = true;
-                        updateSlider();
-                    });
-                    dotsContainer.appendChild(dot);
-                }
-            } else if (index >= maxIndex - 5) {
-                for (let i = maxIndex - 5; i <= maxIndex; i++) {
+            // Логика точек для услуг
+            const totalDots = maxIndex + 1; // Общее количество точек
+            if (totalDots <= 6) {
+                // Если элементов 6 или меньше, показываем все точки
+                for (let i = 0; i < totalDots; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
                     if (i === index) dot.classList.add('active');
@@ -229,32 +210,47 @@ document.addEventListener('DOMContentLoaded', () => {
                     dotsContainer.appendChild(dot);
                 }
             } else {
-                const firstDot = document.createElement('div');
-                firstDot.classList.add('slider-dot');
-                firstDot.addEventListener('click', () => {
-                    index = 0;
-                    isDotClicked = true;
-                    updateSlider();
-                });
-                dotsContainer.appendChild(firstDot);
-
-                const activeDot = document.createElement('div');
-                activeDot.classList.add('slider-dot', 'active');
-                activeDot.addEventListener('click', () => {
-                    index = index;
-                    isDotClicked = true;
-                    updateSlider();
-                });
-                dotsContainer.appendChild(activeDot);
-
-                const lastDot = document.createElement('div');
-                lastDot.classList.add('slider-dot');
-                lastDot.addEventListener('click', () => {
-                    index = maxIndex;
-                    isDotClicked = true;
-                    updateSlider();
-                });
-                dotsContainer.appendChild(lastDot);
+                // Если больше 6, показываем 5 точек с учётом текущей позиции
+                if (index <= 2) {
+                    // Показываем первые 5 точек
+                    for (let i = 0; i < 5; i++) {
+                        const dot = document.createElement('div');
+                        dot.classList.add('slider-dot');
+                        if (i === index) dot.classList.add('active');
+                        dot.addEventListener('click', () => {
+                            index = i;
+                            isDotClicked = true;
+                            updateSlider();
+                        });
+                        dotsContainer.appendChild(dot);
+                    }
+                } else if (index >= maxIndex - 2) {
+                    // Показываем последние 5 точек
+                    for (let i = maxIndex - 4; i <= maxIndex; i++) {
+                        const dot = document.createElement('div');
+                        dot.classList.add('slider-dot');
+                        if (i === index) dot.classList.add('active');
+                        dot.addEventListener('click', () => {
+                            index = i;
+                            isDotClicked = true;
+                            updateSlider();
+                        });
+                        dotsContainer.appendChild(dot);
+                    }
+                } else {
+                    // Показываем текущую точку в середине с двумя соседями
+                    for (let i = index - 2; i <= index + 2; i++) {
+                        const dot = document.createElement('div');
+                        dot.classList.add('slider-dot');
+                        if (i === index) dot.classList.add('active');
+                        dot.addEventListener('click', () => {
+                            index = i;
+                            isDotClicked = true;
+                            updateSlider();
+                        });
+                        dotsContainer.appendChild(dot);
+                    }
+                }
             }
         }
 
