@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCostElement.textContent = `${totalCost.toFixed(2)} ₽`;
     }
 
-    // Слайдер с более лёгкой прокруткой
+    // Слайдер с исправлением последней точки и стрелки
     function initSlider(sliderClass, isGallery = false) {
         const slider = document.querySelector(sliderClass);
         if (!slider) return;
@@ -129,7 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const wrapperWidth = wrapper.offsetWidth;
             const totalWidth = track.scrollWidth;
             let itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            let maxIndex = Math.max(0, Math.ceil((totalWidth - wrapperWidth) / itemWidth));
+            let maxIndex = items.length - 1; // Максимальный индекс — последний элемент
+
+            if (isGallery) {
+                // Для галереи maxIndex остаётся количеством элементов минус 1
+            } else {
+                // Для услуг maxIndex — это последний элемент, который полностью виден
+                maxIndex = Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
+            }
 
             if (index > maxIndex) index = maxIndex;
             if (index < 0) index = 0;
@@ -141,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let currentWidth = currentItem.offsetWidth + parseInt(getComputedStyle(currentItem).marginRight || 0);
                 offset = currentItem.offsetLeft - (wrapperWidth - currentWidth) / 2;
 
-                if (index >= maxIndex) {
+                if (index === maxIndex) {
                     offset = totalWidth - wrapperWidth;
                 }
             } else {
@@ -165,8 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             updateDots(maxIndex, isGallery);
 
+            // Точное управление видимостью кнопок
             prevBtn.style.display = index === 0 ? 'none' : 'flex';
-            nextBtn.style.display = index >= maxIndex ? 'none' : 'flex';
+            nextBtn.style.display = index === maxIndex ? 'none' : 'flex';
         }
 
         function updateDots(maxIndex, isGallery = false) {
@@ -180,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (isGallery) {
+                // Для галереи показываем точку для каждого элемента
                 for (let i = 0; i <= maxIndex; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
@@ -194,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Для услуг показываем точки с учётом логики
             if (maxIndex <= 5 || index < 5) {
                 for (let i = 0; i <= Math.min(5, maxIndex); i++) {
                     const dot = document.createElement('div');
@@ -206,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     dotsContainer.appendChild(dot);
                 }
-            } else if (index >= maxIndex - 5 && (!isDotClicked || (isDotClicked && index > maxIndex - 5))) {
+            } else if (index >= maxIndex - 5) {
                 for (let i = maxIndex - 5; i <= maxIndex; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
@@ -248,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Обработка свайпов с увеличенной чувствительностью
+        // Обработка свайпов
         track.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
@@ -272,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isHorizontalSwipe) {
                 e.preventDefault();
-                let newOffset = currentOffset + diffX * 1.5; // Увеличиваем чувствительность (1.5 вместо 1)
+                let newOffset = currentOffset + diffX * 1.5;
                 const wrapperWidth = wrapper.offsetWidth;
                 const totalWidth = track.scrollWidth;
                 newOffset = Math.max(0, Math.min(newOffset, totalWidth - wrapperWidth));
@@ -288,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const wrapperWidth = wrapper.offsetWidth;
             const totalWidth = track.scrollWidth;
             const itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            const maxIndex = Math.max(0, Math.ceil((totalWidth - wrapperWidth) / itemWidth));
+            const maxIndex = isGallery ? items.length - 1 : Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
 
             const currentOffset = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
             index = Math.round(currentOffset / itemWidth);
@@ -310,9 +320,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         nextBtn.addEventListener('click', () => {
-            let wrapperWidth = wrapper.offsetWidth;
-            let itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            let maxIndex = Math.max(0, Math.ceil((track.scrollWidth - wrapperWidth) / itemWidth));
+            const wrapperWidth = wrapper.offsetWidth;
+            const totalWidth = track.scrollWidth;
+            const itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
+            const maxIndex = isGallery ? items.length - 1 : Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
 
             if (index < maxIndex) {
                 index++;
