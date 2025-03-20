@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCostElement.textContent = `${totalCost.toFixed(2)} ₽`;
     }
 
-    // Слайдер с поддержкой свайпов
+    // Слайдер с естественными свайпами, как в карусели
     function initSlider(sliderClass, isGallery = false) {
         const slider = document.querySelector(sliderClass);
         if (!slider) return;
@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dotsContainer = slider.querySelector('.slider-dots');
         let index = 0;
         let isDotClicked = false;
+        let currentOffset = 0;
 
         // Переменные для свайпов
         let touchStartX = 0;
@@ -122,12 +123,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        function updateSlider() {
+        function updateSlider(animate = true) {
             const wrapperWidth = wrapper.offsetWidth;
             const totalWidth = track.scrollWidth;
             let itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            let visibleItems = Math.floor(wrapperWidth / itemWidth);
             let maxIndex = Math.max(0, Math.ceil((totalWidth - wrapperWidth) / itemWidth));
+
+            if (index > maxIndex) index = maxIndex;
+            if (index < 0) index = 0;
 
             let offset;
 
@@ -139,12 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (index >= maxIndex) {
                     offset = totalWidth - wrapperWidth;
                 }
-
-                offset = Math.round(offset);
             } else {
-                if (index > maxIndex) index = maxIndex;
-                if (index < 0) index = 0;
-
                 let targetItem = items[index];
                 offset = targetItem.offsetLeft;
 
@@ -154,6 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             offset = Math.max(0, Math.min(offset, totalWidth - wrapperWidth));
+            currentOffset = offset;
+
+            if (animate) {
+                track.style.transition = 'transform 0.5s ease';
+            } else {
+                track.style.transition = 'none';
+            }
             track.style.transform = `translateX(-${offset}px)`;
 
             updateDots(maxIndex, isGallery);
@@ -225,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 activeDot.classList.add('slider-dot', 'active');
                 activeDot.addEventListener('click', () => {
                     index = index;
-                    isDotClicked六 = true;
+                    isDotClicked = true;
                     updateSlider();
                 });
                 dotsContainer.appendChild(activeDot);
@@ -241,39 +246,45 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Обработка свайпов
+        // Обработка свайпов как в карусели
         track.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
             isDragging = true;
-            track.style.transition = 'none'; // Убираем анимацию при свайпе
+            track.style.transition = 'none'; // Убираем анимацию во время движения
+            currentOffset = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
         });
 
         track.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
             touchCurrentX = e.touches[0].clientX;
             const diff = touchStartX - touchCurrentX;
-            const currentTransform = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
-            track.style.transform = `translateX(-${currentTransform + diff}px)`;
+            let newOffset = currentOffset + diff;
+
+            // Ограничиваем смещение
+            const wrapperWidth = wrapper.offsetWidth;
+            const totalWidth = track.scrollWidth;
+            newOffset = Math.max(0, Math.min(newOffset, totalWidth - wrapperWidth));
+
+            track.style.transform = `translateX(-${newOffset}px)`;
         });
 
         track.addEventListener('touchend', () => {
             if (!isDragging) return;
             isDragging = false;
-            track.style.transition = 'transform 0.5s ease'; // Возвращаем анимацию
+            track.style.transition = 'transform 0.5s ease'; // Плавная анимация после отпускания
 
-            const diff = touchStartX - touchCurrentX;
-            const threshold = 50; // Минимальное расстояние для свайпа
+            const wrapperWidth = wrapper.offsetWidth;
+            const totalWidth = track.scrollWidth;
+            const itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
+            const maxIndex = Math.max(0, Math.ceil((totalWidth - wrapperWidth) / itemWidth));
 
-            if (Math.abs(diff) > threshold) {
-                if (diff > 0) {
-                    // Свайп влево
-                    let maxIndex = Math.max(0, Math.ceil((track.scrollWidth - wrapper.offsetWidth) / (items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0))));
-                    if (index < maxIndex) index++;
-                } else {
-                    // Свайп вправо
-                    if (index > 0) index--;
-                }
-            }
+            // Вычисляем ближайший слайд
+            const currentOffset = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
+            index = Math.round(currentOffset / itemWidth);
+
+            if (index < 0) index = 0;
+            if (index > maxIndex) index = maxIndex;
+
             isDotClicked = false;
             updateSlider();
         });
@@ -299,8 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        window.addEventListener('resize', updateSlider);
-        updateSlider();
+        window.addEventListener('resize', () => updateSlider(false));
+        updateSlider(false); // Инициализация без анимации
     }
 
     // Запускаем слайдеры
