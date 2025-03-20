@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     });
 
-    // Калькулятор (без изменений)
+    // Калькулятор
     const selectDisplay = document.getElementById('service-select');
     const selectedValue = document.getElementById('selected-value');
     const optionsList = document.getElementById('service-options');
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCostElement.textContent = `${totalCost.toFixed(2)} ₽`;
     }
 
-    // Слайдер с исправлением поведения точек на компьютере
+    // Слайдер
     function initSlider(sliderClass, isGallery = false) {
         const slider = document.querySelector(sliderClass);
         if (!slider) return;
@@ -110,15 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextBtn = slider.querySelector('.slider-next');
         const dotsContainer = slider.querySelector('.slider-dots');
         let index = 0;
-        let isDotClicked = false;
         let currentOffset = 0;
-
-        // Переменные для свайпов
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchCurrentX = 0;
-        let isDragging = false;
-        let isHorizontalSwipe = false;
 
         if (!prevBtn || !nextBtn || !dotsContainer || items.length === 0) {
             console.error(`Элементы слайдера не найдены для: ${sliderClass}`);
@@ -126,47 +118,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function updateSlider(animate = true) {
-            const wrapperWidth = wrapper.offsetWidth;
+            const wrapperWidth = wrapper.getBoundingClientRect().width;
             const totalWidth = track.scrollWidth;
-            let itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            let maxIndex = isGallery ? items.length - 1 : Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
-
-            if (index > maxIndex) index = maxIndex;
-            if (index < 0) index = 0;
-
-            let offset;
+            const itemWidth = items[0].getBoundingClientRect().width + parseInt(getComputedStyle(items[0]).marginRight || 0);
+            let visibleItems, maxIndex, offset;
 
             if (isGallery) {
-                let currentItem = items[index];
-                let currentWidth = currentItem.offsetWidth + parseInt(getComputedStyle(currentItem).marginRight || 0);
-                offset = currentItem.offsetLeft - (wrapperWidth - currentWidth) / 2;
-
-                if (index === maxIndex) {
-                    offset = totalWidth - wrapperWidth;
-                }
+                // Логика для галереи
+                visibleItems = Math.max(1, Math.round(wrapperWidth / itemWidth));
+                maxIndex = Math.max(0, items.length - visibleItems);
+                offset = index * itemWidth;
             } else {
-                let targetItem = items[index];
-                offset = targetItem.offsetLeft;
-
+                // Логика для услуг (старая)
+                visibleItems = Math.floor(wrapperWidth / itemWidth);
+                maxIndex = Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
+                offset = items[index].offsetLeft;
                 if (index === maxIndex) {
                     offset = totalWidth - wrapperWidth;
                 }
             }
 
-            offset = Math.max(0, Math.min(offset, totalWidth - wrapperWidth));
-            currentOffset = offset;
+            if (index > maxIndex) index = maxIndex;
+            if (index < 0) index = 0;
+
+            currentOffset = Math.max(0, Math.min(offset, totalWidth - wrapperWidth));
 
             if (animate) {
                 track.style.transition = 'transform 0.5s ease';
             } else {
                 track.style.transition = 'none';
             }
-            track.style.transform = `translateX(-${offset}px)`;
+            track.style.transform = `translateX(-${currentOffset}px)`;
 
             updateDots(maxIndex, isGallery);
 
             prevBtn.style.display = index === 0 ? 'none' : 'flex';
             nextBtn.style.display = index === maxIndex ? 'none' : 'flex';
+
+            // Отладка
+            console.log(`${sliderClass} - Wrapper Width: ${wrapperWidth}, Item Width: ${itemWidth}, Items: ${items.length}, Visible: ${visibleItems}, Max Index: ${maxIndex}, Dots: ${isGallery ? maxIndex + 1 : 'variable'}`);
         }
 
         function updateDots(maxIndex, isGallery = false) {
@@ -175,115 +165,115 @@ document.addEventListener('DOMContentLoaded', () => {
             if (maxIndex <= 0) {
                 dotsContainer.style.display = 'none';
                 return;
-            } else {
-                dotsContainer.style.display = 'flex';
             }
+            dotsContainer.style.display = 'flex';
 
             if (isGallery) {
+                // Простая логика для галереи
                 for (let i = 0; i <= maxIndex; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
                     if (i === index) dot.classList.add('active');
                     dot.addEventListener('click', () => {
                         index = i;
-                        isDotClicked = true;
-                        updateSlider();
-                    });
-                    dotsContainer.appendChild(dot);
-                }
-                return;
-            }
-
-            // Логика точек для услуг
-            const totalDots = maxIndex + 1; // Общее количество точек
-            if (totalDots <= 6) {
-                // Если элементов 6 или меньше, показываем все точки
-                for (let i = 0; i < totalDots; i++) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('slider-dot');
-                    if (i === index) dot.classList.add('active');
-                    dot.addEventListener('click', () => {
-                        index = i;
-                        isDotClicked = true;
                         updateSlider();
                     });
                     dotsContainer.appendChild(dot);
                 }
             } else {
-                // Если больше 6, показываем 5 точек с учётом текущей позиции
-                if (index <= 2) {
-                    // Показываем первые 5 точек
-                    for (let i = 0; i < 5; i++) {
+                // Старая логика для услуг
+                const totalDots = maxIndex + 1;
+                if (totalDots <= 6) {
+                    for (let i = 0; i < totalDots; i++) {
                         const dot = document.createElement('div');
                         dot.classList.add('slider-dot');
                         if (i === index) dot.classList.add('active');
                         dot.addEventListener('click', () => {
                             index = i;
-                            isDotClicked = true;
-                            updateSlider();
-                        });
-                        dotsContainer.appendChild(dot);
-                    }
-                } else if (index >= maxIndex - 2) {
-                    // Показываем последние 5 точек
-                    for (let i = maxIndex - 4; i <= maxIndex; i++) {
-                        const dot = document.createElement('div');
-                        dot.classList.add('slider-dot');
-                        if (i === index) dot.classList.add('active');
-                        dot.addEventListener('click', () => {
-                            index = i;
-                            isDotClicked = true;
                             updateSlider();
                         });
                         dotsContainer.appendChild(dot);
                     }
                 } else {
-                    // Показываем текущую точку в середине с двумя соседями
-                    for (let i = index - 2; i <= index + 2; i++) {
-                        const dot = document.createElement('div');
-                        dot.classList.add('slider-dot');
-                        if (i === index) dot.classList.add('active');
-                        dot.addEventListener('click', () => {
-                            index = i;
-                            isDotClicked = true;
-                            updateSlider();
-                        });
-                        dotsContainer.appendChild(dot);
+                    if (index <= 2) {
+                        for (let i = 0; i < 5; i++) {
+                            const dot = document.createElement('div');
+                            dot.classList.add('slider-dot');
+                            if (i === index) dot.classList.add('active');
+                            dot.addEventListener('click', () => {
+                                index = i;
+                                updateSlider();
+                            });
+                            dotsContainer.appendChild(dot);
+                        }
+                    } else if (index >= maxIndex - 2) {
+                        for (let i = maxIndex - 4; i <= maxIndex; i++) {
+                            const dot = document.createElement('div');
+                            dot.classList.add('slider-dot');
+                            if (i === index) dot.classList.add('active');
+                            dot.addEventListener('click', () => {
+                                index = i;
+                                updateSlider();
+                            });
+                            dotsContainer.appendChild(dot);
+                        }
+                    } else {
+                        for (let i = index - 2; i <= index + 2; i++) {
+                            const dot = document.createElement('div');
+                            dot.classList.add('slider-dot');
+                            if (i === index) dot.classList.add('active');
+                            dot.addEventListener('click', () => {
+                                index = i;
+                                updateSlider();
+                            });
+                            dotsContainer.appendChild(dot);
+                        }
                     }
                 }
             }
         }
 
+        // Обработка кликов по кнопкам
+        prevBtn.addEventListener('click', () => {
+            if (index > 0) {
+                index--;
+                updateSlider();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const wrapperWidth = wrapper.getBoundingClientRect().width;
+            const itemWidth = items[0].getBoundingClientRect().width + parseInt(getComputedStyle(items[0]).marginRight || 0);
+            const visibleItems = isGallery ? Math.max(1, Math.round(wrapperWidth / itemWidth)) : Math.floor(wrapperWidth / itemWidth);
+            const maxIndex = isGallery ? Math.max(0, items.length - visibleItems) : Math.floor((track.scrollWidth - wrapperWidth) / itemWidth);
+
+            if (index < maxIndex) {
+                index++;
+                updateSlider();
+            }
+        });
+
         // Обработка свайпов
+        let touchStartX = 0;
+        let touchCurrentX = 0;
+        let isDragging = false;
+
         track.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
             isDragging = true;
-            isHorizontalSwipe = false;
             track.style.transition = 'none';
             currentOffset = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
         });
 
         track.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-
             touchCurrentX = e.touches[0].clientX;
-            const touchCurrentY = e.touches[0].clientY;
             const diffX = touchStartX - touchCurrentX;
-            const diffY = touchStartY - touchCurrentY;
-
-            if (!isHorizontalSwipe && (Math.abs(diffX) > Math.abs(diffY))) {
-                isHorizontalSwipe = true;
-            }
-
-            if (isHorizontalSwipe) {
-                e.preventDefault();
-                let newOffset = currentOffset + diffX * 1.5;
-                const wrapperWidth = wrapper.offsetWidth;
-                const totalWidth = track.scrollWidth;
-                newOffset = Math.max(0, Math.min(newOffset, totalWidth - wrapperWidth));
-                track.style.transform = `translateX(-${newOffset}px)`;
-            }
+            let newOffset = currentOffset + diffX;
+            const wrapperWidth = wrapper.getBoundingClientRect().width;
+            const totalWidth = track.scrollWidth;
+            newOffset = Math.max(0, Math.min(newOffset, totalWidth - wrapperWidth));
+            track.style.transform = `translateX(-${newOffset}px)`;
         });
 
         track.addEventListener('touchend', () => {
@@ -291,10 +281,10 @@ document.addEventListener('DOMContentLoaded', () => {
             isDragging = false;
             track.style.transition = 'transform 0.5s ease';
 
-            const wrapperWidth = wrapper.offsetWidth;
-            const totalWidth = track.scrollWidth;
-            const itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            const maxIndex = isGallery ? items.length - 1 : Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
+            const wrapperWidth = wrapper.getBoundingClientRect().width;
+            const itemWidth = items[0].getBoundingClientRect().width + parseInt(getComputedStyle(items[0]).marginRight || 0);
+            const visibleItems = isGallery ? Math.max(1, Math.round(wrapperWidth / itemWidth)) : Math.floor(wrapperWidth / itemWidth);
+            const maxIndex = isGallery ? Math.max(0, items.length - visibleItems) : Math.floor((track.scrollWidth - wrapperWidth) / itemWidth);
 
             const currentOffset = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
             index = Math.round(currentOffset / itemWidth);
@@ -302,30 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (index < 0) index = 0;
             if (index > maxIndex) index = maxIndex;
 
-            isDotClicked = false;
             updateSlider();
-        });
-
-        // Обработка кликов по кнопкам
-        prevBtn.addEventListener('click', () => {
-            if (index > 0) {
-                index--;
-                isDotClicked = false;
-                updateSlider();
-            }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            const wrapperWidth = wrapper.offsetWidth;
-            const totalWidth = track.scrollWidth;
-            const itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            const maxIndex = isGallery ? items.length - 1 : Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
-
-            if (index < maxIndex) {
-                index++;
-                isDotClicked = false;
-                updateSlider();
-            }
         });
 
         window.addEventListener('resize', () => updateSlider(false));
