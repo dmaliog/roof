@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCostElement.textContent = `${totalCost.toFixed(2)} ₽`;
     }
 
-    // Слайдер с естественными свайпами, как в карусели
+    // Слайдер с блокировкой вертикального скролла при свайпах
     function initSlider(sliderClass, isGallery = false) {
         const slider = document.querySelector(sliderClass);
         if (!slider) return;
@@ -115,8 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Переменные для свайпов
         let touchStartX = 0;
+        let touchStartY = 0; // Добавляем Y для отслеживания вертикального движения
         let touchCurrentX = 0;
         let isDragging = false;
+        let isHorizontalSwipe = false;
 
         if (!prevBtn || !nextBtn || !dotsContainer || items.length === 0) {
             console.error(`Элементы слайдера не найдены для: ${sliderClass}`);
@@ -246,39 +248,49 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Обработка свайпов как в карусели
+        // Обработка свайпов с блокировкой вертикального скролла
         track.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY; // Фиксируем начальную Y-координату
             isDragging = true;
-            track.style.transition = 'none'; // Убираем анимацию во время движения
+            isHorizontalSwipe = false; // Сбрасываем флаг горизонтального свайпа
+            track.style.transition = 'none';
             currentOffset = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
         });
 
         track.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
+
             touchCurrentX = e.touches[0].clientX;
-            const diff = touchStartX - touchCurrentX;
-            let newOffset = currentOffset + diff;
+            const touchCurrentY = e.touches[0].clientY;
+            const diffX = touchStartX - touchCurrentX;
+            const diffY = touchStartY - touchCurrentY;
 
-            // Ограничиваем смещение
-            const wrapperWidth = wrapper.offsetWidth;
-            const totalWidth = track.scrollWidth;
-            newOffset = Math.max(0, Math.min(newOffset, totalWidth - wrapperWidth));
+            // Определяем, горизонтальный ли это свайп
+            if (!isHorizontalSwipe && (Math.abs(diffX) > Math.abs(diffY))) {
+                isHorizontalSwipe = true; // Если горизонтальное движение больше вертикального
+            }
 
-            track.style.transform = `translateX(-${newOffset}px)`;
+            if (isHorizontalSwipe) {
+                e.preventDefault(); // Блокируем вертикальный скролл только для горизонтального свайпа
+                let newOffset = currentOffset + diffX;
+                const wrapperWidth = wrapper.offsetWidth;
+                const totalWidth = track.scrollWidth;
+                newOffset = Math.max(0, Math.min(newOffset, totalWidth - wrapperWidth));
+                track.style.transform = `translateX(-${newOffset}px)`;
+            }
         });
 
         track.addEventListener('touchend', () => {
             if (!isDragging) return;
             isDragging = false;
-            track.style.transition = 'transform 0.5s ease'; // Плавная анимация после отпускания
+            track.style.transition = 'transform 0.5s ease';
 
             const wrapperWidth = wrapper.offsetWidth;
             const totalWidth = track.scrollWidth;
             const itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
             const maxIndex = Math.max(0, Math.ceil((totalWidth - wrapperWidth) / itemWidth));
 
-            // Вычисляем ближайший слайд
             const currentOffset = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
             index = Math.round(currentOffset / itemWidth);
 
@@ -311,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         window.addEventListener('resize', () => updateSlider(false));
-        updateSlider(false); // Инициализация без анимации
+        updateSlider(false);
     }
 
     // Запускаем слайдеры
