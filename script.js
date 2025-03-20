@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCostElement.textContent = `${totalCost.toFixed(2)} ₽`;
     }
 
-    // Слайдер с блокировкой вертикального скролла при свайпах
+    // Слайдер с более лёгкой прокруткой
     function initSlider(sliderClass, isGallery = false) {
         const slider = document.querySelector(sliderClass);
         if (!slider) return;
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Переменные для свайпов
         let touchStartX = 0;
-        let touchStartY = 0; // Добавляем Y для отслеживания вертикального движения
+        let touchStartY = 0;
         let touchCurrentX = 0;
         let isDragging = false;
         let isHorizontalSwipe = false;
@@ -248,12 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Обработка свайпов с блокировкой вертикального скролла
+        // Обработка свайпов с увеличенной чувствительностью
         track.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY; // Фиксируем начальную Y-координату
+            touchStartY = e.touches[0].clientY;
             isDragging = true;
-            isHorizontalSwipe = false; // Сбрасываем флаг горизонтального свайпа
+            isHorizontalSwipe = false;
             track.style.transition = 'none';
             currentOffset = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
         });
@@ -266,14 +266,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const diffX = touchStartX - touchCurrentX;
             const diffY = touchStartY - touchCurrentY;
 
-            // Определяем, горизонтальный ли это свайп
             if (!isHorizontalSwipe && (Math.abs(diffX) > Math.abs(diffY))) {
-                isHorizontalSwipe = true; // Если горизонтальное движение больше вертикального
+                isHorizontalSwipe = true;
             }
 
             if (isHorizontalSwipe) {
-                e.preventDefault(); // Блокируем вертикальный скролл только для горизонтального свайпа
-                let newOffset = currentOffset + diffX;
+                e.preventDefault();
+                let newOffset = currentOffset + diffX * 1.5; // Увеличиваем чувствительность (1.5 вместо 1)
                 const wrapperWidth = wrapper.offsetWidth;
                 const totalWidth = track.scrollWidth;
                 newOffset = Math.max(0, Math.min(newOffset, totalWidth - wrapperWidth));
