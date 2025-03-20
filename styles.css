@@ -452,6 +452,56 @@ footer {
     font-size: 0.9em;
 }
 
+.extra-services {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.extra-services h3 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.extra-services ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.extra-services ul li {
+    font-size: 1.1em;
+    color: #555;
+    margin: 10px 0;
+    padding-left: 30px;
+    position: relative;
+}
+
+.extra-services ul li:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+}
+
+.extra-services ul li:nth-child(1):before {
+    content: '⚡'; /* Иконка для электросварки */
+}
+
+.extra-services ul li:nth-child(2):before {
+    content: '🚚'; /* Иконка для погрузки */
+}
+
+.extra-services p {
+    font-size: 1em;
+    color: #777;
+    font-style: italic;
+}
+
 @media (max-width: 1024px) {
     .service-item {
         flex: 0 0 calc(50% - 15px);
