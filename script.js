@@ -2,24 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Обработчик формы для редиректа на mailto
     const contactForm = document.getElementById('contact-form');
     contactForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Предотвращаем стандартную отправку формы
-
-        // Получаем данные из формы
+        e.preventDefault();
         const name = contactForm.querySelector('input[name="name"]').value;
         const phone = contactForm.querySelector('input[name="phone"]').value;
         const message = contactForm.querySelector('textarea[name="message"]').value;
-
-        // Формируем тело письма
         const subject = encodeURIComponent('Заявка с сайта: Монтаж плоских кровель');
         const body = encodeURIComponent(`Имя: ${name}\nТелефон: ${phone}\nСообщение: ${message}`);
-
-        // Укажите ваш email
         const email = 'dmali@mail.ru';
-
-        // Создаем mailto ссылку и перенаправляем
         window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     });
-    // Калькулятор
+
+    // Калькулятор (без изменений)
     const selectDisplay = document.getElementById('service-select');
     const selectedValue = document.getElementById('selected-value');
     const optionsList = document.getElementById('service-options');
@@ -105,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCostElement.textContent = `${totalCost.toFixed(2)} ₽`;
     }
 
-    // Слайдер
+    // Слайдер с поддержкой свайпов
     function initSlider(sliderClass, isGallery = false) {
         const slider = document.querySelector(sliderClass);
         if (!slider) return;
@@ -115,9 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const items = track.children;
         const prevBtn = slider.querySelector('.slider-prev');
         const nextBtn = slider.querySelector('.slider-next');
-        const dotsContainer = slider.querySelector('.slider-dots'); // Изменено на поиск внутри слайдера
+        const dotsContainer = slider.querySelector('.slider-dots');
         let index = 0;
-        let isDotClicked = false; // Флаг для отслеживания клика по точке
+        let isDotClicked = false;
+
+        // Переменные для свайпов
+        let touchStartX = 0;
+        let touchCurrentX = 0;
+        let isDragging = false;
 
         if (!prevBtn || !nextBtn || !dotsContainer || items.length === 0) {
             console.error(`Элементы слайдера не найдены для: ${sliderClass}`);
@@ -134,20 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
             let offset;
 
             if (isGallery) {
-                // Галерея: центрируем текущий слайд
                 let currentItem = items[index];
                 let currentWidth = currentItem.offsetWidth + parseInt(getComputedStyle(currentItem).marginRight || 0);
                 offset = currentItem.offsetLeft - (wrapperWidth - currentWidth) / 2;
 
-                // Если последний слайд, прижимаем его вправо
                 if (index >= maxIndex) {
                     offset = totalWidth - wrapperWidth;
                 }
 
-                // Для галереи округляем offset
                 offset = Math.round(offset);
             } else {
-                // Основной слайдер: используем `offsetLeft`, чтобы убрать обрезание
                 if (index > maxIndex) index = maxIndex;
                 if (index < 0) index = 0;
 
@@ -159,16 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Гарантируем, что не выйдем за границы
             offset = Math.max(0, Math.min(offset, totalWidth - wrapperWidth));
-
-            // Применяем трансформацию
             track.style.transform = `translateX(-${offset}px)`;
 
-            // Обновляем точки
             updateDots(maxIndex, isGallery);
 
-            // Управляем кнопками
             prevBtn.style.display = index === 0 ? 'none' : 'flex';
             nextBtn.style.display = index >= maxIndex ? 'none' : 'flex';
         }
@@ -176,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateDots(maxIndex, isGallery = false) {
             dotsContainer.innerHTML = '';
 
-            // Если слайдер не нуждается в точках — убираем их
             if (maxIndex <= 0) {
                 dotsContainer.style.display = 'none';
                 return;
@@ -185,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (isGallery) {
-                // Галерея: показываем все точки
                 for (let i = 0; i <= maxIndex; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
@@ -200,8 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Основной слайдер: динамическое отображение точек
-            if (maxIndex <= 5 || index < 5) { // Первые 6 точек до index 4 всегда
+            if (maxIndex <= 5 || index < 5) {
                 for (let i = 0; i <= Math.min(5, maxIndex); i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
@@ -213,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     dotsContainer.appendChild(dot);
                 }
-            } else if (index >= maxIndex - 5 && (!isDotClicked || (isDotClicked && index > maxIndex - 5))) { // Последние 6 точек, если не клик или клик не на первую из последних
+            } else if (index >= maxIndex - 5 && (!isDotClicked || (isDotClicked && index > maxIndex - 5))) {
                 for (let i = maxIndex - 5; i <= maxIndex; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
@@ -226,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     dotsContainer.appendChild(dot);
                 }
             } else {
-                // Показываем 3 точки (первая, текущая, последняя) при index >= 5 или клике на первую из последних
                 const firstDot = document.createElement('div');
                 firstDot.classList.add('slider-dot');
                 firstDot.addEventListener('click', () => {
@@ -239,8 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const activeDot = document.createElement('div');
                 activeDot.classList.add('slider-dot', 'active');
                 activeDot.addEventListener('click', () => {
-                    index = index; // Оставляем текущий индекс
-                    isDotClicked = true;
+                    index = index;
+                    isDotClicked六 = true;
                     updateSlider();
                 });
                 dotsContainer.appendChild(activeDot);
@@ -256,12 +241,48 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        updateSlider();
+        // Обработка свайпов
+        track.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            isDragging = true;
+            track.style.transition = 'none'; // Убираем анимацию при свайпе
+        });
 
+        track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            touchCurrentX = e.touches[0].clientX;
+            const diff = touchStartX - touchCurrentX;
+            const currentTransform = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
+            track.style.transform = `translateX(-${currentTransform + diff}px)`;
+        });
+
+        track.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            track.style.transition = 'transform 0.5s ease'; // Возвращаем анимацию
+
+            const diff = touchStartX - touchCurrentX;
+            const threshold = 50; // Минимальное расстояние для свайпа
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    // Свайп влево
+                    let maxIndex = Math.max(0, Math.ceil((track.scrollWidth - wrapper.offsetWidth) / (items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0))));
+                    if (index < maxIndex) index++;
+                } else {
+                    // Свайп вправо
+                    if (index > 0) index--;
+                }
+            }
+            isDotClicked = false;
+            updateSlider();
+        });
+
+        // Обработка кликов по кнопкам
         prevBtn.addEventListener('click', () => {
             if (index > 0) {
                 index--;
-                isDotClicked = false; // Сбрасываем флаг при использовании кнопок
+                isDotClicked = false;
                 updateSlider();
             }
         });
@@ -269,20 +290,20 @@ document.addEventListener('DOMContentLoaded', () => {
         nextBtn.addEventListener('click', () => {
             let wrapperWidth = wrapper.offsetWidth;
             let itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || 0);
-            let visibleItems = Math.floor(wrapperWidth / itemWidth);
             let maxIndex = Math.max(0, Math.ceil((track.scrollWidth - wrapperWidth) / itemWidth));
 
             if (index < maxIndex) {
                 index++;
-                isDotClicked = false; // Сбрасываем флаг при использовании кнопок
+                isDotClicked = false;
                 updateSlider();
             }
         });
 
         window.addEventListener('resize', updateSlider);
+        updateSlider();
     }
 
-    // Запускаем слайдеры с разными параметрами
-    initSlider('.services .slider', false); // Услуги — без центрирования
-    initSlider('.gallery .slider', true);   // Галерея — с центрированием
+    // Запускаем слайдеры
+    initSlider('.services .slider', false);
+    initSlider('.gallery .slider', true);
 });
