@@ -1151,7 +1151,7 @@ background-color: #ff9800;
 
     .card-image {
         position: absolute;
-        top: 50%;
+        top: 20%;
         right: 15px;
         width: 20%;
         padding-top: 20%;
@@ -1160,6 +1160,10 @@ background-color: #ff9800;
         background-position: center;
         transform: translateY(-50%);
         z-index: 1;
+    }
+
+    .button-group {
+        display: grid;
     }
 
     .modal-content {
