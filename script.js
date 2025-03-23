@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Загрузка прайс-листа из prices.json
+    fetch('/prices.json')
+    .then(response => response.json())
+    .then(prices => {
+        populatePricingTable(prices);
+        populateCalculatorOptions(prices);
+    })
+    .catch(error => console.error('Ошибка загрузки prices.json:', error));
+
     // Обработчик формы для редиректа на mailto
     const contactForm = document.getElementById('contact-form');
     contactForm.addEventListener('submit', (e) => {
@@ -28,17 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectDisplay.addEventListener('click', () => {
         optionsList.classList.toggle('show');
-    });
-
-    optionsList.querySelectorAll('li').forEach(option => {
-        option.addEventListener('click', () => {
-            const value = option.getAttribute('data-value');
-            selectDisplay.innerHTML = `${option.textContent} <span class="dropdown-icon">▾</span>`;
-            selectedValue.value = value;
-            const [, unit] = value.split('|');
-            unitLabel.textContent = unit;
-            optionsList.classList.remove('show');
-        });
     });
 
     document.addEventListener('click', (e) => {
@@ -77,6 +75,37 @@ document.addEventListener('DOMContentLoaded', () => {
         renderServiceList();
     });
 
+    function populatePricingTable(prices) {
+        const tbody = document.getElementById('price-table-body');
+        tbody.innerHTML = '';
+        prices.forEach(price => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+            <td>${price.name}</td>
+            <td>${price.unit}</td>
+            <td>от ${price.cost} ₽</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function populateCalculatorOptions(prices) {
+        optionsList.innerHTML = '';
+        prices.forEach(price => {
+            const li = document.createElement('li');
+            li.setAttribute('data-value', `${price.cost}|${price.unit}|${price.name}`);
+            li.textContent = `${price.name} — от ${price.cost} ₽/${price.unit}`;
+            li.addEventListener('click', () => {
+                const value = li.getAttribute('data-value');
+                selectDisplay.innerHTML = `${li.textContent} <span class="dropdown-icon">▾</span>`;
+                selectedValue.value = value;
+                unitLabel.textContent = price.unit;
+                optionsList.classList.remove('show');
+            });
+            optionsList.appendChild(li);
+        });
+    }
+
     function renderServiceList() {
         serviceList.innerHTML = '';
         services.forEach((service, index) => {
@@ -98,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCostElement.textContent = `${totalCost.toFixed(2)} ₽`;
     }
 
-    // Слайдер
+    // Слайдер (оставляем без изменений)
     function initSlider(sliderClass, isGallery = false) {
         const slider = document.querySelector(sliderClass);
         if (!slider) return;
@@ -124,12 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let visibleItems, maxIndex, offset;
 
             if (isGallery) {
-                // Логика для галереи
                 visibleItems = Math.max(1, Math.round(wrapperWidth / itemWidth));
                 maxIndex = Math.max(0, items.length - visibleItems);
                 offset = index * itemWidth;
             } else {
-                // Логика для услуг (старая)
                 visibleItems = Math.floor(wrapperWidth / itemWidth);
                 maxIndex = Math.max(0, Math.floor((totalWidth - wrapperWidth) / itemWidth));
                 offset = items[index].offsetLeft;
@@ -154,14 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             prevBtn.style.display = index === 0 ? 'none' : 'flex';
             nextBtn.style.display = index === maxIndex ? 'none' : 'flex';
-
-            // Отладка
-            console.log(`${sliderClass} - Wrapper Width: ${wrapperWidth}, Item Width: ${itemWidth}, Items: ${items.length}, Visible: ${visibleItems}, Max Index: ${maxIndex}, Dots: ${isGallery ? maxIndex + 1 : 'variable'}`);
         }
 
         function updateDots(maxIndex, isGallery = false) {
             dotsContainer.innerHTML = '';
-
             if (maxIndex <= 0) {
                 dotsContainer.style.display = 'none';
                 return;
@@ -169,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dotsContainer.style.display = 'flex';
 
             if (isGallery) {
-                // Простая логика для галереи
                 for (let i = 0; i <= maxIndex; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('slider-dot');
@@ -181,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     dotsContainer.appendChild(dot);
                 }
             } else {
-                // Старая логика для услуг
                 const totalDots = maxIndex + 1;
                 if (totalDots <= 6) {
                     for (let i = 0; i < totalDots; i++) {
@@ -233,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Обработка кликов по кнопкам
         prevBtn.addEventListener('click', () => {
             if (index > 0) {
                 index--;
@@ -253,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Обработка свайпов
         let touchStartX = 0;
         let touchCurrentX = 0;
         let isDragging = false;
@@ -299,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSlider(false);
     }
 
-    // Запускаем слайдеры
     initSlider('.services .slider', false);
     initSlider('.gallery .slider', true);
 });
