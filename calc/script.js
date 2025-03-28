@@ -66,8 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = f.querySelector('button[type="submit"]');
             if (f === formToShow) {
                 f.style.display = 'block';
+                resetFormFields(f); // Сбрасываем состояние полей
                 cancelBtn.onclick = () => {
                     f.reset();
+                    resetFormFields(f); // Сбрасываем при отмене
                     f.dataset.isEditing = 'false';
                     f.dataset.editIndex = '';
                     submitBtn.textContent = f === expenseForm ? 'Добавить расход' :
@@ -99,6 +101,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         if (formToShow) populateSuggestions(formToShow);
+    }
+
+    function resetFormFields(form) {
+        const lengthInput = form.querySelector('input[name="length"]');
+        const widthInput = form.querySelector('input[name="width"]');
+        const areaInput = form.querySelector('input[name="area"]');
+        if (lengthInput && widthInput && areaInput) {
+            lengthInput.disabled = false;
+            widthInput.disabled = false;
+            areaInput.disabled = false;
+        }
     }
 
     function toggleInputState(form, inputName, selectElement) {
@@ -375,56 +388,46 @@ document.addEventListener('DOMContentLoaded', () => {
                           isExpense: true,
                           editHistory: []
                             };
-                        } else if (!isManual) {
-                            const length = parseFloat(objectForm.querySelector('input[name="length"]').value);
-                            const width = parseFloat(objectForm.querySelector('input[name="width"]').value);
-                            const selectedOption = selectedValue.value;
-                            const workersData = Array.from(workersCheckboxGroup.querySelectorAll('input:checked')).map(input => {
-                                const ktuInput = objectForm.querySelector(`input[name="ktu_${input.value}"]`);
-                                return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
-                            });
-
-                            if (!objectName || !selectedOption || isNaN(length) || isNaN(width) || length <= 0 || width <= 0 || workersData.length === 0 || workersData.some(w => w.ktu <= 0)) {
-                                alert('Заполните все поля корректно!');
-                                return;
-                            }
-
-                            const [price, unit, serviceName] = selectedOption.split('|');
-                            const totalCost = (length * width * parseFloat(price)).toFixed(2);
-                            const totalKtu = workersData.reduce((sum, w) => sum + w.ktu, 0);
-
-                            object = {
-                                name: objectName,
-                                area: `${length}x${width}=${(length * width).toFixed(2)} м²`,
-                          service: serviceName,
-                          cost: totalCost,
-                          workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
-                          timestamp: new Date().toLocaleString(),
-                          isExpense: false,
-                          editHistory: []
-                            };
                         } else {
-                            const length = parseFloat(manualPriceForm.querySelector('input[name="length"]').value);
-                            const width = parseFloat(manualPriceForm.querySelector('input[name="width"]').value);
-                            const selectedOption = manualSelectedValue.value;
-                            const pricePerSquare = parseFloat(manualPriceForm.querySelector('input[name="pricePerSquare"]').value);
-                            const workersData = Array.from(manualWorkersCheckboxGroup.querySelectorAll('input:checked')).map(input => {
-                                const ktuInput = manualPriceForm.querySelector(`input[name="manualktu_${input.value}"]`);
+                            const length = parseFloat(formToUse.querySelector('input[name="length"]').value) || 0;
+                            const width = parseFloat(formToUse.querySelector('input[name="width"]').value) || 0;
+                            const areaInput = parseFloat(formToUse.querySelector('input[name="area"]').value) || 0;
+                            const selectedOption = isManual ? manualSelectedValue.value : selectedValue.value;
+                            const workersData = Array.from((isManual ? manualWorkersCheckboxGroup : workersCheckboxGroup).querySelectorAll('input:checked')).map(input => {
+                                const ktuInput = formToUse.querySelector(`input[name="${isManual ? 'manual' : ''}ktu_${input.value}"]`);
                                 return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
                             });
 
-                            if (!objectName || !selectedOption || isNaN(length) || isNaN(width) || length <= 0 || width <= 0 || isNaN(pricePerSquare) || pricePerSquare <= 0 || workersData.length === 0 || workersData.some(w => w.ktu <= 0)) {
-                                alert('Заполните все поля корректно!');
+                            let area;
+                            if (areaInput > 0) {
+                                area = areaInput;
+                            } else if (length > 0 && width > 0) {
+                                area = length * width;
+                            } else {
+                                alert('Укажите площадь напрямую или оба значения: длину и ширину!');
                                 return;
                             }
 
-                            const [serviceName, unit] = selectedOption.split('|');
-                            const totalCost = (length * width * pricePerSquare).toFixed(2);
+                            if (!objectName || !selectedOption || workersData.length === 0 || workersData.some(w => w.ktu <= 0)) {
+                                alert('Заполните все обязательные поля: название, услугу и участников!');
+                                return;
+                            }
+
+                            let totalCost;
                             const totalKtu = workersData.reduce((sum, w) => sum + w.ktu, 0);
 
-                            object = {
-                                name: objectName,
-                                area: `${length}x${width}=${(length * width).toFixed(2)} м²`,
+                            if (isManual) {
+                                const pricePerSquare = parseFloat(manualPriceForm.querySelector('input[name="pricePerSquare"]').value);
+                                if (isNaN(pricePerSquare) || pricePerSquare <= 0) {
+                                    alert('Укажите корректную цену за м²!');
+                                    return;
+                                }
+                                const [serviceName, unit] = selectedOption.split('|');
+                                totalCost = (area * pricePerSquare).toFixed(2);
+
+                                object = {
+                                    name: objectName,
+                                    area: `${area.toFixed(2)} м²`,
                           service: serviceName,
                           cost: totalCost,
                           workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
@@ -432,7 +435,22 @@ document.addEventListener('DOMContentLoaded', () => {
                           isExpense: false,
                           manualPrice: true,
                           editHistory: []
-                            };
+                                };
+                            } else {
+                                const [price, unit, serviceName] = selectedOption.split('|');
+                                totalCost = (area * parseFloat(price)).toFixed(2);
+
+                                object = {
+                                    name: objectName,
+                                    area: `${area.toFixed(2)} м²`,
+                          service: serviceName,
+                          cost: totalCost,
+                          workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
+                          timestamp: new Date().toLocaleString(),
+                          isExpense: false,
+                          editHistory: []
+                                };
+                            }
                         }
 
                         objects.unshift(object);
@@ -440,6 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderWorkerStats();
                         populateSuggestions(formToUse);
                         formToUse.reset();
+                        resetFormFields(formToUse);
                         if (isManual) {
                             manualSelectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
                             manualSelectedValue.value = '';
@@ -544,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 (obj.area && obj.area.toLowerCase().includes(filterText)) ||
                                 obj.service.toLowerCase().includes(filterText) ||
                                 obj.cost.toLowerCase().includes(filterText) ||
-                                obj.workers.some(worker => (typeof worker === 'string' ? worker : eloader.name).toLowerCase().includes(filterText)) ||
+                                obj.workers.some(worker => (typeof worker === 'string' ? worker : worker.name).toLowerCase().includes(filterText)) ||
                                 (obj.receivers && obj.receivers.some(receiver => receiver.toLowerCase().includes(filterText))) ||
                                 obj.timestamp.toLowerCase().includes(filterText)
                             );
@@ -790,7 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const submitBtn = formToUse.querySelector('button[type="submit"]');
                         const cancelBtn = formToUse.querySelector('.cancel-btn');
 
-                        submitBtn.textContent = 'Изменить ' + (isExpense ? 'расход' : ( byCustomService ? 'услугу' : 'объект'));
+                        submitBtn.textContent = 'Изменить ' + (isExpense ? 'расход' : (isCustomService ? 'услугу' : 'объект'));
                         cancelBtn.style.display = 'inline-block';
                         formToUse.dataset.isEditing = 'true';
                         formToUse.dataset.editIndex = index;
@@ -827,19 +846,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             const input = obj.manualPrice ? manualObjectNameInput : objectNameInput;
                             input.value = obj.name;
-                            const [length, width] = obj.area.split('=')[0].split('x').map(s => parseFloat(s));
-                            formToUse.querySelector('input[name="length"]').value = length;
-                            formToUse.querySelector('input[name="width"]').value = width;
+
+                            const areaMatch = obj.area.match(/([\d.]+)\s*м²/);
+                            if (areaMatch) {
+                                const areaValue = parseFloat(areaMatch[1]);
+                                formToUse.querySelector('input[name="area"]').value = areaValue;
+                                formToUse.querySelector('input[name="length"]').value = '';
+                                formToUse.querySelector('input[name="width"]').value = '';
+                                formToUse.querySelector('input[name="length"]').disabled = true;
+                                formToUse.querySelector('input[name="width"]').disabled = true;
+                            }
+
                             if (obj.manualPrice) {
                                 manualSelectedValue.value = `${obj.service}|м²`;
                                 manualSelectDisplay.innerHTML = `${obj.service} (м²) <span class="dropdown-icon">▾</span>`;
-                                const pricePerSquare = parseFloat(obj.cost) / (length * width);
+                                const area = parseFloat(areaMatch[1]);
+                                const pricePerSquare = parseFloat(obj.cost) / area;
                                 manualPriceForm.querySelector('input[name="pricePerSquare"]').value = pricePerSquare.toFixed(2);
                             } else {
-                                const pricePerSquare = parseFloat(obj.cost) / (length * width);
+                                const area = parseFloat(areaMatch[1]);
+                                const pricePerSquare = parseFloat(obj.cost) / area;
                                 selectedValue.value = `${pricePerSquare}|м²|${obj.service}`;
                                 selectDisplay.innerHTML = `${obj.service} — от ${pricePerSquare} ₽/м² <span class="dropdown-icon">▾</span>`;
                             }
+
                             workers.forEach(worker => {
                                 const checkbox = (obj.manualPrice ? manualWorkersCheckboxGroup : workersCheckboxGroup).querySelector(`input[value="${worker}"]`);
                                 if (checkbox) {
@@ -855,6 +885,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         cancelBtn.onclick = () => {
                             formToUse.reset();
+                            resetFormFields(formToUse);
                             formToUse.dataset.isEditing = 'false';
                             formToUse.dataset.editIndex = '';
                             submitBtn.textContent = isExpense ? 'Добавить расход' : (isCustomService ? 'Добавить услугу' : 'Добавить объект');
@@ -943,19 +974,31 @@ document.addEventListener('DOMContentLoaded', () => {
                                     return;
                                 }
 
+                                const length = parseFloat(formToUse.querySelector('input[name="length"]').value) || 0;
+                                const width = parseFloat(formToUse.querySelector('input[name="width"]').value) || 0;
+                                const areaInput = parseFloat(formToUse.querySelector('input[name="area"]').value) || 0;
+
+                                let newArea;
+                                if (areaInput > 0) {
+                                    newArea = areaInput;
+                                } else if (length > 0 && width > 0) {
+                                    newArea = length * width;
+                                } else {
+                                    alert('Укажите площадь напрямую или оба значения: длину и ширину!');
+                                    return;
+                                }
+
                                 const [priceOrService, unit, serviceName] = selectedOption.split('|');
                                 const newService = obj.manualPrice ? priceOrService : serviceName;
-                                const newLength = parseFloat(formToUse.querySelector('input[name="length"]').value);
-                                const newWidth = parseFloat(formToUse.querySelector('input[name="width"]').value);
                                 const pricePerSquare = obj.manualPrice ? parseFloat(manualPriceForm.querySelector('input[name="pricePerSquare"]').value) : parseFloat(priceOrService);
                                 const newWorkers = Array.from((obj.manualPrice ? manualWorkersCheckboxGroup : workersCheckboxGroup).querySelectorAll('input:checked')).map(input => {
                                     const ktuInput = formToUse.querySelector(`input[name="${obj.manualPrice ? 'manual' : ''}ktu_${input.value}"]`);
                                     return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
                                 });
                                 const totalKtu = newWorkers.reduce((sum, w) => sum + w.ktu, 0);
-                                const newCost = (newLength * newWidth * pricePerSquare).toFixed(2);
+                                const newCost = (newArea * pricePerSquare).toFixed(2);
 
-                                if (!newName || isNaN(newLength) || isNaN(newWidth) || newLength <= 0 || newWidth <= 0 || isNaN(pricePerSquare) || pricePerSquare <= 0 || newWorkers.length === 0 || newWorkers.some(w => w.ktu <= 0)) {
+                                if (!newName || isNaN(newArea) || newArea <= 0 || isNaN(pricePerSquare) || pricePerSquare <= 0 || newWorkers.length === 0 || newWorkers.some(w => w.ktu <= 0)) {
                                     alert('Заполните все поля корректно!');
                                     return;
                                 }
@@ -963,13 +1006,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const newWorkersWithCost = newWorkers.map(w => ({ ...w, cost: (parseFloat(newCost) * w.ktu / totalKtu).toFixed(2) }));
 
                                 if (newName !== oldObj.name) changes.push(`Название: "${oldObj.name}" → "${newName}"`);
-                                if (`${newLength}x${newWidth}=${(newLength * newWidth).toFixed(2)} м²` !== oldObj.area) changes.push(`Площадь: ${oldObj.area} → ${newLength}x${newWidth}=${(newLength * newWidth).toFixed(2)} м²`);
+                                if (`${newArea.toFixed(2)} м²` !== oldObj.area) changes.push(`Площадь: ${oldObj.area} → ${newArea.toFixed(2)} м²`);
                                 if (newService !== oldObj.service) changes.push(`Услуга: "${oldObj.service}" → "${newService}"`);
                                 if (newCost !== oldObj.cost) changes.push(`Стоимость: ${oldObj.cost} → ${newCost}`);
                                 if (JSON.stringify(newWorkersWithCost) !== JSON.stringify(oldObj.workers)) changes.push(`Участники: "${oldObj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}" → "${newWorkersWithCost.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}"`);
 
                                 oldObj.name = newName;
-                                oldObj.area = `${newLength}x${newWidth}=${(newLength * newWidth).toFixed(2)} м²`;
+                                oldObj.area = `${newArea.toFixed(2)} м²`;
                                 oldObj.service = newService;
                                 oldObj.cost = newCost;
                                 oldObj.workers = newWorkersWithCost;
@@ -984,6 +1027,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             renderObjects();
                             renderWorkerStats();
                             formToUse.reset();
+                            resetFormFields(formToUse);
                             formToUse.dataset.isEditing = 'false';
                             formToUse.dataset.editIndex = '';
                             submitBtn.textContent = isExpense ? 'Добавить расход' : (isCustomService ? 'Добавить услугу' : 'Добавить объект');
@@ -1241,4 +1285,44 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line"><span class="label">На одного (начисление):</span><span class="value">${costPerReceiver} ₽</span></div>` : ''}
                         `;
                     }
+
+                    // Управление состоянием полей "Длина", "Ширина" и "Площадь"
+                    function toggleDimensionFields(formPrefix) {
+                        const lengthInput = document.getElementById(`${formPrefix}-length`);
+                        const widthInput = document.getElementById(`${formPrefix}-width`);
+                        const areaInput = document.getElementById(`${formPrefix}-area`);
+
+                        areaInput.addEventListener('input', () => {
+                            if (areaInput.value && parseFloat(areaInput.value) > 0) {
+                                lengthInput.disabled = true;
+                                widthInput.disabled = true;
+                                lengthInput.value = '';
+                                widthInput.value = '';
+                            } else {
+                                lengthInput.disabled = false;
+                                widthInput.disabled = false;
+                            }
+                        });
+
+                        lengthInput.addEventListener('input', () => {
+                            if (lengthInput.value && parseFloat(lengthInput.value) > 0) {
+                                areaInput.disabled = true;
+                                areaInput.value = '';
+                            } else if (!widthInput.value) {
+                                areaInput.disabled = false;
+                            }
+                        });
+
+                        widthInput.addEventListener('input', () => {
+                            if (widthInput.value && parseFloat(widthInput.value) > 0) {
+                                areaInput.disabled = true;
+                                areaInput.value = '';
+                            } else if (!lengthInput.value) {
+                                areaInput.disabled = false;
+                            }
+                        });
+                    }
+
+                    toggleDimensionFields('object');
+                    toggleDimensionFields('manual');
 });
