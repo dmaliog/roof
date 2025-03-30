@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-2070.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "3/30/2025, 12:38:55 PM",
+    "isExpense": true,
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-866.20",
+    "workers": [
+      "Артём",
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "3/30/2025, 12:38:30 PM",
+    "isExpense": true,
+    "editHistory": []
+  }
+]
