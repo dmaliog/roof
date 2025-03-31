@@ -1,4 +1,6 @@
+// calc/script.js
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM элементы
     const customServiceForm = document.getElementById('custom-service-form');
     const showCustomServiceFormBtn = document.getElementById('show-custom-service-form');
     const serviceWorkersCheckboxGroup = document.getElementById('service-workers-checkbox-group');
@@ -6,13 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const serviceNameSuggestions = document.getElementById('service-name-suggestions');
     const serviceSelect = customServiceForm.querySelector('#service-select-custom');
     const serviceOptions = customServiceForm.querySelector('#service-options-custom');
-    let customServiceNames = [];
-    let customServices = [];
 
     const expenseTypeSelect = document.getElementById('expense-type-select');
     const expenseTypeValue = document.getElementById('expense-type-value');
     const expenseTypeOptions = document.getElementById('expense-type-options');
-    let expenseTypes = [];
 
     const objectForm = document.getElementById('object-form');
     const expenseForm = document.getElementById('expense-form');
@@ -46,30 +45,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeHistoryBtn = document.getElementById('close-history');
     const historyList = document.getElementById('history-list');
     const filterInput = document.getElementById('object-filter');
+
+    // Переменные состояния
     let objects = [];
     let workers = [];
     let editMode = false;
     let prices = [];
+    let customServiceNames = [];
+    let customServices = [];
+    let expenseTypes = [];
 
+    // Инициализация автокомплита для расходов
     expenseNameSuggestions.id = 'expense-name-suggestions';
     expenseNameSuggestions.className = 'suggestions-list';
     if (!expenseNameInput.nextElementSibling) expenseNameInput.parentElement.appendChild(expenseNameSuggestions);
 
+    // Установка текстов кнопок
     objectForm.querySelector('button[type="submit"]').textContent = 'Добавить объект';
     expenseForm.querySelector('button[type="submit"]').textContent = 'Добавить расход';
     manualPriceForm.querySelector('button[type="submit"]').textContent = 'Добавить объект';
     customServiceForm.querySelector('button[type="submit"]').textContent = 'Добавить услугу';
 
+    // Функция переключения форм
     function showForm(formToShow) {
         [objectForm, expenseForm, manualPriceForm, customServiceForm].forEach(f => {
             const cancelBtn = f.querySelector('.cancel-btn');
             const submitBtn = f.querySelector('button[type="submit"]');
             if (f === formToShow) {
                 f.style.display = 'block';
-                resetFormFields(f); // Сбрасываем состояние полей
+                resetFormFields(f);
+                if (f === expenseForm) toggleFuelCalcMode();
                 cancelBtn.onclick = () => {
                     f.reset();
-                    resetFormFields(f); // Сбрасываем при отмене
+                    resetFormFields(f);
                     f.dataset.isEditing = 'false';
                     f.dataset.editIndex = '';
                     submitBtn.textContent = f === expenseForm ? 'Добавить расход' :
@@ -78,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
                         expenseTypeValue.value = '';
                         toggleInputState(f, 'expenseName', expenseTypeValue);
+                        f.querySelector('.fuel-calc-mode').style.display = 'none';
                     } else if (f === customServiceForm) {
                         serviceSelect.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
                         serviceSelect.value = '';
@@ -103,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (formToShow) populateSuggestions(formToShow);
     }
 
+    // Сброс состояния полей формы
     function resetFormFields(form) {
         const lengthInput = form.querySelector('input[name="length"]');
         const widthInput = form.querySelector('input[name="width"]');
@@ -112,8 +122,17 @@ document.addEventListener('DOMContentLoaded', () => {
             widthInput.disabled = false;
             areaInput.disabled = false;
         }
+        if (form === expenseForm) {
+            const fuelModeRadios = form.querySelectorAll('input[name="fuelMode"]');
+            const amountInput = form.querySelector('input[name="expenseAmount"]');
+            const distanceInput = form.querySelector('.distance-input');
+            fuelModeRadios.forEach(radio => radio.checked = radio.value === 'amount');
+            amountInput.style.display = 'block';
+            distanceInput.style.display = 'none';
+        }
     }
 
+    // Управление состоянием полей ввода
     function toggleInputState(form, inputName, selectElement) {
         const input = form.querySelector(`input[name="${inputName}"]`);
         const selectedValue = selectElement.value || (selectElement.tagName === 'DIV' ? selectElement.textContent.trim().split(' ')[0] : '');
@@ -124,42 +143,116 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             input.disabled = false;
         }
+        if (form === expenseForm) toggleFuelCalcMode();
     }
 
-    function populateExpenseTypeSelect(types) {
-        expenseTypeOptions.innerHTML = '';
-        types.forEach(type => {
-            const li = document.createElement('li');
-            li.setAttribute('data-value', type.name);
-            li.textContent = type.name;
-            li.addEventListener('click', () => {
-                expenseTypeSelect.innerHTML = `${li.textContent} <span class="dropdown-icon">▾</span>`;
-                expenseTypeValue.value = li.getAttribute('data-value');
-                toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
-                expenseTypeOptions.classList.remove('show');
+    // Переключение режима расчета бензина
+    function toggleFuelCalcMode() {
+        const expenseName = expenseNameInput.disabled ? expenseTypeValue.value : expenseNameInput.value.trim();
+        const fuelCalcMode = expenseForm.querySelector('.fuel-calc-mode');
+        const amountInput = expenseForm.querySelector('input[name="expenseAmount"]');
+        const distanceInput = expenseForm.querySelector('.distance-input');
+        const mileageInput = expenseForm.querySelector('.mileage-input');
+        const distanceValueInput = distanceInput.querySelector('input[name="distance"]');
+        const startMileageInput = mileageInput.querySelector('input[name="startMileage"]');
+        const endMileageInput = mileageInput.querySelector('input[name="endMileage"]');
+        const radioButtons = expenseForm.querySelectorAll('input[name="fuelMode"]');
+        const receivers = Array.from(expenseReceiversCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
+
+        // Условие теперь зависит только от названия "Бензин" и наличия хотя бы одного участника
+        if (expenseName.toLowerCase() === 'бензин' && receivers.length > 0) {
+            fuelCalcMode.style.display = 'block';
+
+            radioButtons.forEach(radio => {
+                radio.removeEventListener('change', updateFuelModeDisplay);
+                radio.addEventListener('change', updateFuelModeDisplay);
             });
-            expenseTypeOptions.appendChild(li);
-        });
+
+            updateFuelModeDisplay();
+        } else {
+            fuelCalcMode.style.display = 'none';
+            amountInput.style.display = 'block';
+            distanceInput.style.display = 'none';
+            mileageInput.style.display = 'none';
+            amountInput.removeAttribute('readonly');
+            amountInput.setAttribute('required', 'required');
+            distanceValueInput.removeAttribute('required');
+            startMileageInput.removeAttribute('required');
+            endMileageInput.removeAttribute('required');
+            distanceValueInput.value = '';
+            startMileageInput.value = '';
+            endMileageInput.value = '';
+        }
+
+        function updateFuelModeDisplay() {
+            const selectedMode = expenseForm.querySelector('input[name="fuelMode"]:checked').value;
+            const fuelConsumption = 6.7; // 6,7 литров на 100 км
+            const fuelPrice = 61; // 61 рубль за литр
+
+            if (selectedMode === 'amount') {
+                amountInput.style.display = 'block';
+                distanceInput.style.display = 'none';
+                mileageInput.style.display = 'none';
+                amountInput.removeAttribute('readonly');
+                amountInput.setAttribute('required', 'required');
+                distanceValueInput.removeAttribute('required');
+                startMileageInput.removeAttribute('required');
+                endMileageInput.removeAttribute('required');
+                distanceValueInput.value = '';
+                startMileageInput.value = '';
+                endMileageInput.value = '';
+            } else if (selectedMode === 'distance') {
+                amountInput.style.display = 'block';
+                distanceInput.style.display = 'block';
+                mileageInput.style.display = 'none';
+                amountInput.setAttribute('readonly', 'true');
+                amountInput.removeAttribute('required');
+                distanceValueInput.setAttribute('required', 'required');
+                startMileageInput.removeAttribute('required');
+                endMileageInput.removeAttribute('required');
+                startMileageInput.value = '';
+                endMileageInput.value = '';
+                distanceValueInput.addEventListener('input', () => {
+                    const distance = parseFloat(distanceValueInput.value) || 0;
+                    const liters = (distance * fuelConsumption) / 100;
+                    const calculatedAmount = -(liters * fuelPrice);
+                    amountInput.value = distance > 0 ? calculatedAmount.toFixed(2) : '';
+                });
+                const distance = parseFloat(distanceValueInput.value) || 0;
+                const liters = (distance * fuelConsumption) / 100;
+                amountInput.value = distance > 0 ? -(liters * fuelPrice).toFixed(2) : '';
+            } else if (selectedMode === 'mileage') {
+                amountInput.style.display = 'block';
+                distanceInput.style.display = 'none';
+                mileageInput.style.display = 'block';
+                amountInput.setAttribute('readonly', 'true');
+                amountInput.removeAttribute('required');
+                distanceValueInput.removeAttribute('required');
+                startMileageInput.setAttribute('required', 'required');
+                endMileageInput.setAttribute('required', 'required');
+                distanceValueInput.value = '';
+
+                function updateMileageCalculation() {
+                    const start = parseFloat(startMileageInput.value) || 0;
+                    const end = parseFloat(endMileageInput.value) || 0;
+                    const distance = end > start ? end - start : 0;
+                    const liters = (distance * fuelConsumption) / 100;
+                    const calculatedAmount = -(liters * fuelPrice);
+                    amountInput.value = distance > 0 ? calculatedAmount.toFixed(2) : '';
+                }
+
+                startMileageInput.addEventListener('input', updateMileageCalculation);
+                endMileageInput.addEventListener('input', updateMileageCalculation);
+                updateMileageCalculation();
+            }
+        }
     }
 
-    function populateCustomServiceSelect(services) {
-        serviceOptions.innerHTML = '';
-        services.forEach(service => {
-            const li = document.createElement('li');
-            li.setAttribute('data-value', service.name);
-            li.textContent = service.name;
-            li.addEventListener('click', () => {
-                serviceSelect.innerHTML = `${li.textContent} <span class="dropdown-icon">▾</span>`;
-                serviceSelect.value = li.getAttribute('data-value');
-                toggleInputState(customServiceForm, 'serviceName', serviceSelect);
-                serviceOptions.classList.remove('show');
-            });
-            serviceOptions.appendChild(li);
-        });
-    }
-
+    // Обработчики событий для переключения выпадающих списков
     expenseTypeSelect.addEventListener('click', () => expenseTypeOptions.classList.toggle('show'));
     serviceSelect.addEventListener('click', () => serviceOptions.classList.toggle('show'));
+    expenseNameInput.addEventListener('input', toggleFuelCalcMode);
+    expenseReceiversCheckboxGroup.addEventListener('change', toggleFuelCalcMode);
 
     document.addEventListener('click', (e) => {
         if (!selectDisplay.contains(e.target) && !optionsList.contains(e.target)) optionsList.classList.remove('show');
@@ -168,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!expenseTypeSelect.contains(e.target) && !expenseTypeOptions.contains(e.target)) expenseTypeOptions.classList.remove('show');
     });
 
+        // Загрузка данных
         function loadData() {
             const expenseAmountInput = expenseForm.querySelector('input[name="expenseAmount"]');
             expenseAmountInput.addEventListener('focus', () => {
@@ -175,41 +269,47 @@ document.addEventListener('DOMContentLoaded', () => {
             });
                 expenseAmountInput.addEventListener('input', () => {
                     const value = expenseAmountInput.value;
-                    if (!value.startsWith('-') || value === '-') expenseAmountInput.value = '-' + value.replace('-', '');
-                    else if (parseFloat(value) >= 0 && value !== '-') expenseAmountInput.value = '-' + Math.abs(parseFloat(value)).toString();
+                    if (value === '-' || value === '') return; // Разрешаем "-" и пустое значение
+                    if (!value.startsWith('-')) {
+                        expenseAmountInput.value = '-' + value.replace('-', '');
+                    } else if (parseFloat(value) >= 0 && value !== '-') {
+                        expenseAmountInput.value = '-' + Math.abs(parseFloat(value)).toString();
+                    }
                 });
 
-                    Promise.all([
-                        fetch('../save.json').then(res => res.ok ? res.json() : []).catch(() => []),
-                                fetch('../workers.json').then(res => res.ok ? res.json() : []).catch(() => ['Артём', 'Коля', 'Слава', 'Женя']),
-                                fetch('../prices.json').then(res => res.ok ? res.json() : []).catch(() => []),
-                                fetch('../custom-services.json').then(res => res.ok ? res.json() : []).catch(() => []),
-                                fetch('../expense-types.json').then(res => res.ok ? res.json() : []).catch(() => [])
-                    ]).then(([objectsData, workersData, pricesData, customServicesData, expenseTypesData]) => {
-                        objects = objectsData;
-                        workers = workersData;
-                        prices = pricesData;
-                        customServices = customServicesData;
-                        expenseTypes = expenseTypesData;
+                Promise.all([
+                    fetch('../save.json').then(res => res.ok ? res.json() : []).catch(() => []),
+                            fetch('../workers.json').then(res => res.ok ? res.json() : []).catch(() => ['Артём', 'Коля', 'Слава', 'Женя']),
+                            fetch('../prices.json').then(res => res.ok ? res.json() : []).catch(() => []),
+                            fetch('../custom-services.json').then(res => res.ok ? res.json() : []).catch(() => []),
+                            fetch('../expense-types.json').then(res => res.ok ? res.json() : []).catch(() => [])
+                ]).then(([objectsData, workersData, pricesData, customServicesData, expenseTypesData]) => {
+                    objects = objectsData;
+                    workers = workersData;
+                    prices = pricesData;
+                    customServices = customServicesData;
+                    expenseTypes = expenseTypesData;
 
-                        expenseTypes.unshift({ name: "Своё название" });
-                        customServices.unshift({ name: "Своё название" });
+                    expenseTypes.unshift({ name: "Своё название" });
+                    expenseTypes.push({ name: "Еда" }, { name: "Займ" });
+                    customServices.unshift({ name: "Своё название" });
 
-                        customServiceNames = [...new Set(objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
-                        renderObjects();
-                        renderWorkerStats();
-                        populateWorkers();
-                        populateServiceSelect(prices, selectDisplay, selectedValue, optionsList);
-                        populateManualServiceSelect(prices, manualSelectDisplay, manualSelectedValue, manualOptionsList, manualPriceLabel);
-                        populateCustomServiceSelect(customServices);
-                        populateExpenseTypeSelect(expenseTypes);
-                        populateSuggestions(objectForm);
+                    customServiceNames = [...new Set(objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
+                    renderObjects();
+                    renderWorkerStats();
+                    populateWorkers();
+                    populateServiceSelect(prices, selectDisplay, selectedValue, optionsList);
+                    populateManualServiceSelect(prices, manualSelectDisplay, manualSelectedValue, manualOptionsList, manualPriceLabel);
+                    populateCustomServiceSelect(customServices);
+                    populateExpenseTypeSelect(expenseTypes);
+                    populateSuggestions(objectForm);
 
-                        toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
-                        toggleInputState(customServiceForm, 'serviceName', serviceSelect);
-                    });
+                    toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
+                    toggleInputState(customServiceForm, 'serviceName', serviceSelect);
+                });
         }
 
+        // Обработчики кнопок для показа форм
         showObjectFormBtn.addEventListener('click', () => showForm(objectForm));
         showExpenseFormBtn.addEventListener('click', () => showForm(expenseForm));
         showManualPriceFormBtn.addEventListener('click', () => showForm(manualPriceForm));
@@ -217,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         loadData();
 
+        // Обработчик отправки формы кастомной услуги
         customServiceForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const isEditing = customServiceForm.dataset.isEditing === 'true';
@@ -271,6 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(isEditing ? 'Услуга изменена.' : 'Услуга добавлена.');
         });
 
+        // Обработчики отправки других форм
         objectForm.addEventListener('submit', (e) => {
             if (objectForm.dataset.isEditing !== 'true') addObject(e);
         });
@@ -283,6 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (manualPriceForm.dataset.isEditing !== 'true') addObject(e, false, true);
                 });
 
+                    // Заполнение списка участников
                     function populateWorkers() {
                         const createCheckbox = (name, group, prefix, withKtu = false) => {
                             const label = document.createElement('label');
@@ -317,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
 
+                    // Автокомплит
                     function populateSuggestions(activeForm) {
                         const uniqueObjectNames = [...new Set(objects.filter(obj => !obj.isExpense && !obj.isCustomService).map(obj => obj.name))];
                         const uniqueExpenseNames = [...new Set(objects.filter(obj => obj.isExpense).map(obj => obj.name))];
@@ -332,8 +436,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 li.addEventListener('click', () => {
                                     input.value = name;
                                     suggestionsList.classList.remove('show');
+                                    if (activeForm === expenseForm) toggleFuelCalcMode();
                                 });
-                                suggestionsList.appendChild(li);
+                                    suggestionsList.appendChild(li);
                             });
 
                             if (filteredNames.length > 0 && inputValue) suggestionsList.classList.add('show');
@@ -358,37 +463,126 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
 
+                    // Показ выпадающих списков услуг
                     selectDisplay.addEventListener('click', () => optionsList.classList.toggle('show'));
                     manualSelectDisplay.addEventListener('click', () => manualOptionsList.classList.toggle('show'));
 
+                    // Добавление объекта
                     function addObject(e, isExpense = false, isManual = false) {
                         e.preventDefault();
                         const formToUse = isExpense ? expenseForm : (isManual ? manualPriceForm : objectForm);
                         const objectName = (isManual ? manualObjectNameInput : (isExpense ? expenseNameInput : objectNameInput)).value.trim();
                         let object;
 
+                        console.log('Режим:', isExpense ? 'Расход' : (isManual ? 'Ручная цена' : 'Объект'), 'Название:', objectName);
+
                         if (isExpense) {
                             const expenseName = expenseNameInput.disabled ? expenseTypeValue.value : objectName;
-                            const expenseAmount = parseFloat(expenseForm.querySelector('input[name="expenseAmount"]').value);
+                            let expenseAmount;
                             const workers = Array.from(expenseWorkersCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
                             const receivers = Array.from(expenseReceiversCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
 
-                            if (!expenseName || isNaN(expenseAmount) || expenseAmount >= 0 || workers.length === 0) {
-                                alert('Заполните все поля корректно!');
+                            console.log('Название расхода:', expenseName, 'Участники (списание):', workers, 'Участники (начисление):', receivers);
+
+                            if (!expenseName || workers.length === 0) {
+                                console.log('Ошибка: Не заполнены обязательные поля');
+                                alert('Заполните все обязательные поля: название и участников!');
                                 return;
                             }
 
-                            object = {
-                                name: expenseName,
-                                service: 'Расход',
-                                cost: expenseAmount.toFixed(2),
+                            if (expenseName.toLowerCase() === 'бензин' && receivers.length > 0) { // Убрано условие на "Артём"
+                                const fuelMode = formToUse.querySelector('input[name="fuelMode"]:checked').value;
+                                const fuelConsumption = 6.7; // 6,7 литров на 100 км
+                                const fuelPrice = 61; // 61 рубль за литр
+
+                                console.log('Режим расчета бензина:', fuelMode);
+
+                                if (fuelMode === 'amount') {
+                                    expenseAmount = parseFloat(formToUse.querySelector('input[name="expenseAmount"]').value);
+                                    console.log('Сумма:', expenseAmount);
+                                    if (isNaN(expenseAmount) || expenseAmount >= 0) {
+                                        console.log('Ошибка: Некорректная сумма');
+                                        alert('Укажите корректную отрицательную сумму расхода!');
+                                        return;
+                                    }
+                                    object = {
+                                        name: expenseName,
+                                        service: 'Расход',
+                                        cost: expenseAmount.toFixed(2),
                           workers,
                           receivers,
                           timestamp: new Date().toLocaleString(),
                           isExpense: true,
                           editHistory: []
-                            };
+                                    };
+                                } else if (fuelMode === 'distance') {
+                                    const distance = parseFloat(formToUse.querySelector('input[name="distance"]').value);
+                                    console.log('Расстояние:', distance);
+                                    if (isNaN(distance) || distance <= 0) {
+                                        console.log('Ошибка: Некорректное расстояние');
+                                        alert('Введите корректное расстояние!');
+                                        return;
+                                    }
+                                    const liters = (distance * fuelConsumption) / 100;
+                                    expenseAmount = -(liters * fuelPrice);
+                                    object = {
+                                        name: expenseName,
+                                        service: 'Расход',
+                                        cost: expenseAmount.toFixed(2),
+                          workers,
+                          receivers,
+                          timestamp: new Date().toLocaleString(),
+                          isExpense: true,
+                          distance: distance.toFixed(2),
+                          editHistory: []
+                                    };
+                                } else if (fuelMode === 'mileage') {
+                                    const startMileage = parseFloat(formToUse.querySelector('input[name="startMileage"]').value);
+                                    const endMileage = parseFloat(formToUse.querySelector('input[name="endMileage"]').value);
+                                    console.log('Начальный километраж:', startMileage, 'Конечный километраж:', endMileage);
+                                    if (isNaN(startMileage) || isNaN(endMileage) || startMileage < 0 || endMileage < 0 || endMileage <= startMileage) {
+                                        console.log('Ошибка: Некорректный километраж');
+                                        alert('Введите корректные значения начального и конечного километража (конечный должен быть больше начального)!');
+                                        return;
+                                    }
+                                    const distance = endMileage - startMileage;
+                                    const liters = (distance * fuelConsumption) / 100;
+                                    expenseAmount = -(liters * fuelPrice);
+                                    object = {
+                                        name: expenseName,
+                                        service: 'Расход',
+                                        cost: expenseAmount.toFixed(2),
+                          workers,
+                          receivers,
+                          timestamp: new Date().toLocaleString(),
+                          isExpense: true,
+                          startMileage: startMileage.toFixed(2),
+                          endMileage: endMileage.toFixed(2),
+                          distance: distance.toFixed(2),
+                          editHistory: []
+                                    };
+                                }
+                            } else {
+                                expenseAmount = parseFloat(formToUse.querySelector('input[name="expenseAmount"]').value);
+                                console.log('Сумма для другого расхода:', expenseAmount);
+                                if (isNaN(expenseAmount) || expenseAmount >= 0) {
+                                    console.log('Ошибка: Некорректная сумма для другого расхода');
+                                    alert('Укажите корректную отрицательную сумму расхода!');
+                                    return;
+                                }
+                                object = {
+                                    name: expenseName,
+                                    service: 'Расход',
+                                    cost: expenseAmount.toFixed(2),
+                          workers,
+                          receivers,
+                          timestamp: new Date().toLocaleString(),
+                          isExpense: true,
+                          editHistory: []
+                                };
+                            }
                         } else {
+                            // Логика для объектов остается без изменений
                             const length = parseFloat(formToUse.querySelector('input[name="length"]').value) || 0;
                             const width = parseFloat(formToUse.querySelector('input[name="width"]').value) || 0;
                             const areaInput = parseFloat(formToUse.querySelector('input[name="area"]').value) || 0;
@@ -424,10 +618,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
                                 const [serviceName, unit] = selectedOption.split('|');
                                 totalCost = (area * pricePerSquare).toFixed(2);
-
                                 object = {
                                     name: objectName,
-                                    area: `${area.toFixed(2)} м²`,
+                                    length: length > 0 ? length.toFixed(2) : null,
+                          width: width > 0 ? width.toFixed(2) : null,
+                          area: length > 0 && width > 0 ? `${length.toFixed(2)} x ${width.toFixed(2)} = ${area.toFixed(2)} м²` : `${area.toFixed(2)} м²`,
                           service: serviceName,
                           cost: totalCost,
                           workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
@@ -439,10 +634,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             } else {
                                 const [price, unit, serviceName] = selectedOption.split('|');
                                 totalCost = (area * parseFloat(price)).toFixed(2);
-
                                 object = {
                                     name: objectName,
-                                    area: `${area.toFixed(2)} м²`,
+                                    length: length > 0 ? length.toFixed(2) : null,
+                          width: width > 0 ? width.toFixed(2) : null,
+                          area: length > 0 && width > 0 ? `${length.toFixed(2)} x ${width.toFixed(2)} = ${area.toFixed(2)} м²` : `${area.toFixed(2)} м²`,
                           service: serviceName,
                           cost: totalCost,
                           workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
@@ -453,6 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
 
+                        console.log('Созданный объект:', object);
                         objects.unshift(object);
                         renderObjects();
                         renderWorkerStats();
@@ -469,10 +666,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
                             expenseTypeValue.value = '';
                         }
+                        console.log('Форма сброшена');
                         showForm(null);
                         alert((isExpense ? 'Расход' : 'Объект') + ' добавлен.');
                     }
 
+                    // Экспорт в JSON
                     exportBtn.addEventListener('click', () => {
                         const json = JSON.stringify(objects, null, 2);
                         const blob = new Blob([json], { type: 'application/json' });
@@ -484,6 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         URL.revokeObjectURL(url);
                     });
 
+                    // Очистка кэша
                     clearCacheBtn.addEventListener('click', () => {
                         if (confirm('Обновить данные из JSON-файлов?')) {
                             caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
@@ -491,6 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     });
 
+                    // Переключение режима редактирования
                     toggleEditModeBtn.addEventListener('click', () => {
                         editMode = !editMode;
                         toggleEditModeBtn.textContent = `Режим редактирования: ${editMode ? 'вкл' : 'выкл'}`;
@@ -498,14 +699,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderObjects();
                     });
 
+                    // Закрытие модального окна истории
                     closeHistoryBtn.addEventListener('click', () => {
                         historyModal.style.display = 'none';
                     });
 
+                    // Фильтрация объектов
                     filterInput.addEventListener('input', () => {
                         renderObjects();
                     });
 
+                    // Заполнение списка услуг
                     function populateServiceSelect(prices, display, hiddenInput, list) {
                         list.innerHTML = '';
                         prices.forEach(price => {
@@ -539,6 +743,39 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
 
+                    function populateCustomServiceSelect(services) {
+                        serviceOptions.innerHTML = '';
+                        services.forEach(service => {
+                            const li = document.createElement('li');
+                            li.setAttribute('data-value', service.name);
+                            li.textContent = service.name;
+                            li.addEventListener('click', () => {
+                                serviceSelect.innerHTML = `${li.textContent} <span class="dropdown-icon">▾</span>`;
+                                serviceSelect.value = li.getAttribute('data-value');
+                                toggleInputState(customServiceForm, 'serviceName', serviceSelect);
+                                serviceOptions.classList.remove('show');
+                            });
+                            serviceOptions.appendChild(li);
+                        });
+                    }
+
+                    function populateExpenseTypeSelect(types) {
+                        expenseTypeOptions.innerHTML = '';
+                        types.forEach(type => {
+                            const li = document.createElement('li');
+                            li.setAttribute('data-value', type.name);
+                            li.textContent = type.name;
+                            li.addEventListener('click', () => {
+                                expenseTypeSelect.innerHTML = `${li.textContent} <span class="dropdown-icon">▾</span>`;
+                                expenseTypeValue.value = li.getAttribute('data-value');
+                                toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
+                                expenseTypeOptions.classList.remove('show');
+                            });
+                            expenseTypeOptions.appendChild(li);
+                        });
+                    }
+
+                    // Отрисовка списка объектов
                     function renderObjects() {
                         const filterText = filterInput.value.trim().toLowerCase();
                         resultsDiv.innerHTML = '';
@@ -581,66 +818,35 @@ document.addEventListener('DOMContentLoaded', () => {
                                 : '0.00';
 
                                 let imageUrl = null;
-                                if (obj.isExpense && obj.name.toLowerCase() === 'бензин') {
-                                    if (obj.receivers.length === 1 && obj.receivers.includes('Коля')) imageUrl = '/calc/img/nexia.png';
-                                    else if (obj.receivers.length === 1 && obj.receivers.includes('Артём')) imageUrl = '/calc/img/ford.png';
-                                    else imageUrl = '/calc/img/fuel.png';
-                                } else if (obj.isExpense && obj.name.toLowerCase() === 'съёмная квартира') {
-                                    imageUrl = '/calc/img/house.png';
-                                } else if (!obj.isCustomService) {
-                                    switch (obj.service) {
-                                        case 'Монтаж наплавляемой кровли':
-                                        case 'Монтаж примыканий':
-                                        case 'Устранение разрушений кровельного ковра':
-                                        case 'Монтаж наплавляемой кровли в 1 слой':
-                                        case 'Монтаж пароизоляции':
-                                            imageUrl = '/calc/img/gorelka.png';
-                                            break;
-                                        case 'Демонтаж полный «кровельного пирога»':
-                                            imageUrl = '/calc/img/rezchik.png';
-                                            break;
-                                        case 'Грунтовка битумным праймером':
-                                            imageUrl = '/calc/img/praymer.png';
-                                            break;
-                                        case 'Монтаж утеплителя каменная вата в 1 слой':
-                                            imageUrl = '/calc/img/minvata.png';
-                                            break;
-                                        case 'Монтаж утеплителя пенопласт в 1 слой':
-                                            imageUrl = '/calc/img/penoplast.png';
-                                            break;
-                                        case 'Монтаж утеплителя PIR в 1 слой':
-                                            imageUrl = '/calc/img/pir.png';
-                                            break;
-                                        case 'Монтаж водоприемной воронки':
-                                            imageUrl = '/calc/img/voronka.png';
-                                            break;
-                                        case 'Монтаж отливов из оцинкованной стали':
-                                            imageUrl = '/calc/img/ocinkovka.png';
-                                            break;
-                                        case 'Монтаж прижимной планки с герметиком':
-                                            imageUrl = '/calc/img/reyka.png';
-                                            break;
-                                        case 'Монтаж аэраторов':
-                                            imageUrl = '/calc/img/aerator.png';
-                                            break;
-                                        case 'Монтаж из шифера в 1 слой':
-                                            imageUrl = '/calc/img/shifer.png';
-                                            break;
-                                        case 'Монтаж из OSB листов в 1 слой':
-                                            imageUrl = '/calc/img/osb.png';
-                                            break;
+                                if (obj.isExpense) {
+                                    if (obj.name.toLowerCase() === 'бензин') {
+                                        if (obj.receivers.length === 1 && obj.receivers.includes('Коля')) imageUrl = '/calc/img/nexia.png';
+                                        else if (obj.receivers.length === 1 && obj.receivers.includes('Артём')) imageUrl = '/calc/img/ford.png';
+                                        else imageUrl = '/calc/img/fuel.png';
+                                    } else if (obj.name.toLowerCase() === 'съёмная квартира') {
+                                        imageUrl = '/calc/img/house.png';
+                                    } else if (obj.name.toLowerCase() === 'еда') {
+                                        imageUrl = '/calc/img/eat.png';
+                                    } else if (obj.name.toLowerCase() === 'займ') {
+                                        imageUrl = '/calc/img/money.png';
                                     }
-                                } else {
-                                    switch (obj.service) {
-                                        case 'Электросварка перил и лестниц на кровле':
-                                            imageUrl = '/calc/img/lestnica.png';
-                                            break;
-                                        case 'Погрузо-разгрузочные работы':
-                                            imageUrl = '/calc/img/pogruzka.png';
-                                            break;
-                                        case 'Уборка территории':
-                                            imageUrl = '/calc/img/cleaning.png';
-                                            break;
+                                }
+
+                                // Формула для бензина
+                                let costFormula = `${obj.cost} ₽`;
+                                if (obj.isExpense && obj.name.toLowerCase() === 'бензин' && obj.receivers.length > 0) { // Убрано условие на "Артём"
+                                    const fuelConsumption = 6.7; // 6,7 литров на 100 км
+                                    const fuelPrice = 61; // 61 рубль за литр
+                                    if (obj.distance && !obj.startMileage) { // Режим "Расстояние"
+                                        const distance = parseFloat(obj.distance);
+                                        const liters = (distance * fuelConsumption) / 100;
+                                        costFormula = `${distance} км × ${fuelConsumption} л/100 км ÷ 100 × ${fuelPrice} ₽/л = ${liters.toFixed(2)} л × ${fuelPrice} ₽/л = ${obj.cost} ₽`;
+                                    } else if (obj.startMileage && obj.endMileage) { // Режим "Километраж"
+                                        const start = parseFloat(obj.startMileage);
+                                        const end = parseFloat(obj.endMileage);
+                                        const distance = parseFloat(obj.distance);
+                                        const liters = (distance * fuelConsumption) / 100;
+                                        costFormula = `(${end} км - ${start} км) × ${fuelConsumption} л/100 км ÷ 100 × ${fuelPrice} ₽/л = ${liters.toFixed(2)} л × ${fuelPrice} ₽/л = ${obj.cost} ₽`;
                                     }
                                 }
 
@@ -657,20 +863,26 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${!obj.isExpense && !obj.isCustomService ? `<div class="info-line name"><span class="label">Название объекта:</span><span class="value">${obj.name}</span></div>` : ''}
                                 ${obj.area ? `<div class="info-line area"><span class="label">Площадь:</span><span class="value">${obj.area}</span></div>` : ''}
                                 <div class="info-line service"><span class="label">Услуга:</span><span class="value">${obj.isExpense ? obj.name : obj.service}</span></div>
-                                <div class="info-line cost"><span class="label">Стоимость:</span><span class="value">${obj.cost} ₽</span></div>
-                                <div class="info-line workers"><span class="label">${obj.isExpense ? 'Участники (списание)' : 'Участники'}:</span><span class="value">${obj.isExpense ? obj.workers.join(', ') : obj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}</span></div>
-                                ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line receivers"><span class="label">Участники (начисление):</span><span class="value">${obj.receivers.join(', ')}</span></div>` : ''}
-                                <div class="info-line cost-per-worker"><span class="label">${obj.isExpense ? 'На одного (списание)' : 'Распределение'}:</span><span class="value">${costPerWorker}</span></div>
-                                ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line cost-per-receiver"><span class="label">На одного (начисление):</span><span class="value">${costPerReceiver} ₽</span></div>` : ''}
-                                ${obj.editedTimestamp ? `<div class="edit-history">Последнее редактирование: ${obj.editedTimestamp}</div>` : ''}
-                                `;
-                                entry.dataset.index = index;
-                                if (editMode) {
-                                    entry.addEventListener('click', (e) => {
-                                        if (!e.target.classList.contains('delete-cross') && !e.target.classList.contains('calendar-btn')) editObject(index);
-                                    });
-                                }
-                                resultsDiv.appendChild(entry);
+                                <div class="info-line cost"><span class="label">Стоимость:</span><span class="value">${costFormula}</span></div>
+                                ${obj.startMileage && obj.endMileage ? `
+                                    <div class="info-line mileage"><span class="label">Километраж:</span><span class="value">${obj.startMileage} км → ${obj.endMileage} км = ${obj.distance} км</span></div>
+                                    ` : ''}
+                                    ${obj.distance && !obj.startMileage ? `
+                                        <div class="info-line distance"><span class="label">Расстояние:</span><span class="value">${obj.distance} км</span></div>
+                                        ` : ''}
+                                        <div class="info-line workers"><span class="label">${obj.isExpense ? 'Участники (списание)' : 'Участники'}:</span><span class="value">${obj.isExpense ? obj.workers.join(', ') : obj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}</span></div>
+                                        ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line receivers"><span class="label">Участники (начисление):</span><span class="value">${obj.receivers.join(', ')}</span></div>` : ''}
+                                        <div class="info-line cost-per-worker"><span class="label">${obj.isExpense ? 'На одного (списание)' : 'Распределение'}:</span><span class="value">${costPerWorker}</span></div>
+                                        ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line cost-per-receiver"><span class="label">На одного (начисление):</span><span class="value">${costPerReceiver} ₽</span></div>` : ''}
+                                        ${obj.editedTimestamp ? `<div class="edit-history">Последнее редактирование: ${obj.editedTimestamp}</div>` : ''}
+                                        `;
+                                        entry.dataset.index = index;
+                                        if (editMode) {
+                                            entry.addEventListener('click', (e) => {
+                                                if (!e.target.classList.contains('delete-cross') && !e.target.classList.contains('calendar-btn')) editObject(index);
+                                            });
+                                        }
+                                        resultsDiv.appendChild(entry);
                             });
                         }
 
@@ -678,6 +890,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         bindCalendarButtons();
                     }
 
+                    // Привязка обработчиков удаления
                     function bindDeleteCrosses() {
                         document.querySelectorAll('.delete-cross').forEach(cross => {
                             cross.removeEventListener('click', handleDelete);
@@ -695,6 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
+                    // Привязка обработчиков истории
                     function bindCalendarButtons() {
                         document.querySelectorAll('.calendar-btn').forEach(btn => {
                             btn.removeEventListener('click', showHistory);
@@ -799,6 +1013,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         bindCalendarButtons();
                     }
 
+                    // Редактирование объекта
                     function editObject(index) {
                         const obj = objects[index];
                         const isExpense = obj.isExpense;
@@ -826,6 +1041,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const receiverCheckbox = expenseReceiversCheckboxGroup.querySelector(`input[value="${worker}"]`);
                                 if (receiverCheckbox) receiverCheckbox.checked = obj.receivers.includes(worker);
                             });
+                                if (obj.name.toLowerCase() === 'бензин' && obj.receivers.length === 1 && obj.receivers[0] === 'Артём') {
+                                    formToUse.querySelector('input[name="fuelMode"][value="amount"]').checked = true;
+                                    formToUse.querySelector('input[name="distance"]').value = '';
+                                }
                         } else if (isCustomService) {
                             serviceNameInput.value = obj.name;
                             customServiceForm.querySelector('input[name="servicePrice"]').value = obj.cost;
@@ -847,24 +1066,30 @@ document.addEventListener('DOMContentLoaded', () => {
                             const input = obj.manualPrice ? manualObjectNameInput : objectNameInput;
                             input.value = obj.name;
 
-                            const areaMatch = obj.area.match(/([\d.]+)\s*м²/);
+                            const areaMatch = obj.area.match(/([\d.]+)\s*x\s*([\d.]+)\s*=\s*([\d.]+)\s*м²/) || obj.area.match(/([\d.]+)\s*м²/);
                             if (areaMatch) {
-                                const areaValue = parseFloat(areaMatch[1]);
-                                formToUse.querySelector('input[name="area"]').value = areaValue;
-                                formToUse.querySelector('input[name="length"]').value = '';
-                                formToUse.querySelector('input[name="width"]').value = '';
-                                formToUse.querySelector('input[name="length"]').disabled = true;
-                                formToUse.querySelector('input[name="width"]').disabled = true;
+                                if (areaMatch.length === 4) { // Если есть длина и ширина
+                                    formToUse.querySelector('input[name="length"]').value = parseFloat(areaMatch[1]);
+                                    formToUse.querySelector('input[name="width"]').value = parseFloat(areaMatch[2]);
+                                    formToUse.querySelector('input[name="area"]').value = '';
+                                    formToUse.querySelector('input[name="area"]').disabled = true;
+                                } else { // Только площадь
+                                    formToUse.querySelector('input[name="area"]').value = parseFloat(areaMatch[1]);
+                                    formToUse.querySelector('input[name="length"]').value = '';
+                                    formToUse.querySelector('input[name="width"]').value = '';
+                                    formToUse.querySelector('input[name="length"]').disabled = true;
+                                    formToUse.querySelector('input[name="width"]').disabled = true;
+                                }
                             }
 
                             if (obj.manualPrice) {
                                 manualSelectedValue.value = `${obj.service}|м²`;
                                 manualSelectDisplay.innerHTML = `${obj.service} (м²) <span class="dropdown-icon">▾</span>`;
-                                const area = parseFloat(areaMatch[1]);
+                                const area = parseFloat(areaMatch[areaMatch.length === 4 ? 3 : 1]);
                                 const pricePerSquare = parseFloat(obj.cost) / area;
                                 manualPriceForm.querySelector('input[name="pricePerSquare"]').value = pricePerSquare.toFixed(2);
                             } else {
-                                const area = parseFloat(areaMatch[1]);
+                                const area = parseFloat(areaMatch[areaMatch.length === 4 ? 3 : 1]);
                                 const pricePerSquare = parseFloat(obj.cost) / area;
                                 selectedValue.value = `${pricePerSquare}|м²|${obj.service}`;
                                 selectDisplay.innerHTML = `${obj.service} — от ${pricePerSquare} ₽/м² <span class="dropdown-icon">▾</span>`;
@@ -924,13 +1149,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             if (isExpense) {
                                 const newName = expenseNameInput.disabled ? expenseTypeValue.value : expenseNameInput.value.trim();
-                                const newAmount = parseFloat(expenseForm.querySelector('input[name="expenseAmount"]').value);
+                                let newAmount;
                                 const newWorkers = Array.from(expenseWorkersCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
                                 const newReceivers = Array.from(expenseReceiversCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
 
-                                if (!newName || isNaN(newAmount) || newAmount >= 0 || newWorkers.length === 0) {
-                                    alert('Заполните все поля корректно!');
+                                if (!newName || newWorkers.length === 0) {
+                                    alert('Заполните все обязательные поля: название и участников!');
                                     return;
+                                }
+
+                                if (newName.toLowerCase() === 'бензин' && newReceivers.length === 1 && newReceivers[0] === 'Артём') {
+                                    const fuelMode = formToUse.querySelector('input[name="fuelMode"]:checked').value;
+                                    if (fuelMode === 'amount') {
+                                        newAmount = parseFloat(formToUse.querySelector('input[name="expenseAmount"]').value);
+                                        if (isNaN(newAmount) || newAmount >= 0) {
+                                            alert('Укажите корректную отрицательную сумму расхода!');
+                                            return;
+                                        }
+                                    } else {
+                                        const distance = parseFloat(formToUse.querySelector('input[name="distance"]').value);
+                                        if (isNaN(distance) || distance <= 0) {
+                                            alert('Введите корректное расстояние!');
+                                            return;
+                                        }
+                                        const fuelConsumption = 6.7; // 6,7 литров на 100 км
+                                        const fuelPrice = 61; // 61 рубль за литр
+                                        const liters = (distance * fuelConsumption) / 100;
+                                        newAmount = -(liters * fuelPrice);
+                                    }
+                                } else {
+                                    newAmount = parseFloat(formToUse.querySelector('input[name="expenseAmount"]').value);
+                                    if (isNaN(newAmount) || newAmount >= 0) {
+                                        alert('Укажите корректную отрицательную сумму расхода!');
+                                        return;
+                                    }
                                 }
 
                                 if (newName !== oldObj.name) changes.push(`Название: "${oldObj.name}" → "${newName}"`);
@@ -1004,15 +1256,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
 
                                 const newWorkersWithCost = newWorkers.map(w => ({ ...w, cost: (parseFloat(newCost) * w.ktu / totalKtu).toFixed(2) }));
+                                const newAreaStr = length > 0 && width > 0 ? `${length.toFixed(2)} x ${width.toFixed(2)} = ${newArea.toFixed(2)} м²` : `${newArea.toFixed(2)} м²`;
 
                                 if (newName !== oldObj.name) changes.push(`Название: "${oldObj.name}" → "${newName}"`);
-                                if (`${newArea.toFixed(2)} м²` !== oldObj.area) changes.push(`Площадь: ${oldObj.area} → ${newArea.toFixed(2)} м²`);
+                                if (newAreaStr !== oldObj.area) changes.push(`Площадь: ${oldObj.area} → ${newAreaStr}`);
                                 if (newService !== oldObj.service) changes.push(`Услуга: "${oldObj.service}" → "${newService}"`);
                                 if (newCost !== oldObj.cost) changes.push(`Стоимость: ${oldObj.cost} → ${newCost}`);
                                 if (JSON.stringify(newWorkersWithCost) !== JSON.stringify(oldObj.workers)) changes.push(`Участники: "${oldObj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}" → "${newWorkersWithCost.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}"`);
 
                                 oldObj.name = newName;
-                                oldObj.area = `${newArea.toFixed(2)} м²`;
+                                oldObj.length = length > 0 ? length.toFixed(2) : null;
+                                oldObj.width = width > 0 ? width.toFixed(2) : null;
+                                oldObj.area = newAreaStr;
                                 oldObj.service = newService;
                                 oldObj.cost = newCost;
                                 oldObj.workers = newWorkersWithCost;
@@ -1037,6 +1292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         };
                     }
 
+                    // Отрисовка статистики работников
                     function renderWorkerStats() {
                         const statsGrid = document.getElementById('worker-stats');
                         if (!statsGrid) {
@@ -1185,6 +1441,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderWorkerCharts();
                     }
 
+                    // Фильтрация по работнику
                     function filterByWorker(worker) {
                         filterInput.value = worker;
                         renderObjects();
@@ -1200,6 +1457,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const filterGroup = document.querySelector('.filter-group');
                         if (!filterGroup.querySelector('.filter-reset')) filterGroup.appendChild(resetFilter);
                     }
+
 
                     function renderWorkerCharts() {
                         document.querySelectorAll('.worker-chart').forEach(chartDiv => {
@@ -1286,7 +1544,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                     }
 
-                    // Управление состоянием полей "Длина", "Ширина" и "Площадь"
                     function toggleDimensionFields(formPrefix) {
                         const lengthInput = document.getElementById(`${formPrefix}-length`);
                         const widthInput = document.getElementById(`${formPrefix}-width`);

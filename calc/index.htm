@@ -104,7 +104,25 @@
             </div>
             <div class="form-group">
                 <label>Сумма (₽):</label>
-                <input type="number" name="expenseAmount" step="0.01" min="-999999" placeholder="-500" required>
+                <input type="number" name="expenseAmount" step="0.01" min="-999999" placeholder="-500">
+            </div>
+            <div class="form-group fuel-calc-mode" style="display: none;">
+                    <label>Режим расчета бензина:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="fuelMode" value="amount" checked> Сумма</label>
+                        <label><input type="radio" name="fuelMode" value="distance"> Расстояние</label>
+                        <label><input type="radio" name="fuelMode" value="mileage"> Километраж</label>
+                    </div>
+                    <div class="distance-input" style="display: none;">
+                        <label>Расстояние (км):</label>
+                        <input type="number" name="distance" step="0.01" min="0" placeholder="212">
+                    </div>
+                    <div class="mileage-input" style="display: none;">
+                        <label>Начальный километраж (км):</label>
+                        <input type="number" name="startMileage" step="0.01" min="0" placeholder="1000">
+                        <label>Конечный километраж (км):</label>
+                        <input type="number" name="endMileage" step="0.01" min="0" placeholder="1212">
+                    </div>
             </div>
             <div class="form-group">
                 <label>Участники (списание):</label>
