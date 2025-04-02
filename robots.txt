@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /calc/
+Sitemap: https://ekbroof.ru/sitemap.xml
+
+User-agent: Yandex
+Host: ekbroof.ru
