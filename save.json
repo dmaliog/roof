@@ -1,5 +1,20 @@
 [
   {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-2500.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "4/6/2025, 9:12:57 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
     "name": "УЗТМ Фонарь 1-2",
     "length": "121.80",
     "width": "12.10",
