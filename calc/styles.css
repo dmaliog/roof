@@ -23,7 +23,7 @@ body {
     background: linear-gradient(135deg, #f1c40f, #e67e22);
     color: #fff;
     box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
-    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .btn.paid-btn:hover {

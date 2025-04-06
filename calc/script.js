@@ -955,12 +955,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     .filter(Boolean)
                                     .join('\n')
                                     .trim();
-
-                                    navigator.clipboard.writeText(textToCopy).then(() => {
-                                        alert('Информация скопирована в буфер обмена!');
-                                    }).catch(err => {
-                                        console.error('Ошибка копирования:', err);
-                                    });
                                 });
                             });
                         }
@@ -1004,10 +998,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (navigator.clipboard && window.isSecureContext) {
                             navigator.clipboard.writeText(textToCopy)
                             .then(() => {
-                                alert('Информация скопирована в буфер обмена!');
                             })
                             .catch(err => {
-                                console.error('Ошибка копирования через clipboard API:', err);
                                 fallbackCopy(textToCopy);
                             });
                         } else {
@@ -1027,10 +1019,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         try {
                             document.execCommand('copy');
-                            alert('Информация скопирована в буфер обмена!');
-                        } catch (err) {
-                            console.error('Ошибка копирования через execCommand:', err);
-                            alert('Не удалось скопировать текст. Пожалуйста, скопируйте вручную.');
                         } finally {
                             document.body.removeChild(textArea);
                         }
