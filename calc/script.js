@@ -55,6 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let customServices = [];
     let expenseTypes = [];
 
+    serviceSelect.addEventListener('click', () => {
+        serviceOptions.classList.toggle('show');
+    });
+
+    serviceOptions.addEventListener('click', (e) => {
+        if (e.target.tagName === 'LI') {
+            const selectedValue = e.target.getAttribute('data-value');
+            serviceSelect.innerHTML = `${selectedValue} <span class="dropdown-icon">▾</span>`;
+            serviceSelect.value = selectedValue; // Устанавливаем значение
+            toggleInputState(customServiceForm, 'serviceName', serviceSelect);
+            serviceOptions.classList.remove('show');
+        }
+    });
+
     // Инициализация автокомплита для расходов
     expenseNameSuggestions.id = 'expense-name-suggestions';
     expenseNameSuggestions.className = 'suggestions-list';
@@ -140,19 +154,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (form === customServiceForm) {
             if (selectedValue && selectedValue !== "Своё название" && selectedValue !== "Выберите") {
-                inputWrapper.style.display = 'none'; // Скрываем поле для формы услуги
-                input.value = '';
+                inputWrapper.style.display = 'none'; // Скрываем поле
+                input.disabled = true; // Отключаем поле
+                input.value = ''; // Очищаем значение
             } else {
                 inputWrapper.style.display = 'block'; // Показываем поле
+                input.disabled = false; // Включаем поле
+                input.focus();
             }
         } else if (form === expenseForm) {
-            if (selectedValue && selectedValue !== "Своё название" && selectedValue !== "Выберите") {
-                inputWrapper.style.display = 'none'; // Скрываем поле для формы расхода
+            if (selectedValue === "Своё название") {
+                inputWrapper.style.display = 'block';
+                input.disabled = false;
+                input.focus();
+            } else if (selectedValue && selectedValue !== "Выберите") {
+                inputWrapper.style.display = 'none';
+                input.disabled = true;
                 input.value = '';
             } else {
-                inputWrapper.style.display = 'block'; // Показываем поле
+                inputWrapper.style.display = 'none';
+                input.disabled = true;
+                input.value = '';
             }
-            toggleFuelCalcMode(); // Вызываем для обработки логики бензина
+            toggleFuelCalcMode();
         } else {
             if (selectedValue && selectedValue !== "Своё название" && selectedValue !== "Выберите") {
                 input.disabled = true;
@@ -165,7 +189,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Переключение режима расчета бензина
     function toggleFuelCalcMode() {
-        const expenseName = expenseNameInput.disabled ? expenseTypeValue.value : expenseNameInput.value.trim();
+        const expenseNameInput = expenseForm.querySelector('input[name="expenseName"]');
+        const expenseName = expenseNameInput.disabled || expenseNameInput.style.display === 'none'
+        ? expenseTypeValue.value.trim()
+        : expenseNameInput.value.trim();
         const fuelCalcMode = expenseForm.querySelector('.fuel-calc-mode');
         const amountInput = expenseForm.querySelector('input[name="expenseAmount"]');
         const distanceInput = expenseForm.querySelector('.distance-input');
@@ -178,12 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (expenseName.toLowerCase() === 'бензин' && receivers.length > 0) {
             fuelCalcMode.style.display = 'block';
-
             radioButtons.forEach(radio => {
                 radio.removeEventListener('change', updateFuelModeDisplay);
                 radio.addEventListener('change', updateFuelModeDisplay);
             });
-
             updateFuelModeDisplay();
         } else {
             fuelCalcMode.style.display = 'none';
@@ -264,10 +289,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function populateSuggestions(activeForm) {
+        const uniqueObjectNames = [...new Set(objects.filter(obj => !obj.isExpense && !obj.isCustomService).map(obj => obj.name))];
+        const uniqueExpenseNames = [...new Set(objects.filter(obj => obj.isExpense).map(obj => obj.name))];
+
+        const renderSuggestions = (input, suggestionsList, names) => {
+            suggestionsList.innerHTML = '';
+            const inputValue = input.value.trim().toLowerCase();
+            const filteredNames = names.filter(name => name.toLowerCase().includes(inputValue));
+
+            filteredNames.forEach(name => {
+                const li = document.createElement('li');
+                li.textContent = name;
+                li.addEventListener('click', () => {
+                    input.value = name;
+                    suggestionsList.classList.remove('show');
+                    if (activeForm === expenseForm) toggleFuelCalcMode();
+                });
+                    suggestionsList.appendChild(li);
+            });
+
+            if (filteredNames.length > 0 && inputValue && !input.disabled) suggestionsList.classList.add('show');
+            else suggestionsList.classList.remove('show');
+        };
+
+            if (activeForm === expenseForm && !expenseNameInput.disabled) {
+                renderSuggestions(expenseNameInput, expenseNameSuggestions, uniqueExpenseNames);
+            } else if (activeForm === objectForm) {
+                renderSuggestions(objectNameInput, objectNameSuggestions, uniqueObjectNames);
+            } else if (activeForm === manualPriceForm) {
+                renderSuggestions(manualObjectNameInput, manualObjectNameSuggestions, uniqueObjectNames);
+            } else if (activeForm === customServiceForm) {
+                renderSuggestions(serviceNameInput, serviceNameSuggestions, customServiceNames);
+            }
+    }
+
     // Обработчики событий для переключения выпадающих списков
     expenseTypeSelect.addEventListener('click', () => expenseTypeOptions.classList.toggle('show'));
-    serviceSelect.addEventListener('click', () => serviceOptions.classList.toggle('show'));
-    expenseNameInput.addEventListener('input', toggleFuelCalcMode);
+
+    expenseTypeOptions.addEventListener('click', (e) => {
+        if (e.target.tagName === 'LI') {
+            const selectedValue = e.target.getAttribute('data-value');
+            expenseTypeSelect.innerHTML = `${selectedValue} <span class="dropdown-icon">▾</span>`;
+            expenseTypeValue.value = selectedValue;
+            toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
+            expenseTypeOptions.classList.remove('show');
+        }
+    });
+
+    expenseNameInput.addEventListener('input', () => {
+        toggleFuelCalcMode(); // Обновляем режим бензина при вводе
+        populateSuggestions(expenseForm); // Обновляем автокомплит
+    });
+
     expenseReceiversCheckboxGroup.addEventListener('change', toggleFuelCalcMode);
 
     document.addEventListener('click', (e) => {
@@ -334,8 +408,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Обновленный обработчик кнопки "Очистить кэш"
         clearCacheBtn.addEventListener('click', () => {
-                loadData(); // Просто перезагружаем данные
-                alert('Данные обновлены из JSON-файлов.');
+            loadData(); // Просто перезагружаем данные
+            alert('Данные обновлены из JSON-файлов.');
         });
 
         // Обработчики кнопок для показа форм
@@ -350,9 +424,11 @@ document.addEventListener('DOMContentLoaded', () => {
         customServiceForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const isEditing = customServiceForm.dataset.isEditing === 'true';
-            const serviceName = serviceNameInput.disabled ? serviceSelect.value : serviceNameInput.value.trim();
+            const serviceName = serviceNameInput.disabled || serviceNameInput.style.display === 'none'
+            ? serviceSelect.value
+            : serviceNameInput.value.trim();
             const servicePrice = parseFloat(customServiceForm.querySelector('input[name="servicePrice"]').value);
-            const isPaid = customServiceForm.querySelector('input[name="isPaid"]').checked; // Получаем статус "Выплачено"
+            const isPaid = customServiceForm.querySelector('input[name="isPaid"]').checked;
             const workersData = Array.from(serviceWorkersCheckboxGroup.querySelectorAll('input:checked')).map(input => {
                 const ktuInput = customServiceForm.querySelector(`input[name="servicektu_${input.value}"]`);
                 return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
@@ -453,72 +529,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Автокомплит
-                    function populateSuggestions(activeForm) {
-                        const uniqueObjectNames = [...new Set(objects.filter(obj => !obj.isExpense && !obj.isCustomService).map(obj => obj.name))];
-                        const uniqueExpenseNames = [...new Set(objects.filter(obj => obj.isExpense).map(obj => obj.name))];
-
-                        const renderSuggestions = (input, suggestionsList, names) => {
-                            suggestionsList.innerHTML = '';
-                            const inputValue = input.value.trim().toLowerCase();
-                            const filteredNames = names.filter(name => name.toLowerCase().includes(inputValue));
-
-                            filteredNames.forEach(name => {
-                                const li = document.createElement('li');
-                                li.textContent = name;
-                                li.addEventListener('click', () => {
-                                    input.value = name;
-                                    suggestionsList.classList.remove('show');
-                                    if (activeForm === expenseForm) toggleFuelCalcMode();
-                                });
-                                    suggestionsList.appendChild(li);
-                            });
-
-                            if (filteredNames.length > 0 && inputValue) suggestionsList.classList.add('show');
-                            else suggestionsList.classList.remove('show');
-                        };
-
-                            if (activeForm === objectForm) renderSuggestions(objectNameInput, objectNameSuggestions, uniqueObjectNames);
-                            else if (activeForm === expenseForm) renderSuggestions(expenseNameInput, expenseNameSuggestions, uniqueExpenseNames);
-                            else if (activeForm === manualPriceForm) renderSuggestions(manualObjectNameInput, manualObjectNameSuggestions, uniqueObjectNames);
-                            else if (activeForm === customServiceForm) renderSuggestions(serviceNameInput, serviceNameSuggestions, customServiceNames);
-
-                            objectNameInput.addEventListener('input', () => renderSuggestions(objectNameInput, objectNameSuggestions, uniqueObjectNames));
-                        expenseNameInput.addEventListener('input', () => renderSuggestions(expenseNameInput, expenseNameSuggestions, uniqueExpenseNames));
-                        manualObjectNameInput.addEventListener('input', () => renderSuggestions(manualObjectNameInput, manualObjectNameSuggestions, uniqueObjectNames));
-                        serviceNameInput.addEventListener('input', () => renderSuggestions(serviceNameInput, serviceNameSuggestions, customServiceNames));
-
-                        document.addEventListener('click', (e) => {
-                            if (!objectNameInput.contains(e.target) && !objectNameSuggestions.contains(e.target)) objectNameSuggestions.classList.remove('show');
-                            if (!expenseNameInput.contains(e.target) && !expenseNameSuggestions.contains(e.target)) expenseNameSuggestions.classList.remove('show');
-                            if (!manualObjectNameInput.contains(e.target) && !manualObjectNameSuggestions.contains(e.target)) manualObjectNameSuggestions.classList.remove('show');
-                            if (!serviceNameInput.contains(e.target) && !serviceNameSuggestions.contains(e.target)) serviceNameSuggestions.classList.remove('show');
-                        });
-                    }
-
-                    // Показ выпадающих списков услуг
-                    selectDisplay.addEventListener('click', () => optionsList.classList.toggle('show'));
-                    manualSelectDisplay.addEventListener('click', () => manualOptionsList.classList.toggle('show'));
-
-                    // Добавление объекта
                     function addObject(e, isExpense = false, isManual = false) {
                         e.preventDefault();
                         const formToUse = isExpense ? expenseForm : (isManual ? manualPriceForm : objectForm);
-                        const objectName = (isManual ? manualObjectNameInput : (isExpense ? expenseNameInput : objectNameInput)).value.trim();
-                        const isPaid = formToUse.querySelector('input[name="isPaid"]').checked; // Получаем статус "Выплачено"
+                        const isPaid = formToUse.querySelector('input[name="isPaid"]').checked;
                         let object;
 
                         if (isExpense) {
-                            const expenseName = expenseNameInput.disabled ? expenseTypeValue.value : objectName;
+                            const expenseNameInput = formToUse.querySelector('input[name="expenseName"]');
+                            const expenseName = expenseNameInput.disabled || expenseNameInput.style.display === 'none'
+                            ? expenseTypeValue.value.trim()
+                            : expenseNameInput.value.trim();
                             let expenseAmount;
                             const workers = Array.from(expenseWorkersCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
                             const receivers = Array.from(expenseReceiversCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
 
                             if (!expenseName || workers.length === 0) {
-                                alert('Заполните все обязательные поля: название и участников!');
+                                alert('Заполните все обязательные поля: выберите тип расхода или введите название и укажите участников!');
                                 return;
                             }
 
-                            if (expenseName.toLowerCase() === 'бензин' && receivers.length > 0) { // Убрано условие на "Артём"
+                            if (expenseName.toLowerCase() === 'бензин' && receivers.length > 0) {
                                 const fuelMode = formToUse.querySelector('input[name="fuelMode"]:checked').value;
                                 const fuelConsumption = 6.7; // 6,7 литров на 100 км
                                 const fuelPrice = 61; // 61 рубль за литр
@@ -537,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           receivers,
                           timestamp: new Date().toLocaleString(),
                           isExpense: true,
-                          isPaid: isPaid, // Добавляем статус "Выплачено"
+                          isPaid: isPaid,
                           editHistory: []
                                     };
                                 } else if (fuelMode === 'distance') {
@@ -597,11 +628,12 @@ document.addEventListener('DOMContentLoaded', () => {
                           receivers,
                           timestamp: new Date().toLocaleString(),
                           isExpense: true,
+                          isPaid: isPaid,
                           editHistory: []
                                 };
                             }
                         } else {
-                            // Логика для объектов остается без изменений
+                            const objectName = (isManual ? manualObjectNameInput : objectNameInput).value.trim();
                             const length = parseFloat(formToUse.querySelector('input[name="length"]').value) || 0;
                             const width = parseFloat(formToUse.querySelector('input[name="width"]').value) || 0;
                             const areaInput = parseFloat(formToUse.querySelector('input[name="area"]').value) || 0;
@@ -676,15 +708,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         populateSuggestions(formToUse);
                         formToUse.reset();
                         resetFormFields(formToUse);
-                        if (isManual) {
-                            manualSelectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
-                            manualSelectedValue.value = '';
-                        } else if (!isExpense) {
-                            selectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
-                            selectedValue.value = '';
-                        } else {
+                        if (isExpense) {
                             expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
                             expenseTypeValue.value = '';
+                            toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
+                        } else if (isManual) {
+                            manualSelectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                            manualSelectedValue.value = '';
+                        } else {
+                            selectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                            selectedValue.value = '';
                         }
                         showForm(null);
                         alert((isExpense ? 'Расход' : 'Объект') + ' добавлен.');
@@ -704,8 +737,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Очистка кэша
                     clearCacheBtn.addEventListener('click', () => {
-                            caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
-                            loadData();
+                        caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+                        loadData();
                     });
 
                     // Переключение режима редактирования
@@ -1457,142 +1490,169 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Отрисовка статистики работников
                     function renderWorkerStats() {
                         const statsGrid = document.getElementById('worker-stats');
-                        if (!statsGrid) {
-                            return;
-                        }
+                        if (!statsGrid) return;
                         statsGrid.innerHTML = '';
 
+                        const getWorkerName = (w) => typeof w === 'string' ? w : (w && w.name ? w.name : '');
+
                         workers.forEach(worker => {
+                            // Фильтруем объекты для работника, исключая оплаченные расходы
                             const workerObjects = objects.filter(obj =>
-                            (obj.workers.some(w => (typeof w === 'string' ? w : w.name) === worker)) ||
-                            (obj.receivers && obj.receivers.includes(worker))
+                            (!obj.isExpense || (obj.isExpense && !obj.isPaid)) && // Исключаем оплаченные расходы
+                            ((obj.workers && obj.workers.some(w => getWorkerName(w) === worker)) ||
+                            (obj.receivers && obj.receivers.includes(worker)))
                             );
-                            if (workerObjects.length > 0) {
-                                const regularObjects = workerObjects.filter(obj => !obj.isExpense && !obj.manualPrice && !obj.isCustomService).length;
-                                const manualObjects = workerObjects.filter(obj => obj.manualPrice).length;
-                                const services = workerObjects.filter(obj => obj.isCustomService).length;
-                                const expenses = workerObjects.filter(obj => obj.isExpense).length;
-                                const lowKtuCount = workerObjects
-                                .filter(obj => !obj.isExpense && obj.workers.some(w => w.name === worker && w.ktu < 1))
-                                .length;
 
-                                const earningsBreakdown = workerObjects.map((obj, index) => {
-                                    let workerContribution = 0;
-                                    let className = '';
-                                    if (obj.workers.some(w => (typeof w === 'string' ? w : w.name) === worker)) {
-                                        const workerData = obj.isExpense ? null : obj.workers.find(w => w.name === worker);
-                                        workerContribution += obj.isExpense
-                                        ? parseFloat(obj.cost) / obj.workers.length
-                                        : parseFloat(workerData.cost);
-                                        className = obj.isExpense ? 'expense-earning' : (obj.isCustomService ? 'service-earning' : 'regular-earning');
-                                    }
-                                    if (obj.isExpense && obj.receivers && obj.receivers.includes(worker)) {
-                                        workerContribution += Math.abs(parseFloat(obj.cost)) / obj.receivers.length;
-                                        className = 'receiver-earning';
-                                    }
-                                    return { value: workerContribution.toFixed(2), index, className, isPaid: obj.isPaid };
-                                });
+                            if (workerObjects.length === 0) return;
 
-                                // Разделяем на оплаченные и неоплаченные
-                                const paidEarnings = earningsBreakdown.filter(e => e.isPaid);
-                                const pendingEarnings = earningsBreakdown.filter(e => !e.isPaid);
+                            // Статистика объектов (учитываем только неоплаченные расходы)
+                            const regularObjects = workerObjects.filter(obj => !obj.isExpense && !obj.manualPrice && !obj.isCustomService).length;
+                            const manualObjects = workerObjects.filter(obj => obj.manualPrice).length;
+                            const services = workerObjects.filter(obj => obj.isCustomService).length;
+                            const expenses = workerObjects.filter(obj => obj.isExpense).length;
+                            const lowKtuCount = workerObjects.filter(obj =>
+                            !obj.isExpense && obj.workers &&
+                            obj.workers.some(w => getWorkerName(w) === worker && w.ktu < 1)
+                            ).length;
 
-                                const totalPaid = paidEarnings.reduce((sum, val) => sum + parseFloat(val.value), 0);
-                                const totalPending = pendingEarnings.reduce((sum, val) => sum + parseFloat(val.value), 0);
-                                const totalEarnings = totalPaid + totalPending;
+                            // Разделяем доходы и расходы
+                            const incomeObjects = workerObjects.filter(obj => !obj.isExpense);
+                            const expenseObjects = workerObjects.filter(obj => obj.isExpense);
 
-                                const formatEarnings = (amount) => amount.toFixed(2)
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-                                .replace('.00', '');
+                            // Расчёт доходов
+                            const incomeBreakdown = incomeObjects.map((obj, index) => {
+                                const workerData = obj.workers.find(w => getWorkerName(w) === worker);
+                                const contribution = workerData ? parseFloat(workerData.cost) : 0;
+                                const className = obj.isCustomService ? 'service-earning' : 'regular-earning';
+                                return { value: contribution.toFixed(2), index, className, isPaid: obj.isPaid };
+                            });
+                            const paidIncome = incomeBreakdown.filter(e => e.isPaid);
+                            const pendingIncome = incomeBreakdown.filter(e => !e.isPaid);
+                            const totalPaidIncome = paidIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
+                            const totalPendingIncome = pendingIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
 
-                                const paidEarningsHtml = paidEarnings.length > 0
-                                ? paidEarnings.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalPaid)} ₽`
-                                : '0 ₽';
-                                const pendingEarningsHtml = pendingEarnings.length > 0
-                                ? pendingEarnings.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalPending)} ₽`
-                                : '0 ₽';
-                                const totalEarningsHtml = `${formatEarnings(totalEarnings)} ₽`;
+                            // Расчёт расходов (только неоплаченные уже отфильтрованы)
+                            const expenseBreakdown = expenseObjects.map((obj, index) => {
+                                let contribution = 0;
+                                let className = 'expense-earning';
+                                if (obj.workers.some(w => getWorkerName(w) === worker)) {
+                                    contribution += parseFloat(obj.cost) / obj.workers.length; // Списание
+                                }
+                                if (obj.receivers && obj.receivers.includes(worker)) {
+                                    contribution += Math.abs(parseFloat(obj.cost)) / obj.receivers.length; // Начисление
+                                    className = 'receiver-earning';
+                                }
+                                return { value: contribution.toFixed(2), index, className };
+                            });
+                            const totalExpenses = expenseBreakdown.reduce((sum, val) => sum + parseFloat(val.value), 0);
 
-                                const card = document.createElement('div');
-                                card.className = 'worker-card';
-                                card.innerHTML = `
-                                <div class="worker-name">${worker}</div>
-                                <div class="earnings paid-earnings"><strong>Заработано:</strong> ${paidEarningsHtml}</div>
-                                <div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingEarningsHtml}</div>
-                                <div class="earnings total-earnings"><strong>Итого:</strong> ${totalEarningsHtml}</div>
-                                <ul class="stats-list">
-                                <li data-filter="regular">Обычные объекты: <span>${regularObjects}</span></li>
-                                <li data-filter="manual">Ручная цена: <span>${manualObjects}</span></li>
-                                <li data-filter="services">Услуги: <span>${services}</span></li>
-                                <li data-filter="expenses">Расходы: <span>${expenses}</span></li>
-                                ${lowKtuCount > 0 ? `<li data-filter="lowKtu">КТУ ниже нормы: <span>${lowKtuCount}</span></li>` : ''}
-                                </ul>
-                                <div class="worker-chart" data-earnings="${totalEarnings}" data-worker="${worker}"></div>
-                                `;
+                            // Итог: доходы + расходы
+                            const totalEarnings = totalPaidIncome + totalPendingIncome + totalExpenses;
 
-                                card.addEventListener('click', (e) => {
-                                    const isChart = e.target.closest('.worker-chart');
-                                    const isEarningItem = e.target.classList.contains('earnings-item');
-                                    const isStatsLi = e.target.closest('.stats-list li');
+                            const formatEarnings = (amount) => amount.toFixed(2)
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+                            .replace('.00', '');
 
-                                    if (!isChart && !isEarningItem && !isStatsLi) {
-                                        filterByWorker(worker);
-                                    }
-                                });
+                            const paidIncomeHtml = paidIncome.length > 0
+                            ? paidIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalPaidIncome)} ₽`
+                            : '0 ₽';
+                            const pendingIncomeHtml = pendingIncome.length > 0
+                            ? pendingIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalPendingIncome)} ₽`
+                            : '0 ₽';
+                            const expensesHtml = expenseBreakdown.length > 0
+                            ? expenseBreakdown.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalExpenses)} ₽`
+                            : '0 ₽';
 
-                                card.querySelectorAll('.stats-list li').forEach(li => {
-                                    li.style.cursor = 'pointer';
-                                    li.addEventListener('click', (e) => {
-                                        e.stopPropagation();
-                                        const filterType = li.dataset.filter;
-                                        let filterValue = `${worker} `;
-                                        switch (filterType) {
-                                            case 'regular': filterValue += 'обычных объектов'; break;
-                                            case 'manual': filterValue += 'объектов с ручной ценой'; break;
-                                            case 'services': filterValue += 'услуги'; break;
-                                            case 'expenses': filterValue += 'расходов'; break;
-                                            case 'lowKtu': filterValue += 'КТУ ниже нормы'; break;
-                                        }
-                                        filterInput.value = filterValue;
-                                        renderObjects();
-
-                                        setTimeout(() => {
-                                            const filteredCards = resultsDiv.querySelectorAll('.calculation');
-                                            if (filteredCards.length > 0) {
-                                                filteredCards.forEach(card => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
-                                            }
-                                            const filterGroup = document.querySelector('.filter-group');
-                                            if (!filterGroup.querySelector('.filter-reset')) {
-                                                const resetFilter = document.createElement('span');
-                                                resetFilter.className = 'filter-reset';
-                                                resetFilter.innerHTML = '✕';
-                                                resetFilter.title = 'Сбросить фильтр';
-                                                resetFilter.addEventListener('click', () => {
-                                                    filterInput.value = '';
-                                                    renderObjects();
-                                                    resetFilter.remove();
-                                                });
-                                                filterGroup.appendChild(resetFilter);
-                                            }
-                                        }, 100);
-                                    });
-                                });
-
-                                card.querySelectorAll('.earnings-item').forEach(item => {
-                                    item.addEventListener('click', (e) => {
-                                        e.stopPropagation();
-                                        const index = parseInt(item.dataset.index);
-                                        filterInput.value = '';
-                                        renderObjects();
-                                        setTimeout(() => {
-                                            const card = resultsDiv.querySelector(`.calculation[data-index="${index}"]`);
-                                            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                        }, 100);
-                                    });
-                                });
-
-                                statsGrid.appendChild(card);
+                            // Условное отображение блоков
+                            let earningsHtml = '';
+                            if (totalPaidIncome !== 0) {
+                                earningsHtml += `<div class="earnings paid-earnings"><strong>Заработано:</strong> ${paidIncomeHtml}</div>`;
                             }
+                            if (totalPendingIncome !== 0) {
+                                earningsHtml += `<div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingIncomeHtml}</div>`;
+                            }
+                            if (totalExpenses !== 0) {
+                                earningsHtml += `<div class="earnings expense-earnings"><strong>Расходы:</strong> ${expensesHtml}</div>`;
+                            }
+
+                            const card = document.createElement('div');
+                            card.className = 'worker-card';
+                            card.innerHTML = `
+                            <div class="worker-name">${worker}</div>
+                            ${earningsHtml}
+                            <div class="earnings total-earnings"><strong>Итого:</strong> ${formatEarnings(totalEarnings)} ₽</div>
+                            <ul class="stats-list">
+                            <li data-filter="regular">Обычные объекты: <span>${regularObjects}</span></li>
+                            <li data-filter="manual">Ручная цена: <span>${manualObjects}</span></li>
+                            <li data-filter="services">Услуги: <span>${services}</span></li>
+                            <li data-filter="expenses">Расходы: <span>${expenses}</span></li>
+                            ${lowKtuCount > 0 ? `<li data-filter="lowKtu">КТУ ниже нормы: <span>${lowKtuCount}</span></li>` : ''}
+                            </ul>
+                            <div class="worker-chart" data-earnings="${totalEarnings}" data-worker="${worker}"></div>
+                            `;
+
+                            card.addEventListener('click', (e) => {
+                                const isChart = e.target.closest('.worker-chart');
+                                const isEarningItem = e.target.classList.contains('earnings-item');
+                                const isStatsLi = e.target.closest('.stats-list li');
+
+                                if (!isChart && !isEarningItem && !isStatsLi) {
+                                    filterByWorker(worker);
+                                }
+                            });
+
+                            card.querySelectorAll('.stats-list li').forEach(li => {
+                                li.style.cursor = 'pointer';
+                                li.addEventListener('click', (e) => {
+                                    e.stopPropagation();
+                                    const filterType = li.dataset.filter;
+                                    let filterValue = `${worker} `;
+                                    switch (filterType) {
+                                        case 'regular': filterValue += 'обычных объектов'; break;
+                                        case 'manual': filterValue += 'объектов с ручной ценой'; break;
+                                        case 'services': filterValue += 'услуги'; break;
+                                        case 'expenses': filterValue += 'расходов'; break;
+                                        case 'lowKtu': filterValue += 'КТУ ниже нормы'; break;
+                                    }
+                                    filterInput.value = filterValue;
+                                    renderObjects();
+
+                                    setTimeout(() => {
+                                        const filteredCards = resultsDiv.querySelectorAll('.calculation');
+                                        if (filteredCards.length > 0) {
+                                            filteredCards.forEach(card => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+                                        }
+                                        const filterGroup = document.querySelector('.filter-group');
+                                        if (!filterGroup.querySelector('.filter-reset')) {
+                                            const resetFilter = document.createElement('span');
+                                            resetFilter.className = 'filter-reset';
+                                            resetFilter.innerHTML = '✕';
+                                            resetFilter.title = 'Сбросить фильтр';
+                                            resetFilter.addEventListener('click', () => {
+                                                filterInput.value = '';
+                                                renderObjects();
+                                                resetFilter.remove();
+                                            });
+                                            filterGroup.appendChild(resetFilter);
+                                        }
+                                    }, 100);
+                                });
+                            });
+
+                            card.querySelectorAll('.earnings-item').forEach(item => {
+                                item.addEventListener('click', (e) => {
+                                    e.stopPropagation();
+                                    const index = parseInt(item.dataset.index);
+                                    filterInput.value = '';
+                                    renderObjects();
+                                    setTimeout(() => {
+                                        const card = resultsDiv.querySelector(`.calculation[data-index="${index}"]`);
+                                        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    }, 100);
+                                });
+                            });
+
+                            statsGrid.appendChild(card);
                         });
 
                         renderWorkerCharts();

@@ -1373,7 +1373,6 @@ background-color: #ff9800;
 
     .worker-card {
         padding: 15px;
-        margin: 0 10px; /* Исправление: симметричные поля слева и справа */
     }
 
     .worker-card .worker-name {
