@@ -35,7 +35,7 @@
     "editHistory": []
   },
   {
-    "name": "Кумз Фонарь 1",
+    "name": "КУМЗ Фонарь 1",
     "length": "12.20",
     "width": "90.40",
     "area": "12.20 x 90.40 = 1102.88 м²",
@@ -56,16 +56,32 @@
     "timestamp": "4/4/2025, 10:19:02 PM",
     "isExpense": false,
     "manualPrice": true,
-    "editHistory": [
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
+    "name": "КУМЗ Фонарь 1",
+    "length": "12.20",
+    "width": "90.40",
+    "area": "12.20 x 90.40 = 1102.88 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "55144.00",
+    "workers": [
       {
-        "timestamp": "4/4/2025, 10:21:16 PM",
-        "changes": "Название: \"123\" → \"Кумз Фонарь 1\", Стоимость: 55144.00 → 11028.80, Участники: \"Артём (КТУ 1), Коля (КТУ 1)\" → \"Артём (КТУ 1), Коля (КТУ 1)\""
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "27572.00"
       },
       {
-        "timestamp": "4/4/2025, 10:21:57 PM",
-        "changes": "Площадь: 1102.88 м² → 12.20 x 90.40 = 1102.88 м²"
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "27572.00"
       }
     ],
-    "editedTimestamp": "4/4/2025, 10:21:57 PM"
+    "timestamp": "3/4/2025, 7:11:28 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": true,
+    "editHistory": []
   }
 ]
