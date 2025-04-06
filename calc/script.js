@@ -870,12 +870,30 @@ document.addEventListener('DOMContentLoaded', () => {
                             resultsDiv.innerHTML = '<p>Объектов по этому фильтру не найдено.</p>';
                         } else {
                             filteredObjects.forEach((obj, index) => {
-                                const costPerWorker = obj.isExpense
-                                ? (parseFloat(obj.cost) / obj.workers.length).toFixed(2)
-                                : obj.workers.map(w => `${w.name}: ${w.cost} ₽ (КТУ ${w.ktu})`).join(', ');
-                                const costPerReceiver = obj.isExpense && obj.receivers.length > 0
-                                ? (Math.abs(parseFloat(obj.cost)) / obj.receivers.length).toFixed(2)
-                                : '0.00';
+                                let costDetailsHtml = '';
+                                if (obj.isExpense) {
+                                    // Расходы: формируем списания и начисления в двух строках
+                                    const writeOffPerWorker = parseFloat(obj.cost) / obj.workers.length;
+                                    const accrualPerReceiver = obj.receivers.length > 0 ? Math.abs(parseFloat(obj.cost)) / obj.receivers.length : 0;
+
+                                    const writeOffDetails = obj.workers.map(worker => {
+                                        const workerName = typeof worker === 'string' ? worker : worker.name;
+                                        return `${workerName}: ${writeOffPerWorker.toFixed(2)} ₽`;
+                                    }).join(', ');
+
+                                    const accrualDetails = obj.receivers.length > 0
+                                    ? obj.receivers.map(receiver => `${receiver}: ${accrualPerReceiver.toFixed(2)} ₽`).join(', ')
+                                    : '';
+
+                                    costDetailsHtml = `
+                                    <div class="info-line cost-per-worker"><span class="label">Списание:</span><span class="value write-off">${writeOffDetails}</span></div>
+                                    ${accrualDetails ? `<div class="info-line cost-per-receiver"><span class="label">Начисление:</span><span class="value accrual">${accrualDetails}</span></div>` : ''}
+                                    `;
+                                } else {
+                                    // Доходы: оставляем как есть
+                                    const costPerWorker = obj.workers.map(w => `${w.name}: ${w.cost} ₽ (КТУ ${w.ktu})`).join(', ');
+                                    costDetailsHtml = `<div class="info-line cost-per-worker"><span class="label">Распределение:</span><span class="value">${costPerWorker}</span></div>`;
+                                }
 
                                 let imageUrl = null;
                                 if (obj.isExpense) {
@@ -890,10 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     } else if (obj.name.toLowerCase() === 'займ') {
                                         imageUrl = '/calc/img/money.png';
                                     }
-                                }
-
-                                // Логика для кастомных услуг (добавьте свои изображения, если нужно)
-                                else if (obj.isCustomService) {
+                                } else if (obj.isCustomService) {
                                     switch (obj.service) {
                                         case 'Электросварка перил и лестниц на кровле':
                                             imageUrl = '/calc/img/lestnica.png';
@@ -905,25 +920,22 @@ document.addEventListener('DOMContentLoaded', () => {
                                             imageUrl = '/calc/img/cleaning.png';
                                             break;
                                     }
-                                }
-                                // Логика для объектов из prices.json
-                                else {
+                                } else {
                                     const priceEntry = prices.find(p => p.name === obj.service);
                                     if (priceEntry && priceEntry.image) {
                                         imageUrl = priceEntry.image;
                                     }
                                 }
 
-                                // Формула для бензина
                                 let costFormula = `${obj.cost} ₽`;
-                                if (obj.isExpense && obj.name.toLowerCase() === 'бензин' && obj.receivers.length > 0) { // Убрано условие на "Артём"
+                                if (obj.isExpense && obj.name.toLowerCase() === 'бензин' && obj.receivers.length > 0) {
                                     const fuelConsumption = 6.7; // 6,7 литров на 100 км
                                     const fuelPrice = 61; // 61 рубль за литр
-                                    if (obj.distance && !obj.startMileage) { // Режим "Расстояние"
+                                    if (obj.distance && !obj.startMileage) {
                                         const distance = parseFloat(obj.distance);
                                         const liters = (distance * fuelConsumption) / 100;
                                         costFormula = `${distance} км × ${fuelConsumption} л/100 км ÷ 100 × ${fuelPrice} ₽/л = ${liters.toFixed(2)} л × ${fuelPrice} ₽/л = ${obj.cost} ₽`;
-                                    } else if (obj.startMileage && obj.endMileage) { // Режим "Километраж"
+                                    } else if (obj.startMileage && obj.endMileage) {
                                         const start = parseFloat(obj.startMileage);
                                         const end = parseFloat(obj.endMileage);
                                         const distance = parseFloat(obj.distance);
@@ -957,8 +969,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ${obj.distance && !obj.startMileage ? `
                                         <div class="info-line distance"><span class="label">Расстояние:</span><span class="value">${obj.distance} км</span></div>
                                         ` : ''}
-                                        <div class="info-line cost-per-worker"><span class="label">${obj.isExpense ? 'На одного (списание)' : 'Распределение'}:</span><span class="value">${costPerWorker}</span></div>
-                                        ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line cost-per-receiver"><span class="label">На одного (начисление):</span><span class="value">${costPerReceiver} ₽</span></div>` : ''}
+                                        ${costDetailsHtml}
                                         ${obj.editedTimestamp ? `<div class="edit-history">Последнее редактирование: ${obj.editedTimestamp}</div>` : ''}
                                         <button class="btn copy-btn" data-index="${index}">Скопировать</button>
                                         <button class="btn paid-btn ${obj.isPaid ? 'paid' : ''}" data-index="${index}">${obj.isPaid ? 'Выплачено' : 'Не выплачено'}</button>
@@ -972,30 +983,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                         resultsDiv.appendChild(entry);
                             });
 
-                            // Привязка обработчиков для кнопок "Скопировать"
-                            document.querySelectorAll('.copy-btn').forEach(btn => {
-                                btn.addEventListener('click', (e) => {
-                                    e.stopPropagation(); // Предотвращаем срабатывание других событий
-                                    const index = parseInt(e.target.getAttribute('data-index'));
-                                    const card = resultsDiv.querySelector(`.calculation[data-index="${index}"]`);
-                                    const textToCopy = Array.from(card.querySelectorAll('.info-line, .header-line'))
-                                    .map(line => {
-                                        const label = line.querySelector('.label')?.textContent || '';
-                                        const value = line.querySelector('.value')?.textContent || '';
-                                        const timestamp = line.querySelector('.timestamp')?.textContent || '';
-                                        return label ? `${label} ${value}` : timestamp;
-                                    })
-                                    .filter(Boolean)
-                                    .join('\n')
-                                    .trim();
-                                });
-                            });
+                            bindCopyButtons();
+                            bindPaidButtons();
+                            bindDeleteCrosses();
+                            bindCalendarButtons();
                         }
-
-                        bindCopyButtons();
-                        bindPaidButtons();
-                        bindDeleteCrosses();
-                        bindCalendarButtons();
                     }
 
                     // Привязка кнопок "Скопировать"

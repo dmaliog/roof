@@ -896,6 +896,29 @@ margin-top: 40px;
     color: #27ae60;
 }
 
+.calculation .info-line.cost-per-worker .value,
+.calculation .info-line.cost-per-receiver .value {
+    background: none; /* Убираем общий фон */
+    color: #2c3e50; /* Цвет текста по умолчанию */
+    padding: 0; /* Убираем отступы */
+}
+
+/* Стиль для списаний (красный фон) */
+.calculation .info-line.cost-per-worker .value.write-off {
+    background: rgba(231, 76, 60, 0.15); /* Красный фон */
+    color: #e74c3c; /* Красный цвет текста */
+    padding: 3px 8px; /* Отступы для фона */
+    border-radius: 4px;
+}
+
+/* Стиль для начислений (зелёный фон) */
+.calculation .info-line.cost-per-receiver .value.accrual {
+    background: rgba(39, 174, 96, 0.15); /* Зелёный фон */
+    color: #27ae60; /* Зелёный цвет текста */
+    padding: 3px 8px; /* Отступы для фона */
+    border-radius: 4px;
+}
+
 .calculation .info-line.cost-per-receiver span.value {
     background: rgba(39, 174, 96, 0.15);
     color: #27ae60;
