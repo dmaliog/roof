@@ -900,7 +900,6 @@ margin-top: 40px;
 .calculation .info-line.cost-per-receiver .value {
     background: none; /* Убираем общий фон */
     color: #2c3e50; /* Цвет текста по умолчанию */
-    padding: 0; /* Убираем отступы */
 }
 
 /* Стиль для списаний (красный фон) */
