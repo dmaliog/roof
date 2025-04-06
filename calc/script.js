@@ -134,16 +134,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Управление состоянием полей ввода
     function toggleInputState(form, inputName, selectElement) {
-        const input = form.querySelector(`input[name="${inputName}"]`);
+        const inputWrapper = form.querySelector(`.form-group:has(input[name="${inputName}"])`);
+        const input = inputWrapper.querySelector(`input[name="${inputName}"]`);
         const selectedValue = selectElement.value || (selectElement.tagName === 'DIV' ? selectElement.textContent.trim().split(' ')[0] : '');
 
-        if (selectedValue && selectedValue !== "Своё название" && selectedValue !== "Выберите") {
-            input.disabled = true;
-            input.value = '';
+        if (form === customServiceForm) {
+            if (selectedValue && selectedValue !== "Своё название" && selectedValue !== "Выберите") {
+                inputWrapper.style.display = 'none'; // Скрываем поле для формы услуги
+                input.value = '';
+            } else {
+                inputWrapper.style.display = 'block'; // Показываем поле
+            }
+        } else if (form === expenseForm) {
+            if (selectedValue && selectedValue !== "Своё название" && selectedValue !== "Выберите") {
+                inputWrapper.style.display = 'none'; // Скрываем поле для формы расхода
+                input.value = '';
+            } else {
+                inputWrapper.style.display = 'block'; // Показываем поле
+            }
+            toggleFuelCalcMode(); // Вызываем для обработки логики бензина
         } else {
-            input.disabled = false;
+            if (selectedValue && selectedValue !== "Своё название" && selectedValue !== "Выберите") {
+                input.disabled = true;
+                input.value = '';
+            } else {
+                input.disabled = false;
+            }
         }
-        if (form === expenseForm) toggleFuelCalcMode();
     }
 
     // Переключение режима расчета бензина
@@ -159,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const radioButtons = expenseForm.querySelectorAll('input[name="fuelMode"]');
         const receivers = Array.from(expenseReceiversCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
 
-        // Условие теперь зависит только от названия "Бензин" и наличия хотя бы одного участника
         if (expenseName.toLowerCase() === 'бензин' && receivers.length > 0) {
             fuelCalcMode.style.display = 'block';
 
@@ -269,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
                 expenseAmountInput.addEventListener('input', () => {
                     const value = expenseAmountInput.value;
-                    if (value === '-' || value === '') return; // Разрешаем "-" и пустое значение
+                    if (value === '-' || value === '') return;
                     if (!value.startsWith('-')) {
                         expenseAmountInput.value = '-' + value.replace('-', '');
                     } else if (parseFloat(value) >= 0 && value !== '-') {
@@ -277,12 +293,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
+                const fetchOptions = {
+                    cache: 'no-store', // Отключаем кэширование
+                    headers: {
+                        'Cache-Control': 'no-store'
+                    }
+                };
+
                 Promise.all([
-                    fetch('../save.json').then(res => res.ok ? res.json() : []).catch(() => []),
-                            fetch('../workers.json').then(res => res.ok ? res.json() : []).catch(() => ['Артём', 'Коля', 'Слава', 'Женя']),
-                            fetch('../prices.json').then(res => res.ok ? res.json() : []).catch(() => []),
-                            fetch('../custom-services.json').then(res => res.ok ? res.json() : []).catch(() => []),
-                            fetch('../expense-types.json').then(res => res.ok ? res.json() : []).catch(() => [])
+                    fetch('../save.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
+                            fetch('../workers.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => ['Артём', 'Коля', 'Слава', 'Женя']),
+                            fetch('../prices.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
+                            fetch('../custom-services.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
+                            fetch('../expense-types.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => [])
                 ]).then(([objectsData, workersData, pricesData, customServicesData, expenseTypesData]) => {
                     objects = objectsData;
                     workers = workersData;
@@ -309,6 +332,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         }
 
+        // Обновленный обработчик кнопки "Очистить кэш"
+        clearCacheBtn.addEventListener('click', () => {
+                loadData(); // Просто перезагружаем данные
+                alert('Данные обновлены из JSON-файлов.');
+        });
+
         // Обработчики кнопок для показа форм
         showObjectFormBtn.addEventListener('click', () => showForm(objectForm));
         showExpenseFormBtn.addEventListener('click', () => showForm(expenseForm));
@@ -323,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isEditing = customServiceForm.dataset.isEditing === 'true';
             const serviceName = serviceNameInput.disabled ? serviceSelect.value : serviceNameInput.value.trim();
             const servicePrice = parseFloat(customServiceForm.querySelector('input[name="servicePrice"]').value);
+            const isPaid = customServiceForm.querySelector('input[name="isPaid"]').checked; // Получаем статус "Выплачено"
             const workersData = Array.from(serviceWorkersCheckboxGroup.querySelectorAll('input:checked')).map(input => {
                 const ktuInput = customServiceForm.querySelector(`input[name="servicektu_${input.value}"]`);
                 return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
@@ -342,6 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                            timestamp: new Date().toLocaleString(),
                                            isExpense: false,
                                            isCustomService: true,
+                                           isPaid: isPaid, // Добавляем статус "Выплачено"
                                            editHistory: isEditing ? objects[customServiceForm.dataset.editIndex]?.editHistory || [] : []
             };
 
@@ -356,6 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     object.editedTimestamp = new Date().toLocaleString();
                     object.editHistory.push({ timestamp: object.editedTimestamp, changes: changes.join(', ') });
                 }
+                object.isPaid = isPaid; // Обновляем статус "Выплачено" при редактировании
                 objects[index] = object;
             } else {
                 objects.unshift(object);
@@ -472,9 +504,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         e.preventDefault();
                         const formToUse = isExpense ? expenseForm : (isManual ? manualPriceForm : objectForm);
                         const objectName = (isManual ? manualObjectNameInput : (isExpense ? expenseNameInput : objectNameInput)).value.trim();
+                        const isPaid = formToUse.querySelector('input[name="isPaid"]').checked; // Получаем статус "Выплачено"
                         let object;
-
-                        console.log('Режим:', isExpense ? 'Расход' : (isManual ? 'Ручная цена' : 'Объект'), 'Название:', objectName);
 
                         if (isExpense) {
                             const expenseName = expenseNameInput.disabled ? expenseTypeValue.value : objectName;
@@ -482,10 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const workers = Array.from(expenseWorkersCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
                             const receivers = Array.from(expenseReceiversCheckboxGroup.querySelectorAll('input:checked')).map(input => input.value);
 
-                            console.log('Название расхода:', expenseName, 'Участники (списание):', workers, 'Участники (начисление):', receivers);
-
                             if (!expenseName || workers.length === 0) {
-                                console.log('Ошибка: Не заполнены обязательные поля');
                                 alert('Заполните все обязательные поля: название и участников!');
                                 return;
                             }
@@ -495,13 +523,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const fuelConsumption = 6.7; // 6,7 литров на 100 км
                                 const fuelPrice = 61; // 61 рубль за литр
 
-                                console.log('Режим расчета бензина:', fuelMode);
-
                                 if (fuelMode === 'amount') {
                                     expenseAmount = parseFloat(formToUse.querySelector('input[name="expenseAmount"]').value);
-                                    console.log('Сумма:', expenseAmount);
                                     if (isNaN(expenseAmount) || expenseAmount >= 0) {
-                                        console.log('Ошибка: Некорректная сумма');
                                         alert('Укажите корректную отрицательную сумму расхода!');
                                         return;
                                     }
@@ -513,13 +537,12 @@ document.addEventListener('DOMContentLoaded', () => {
                           receivers,
                           timestamp: new Date().toLocaleString(),
                           isExpense: true,
+                          isPaid: isPaid, // Добавляем статус "Выплачено"
                           editHistory: []
                                     };
                                 } else if (fuelMode === 'distance') {
                                     const distance = parseFloat(formToUse.querySelector('input[name="distance"]').value);
-                                    console.log('Расстояние:', distance);
                                     if (isNaN(distance) || distance <= 0) {
-                                        console.log('Ошибка: Некорректное расстояние');
                                         alert('Введите корректное расстояние!');
                                         return;
                                     }
@@ -539,9 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 } else if (fuelMode === 'mileage') {
                                     const startMileage = parseFloat(formToUse.querySelector('input[name="startMileage"]').value);
                                     const endMileage = parseFloat(formToUse.querySelector('input[name="endMileage"]').value);
-                                    console.log('Начальный километраж:', startMileage, 'Конечный километраж:', endMileage);
                                     if (isNaN(startMileage) || isNaN(endMileage) || startMileage < 0 || endMileage < 0 || endMileage <= startMileage) {
-                                        console.log('Ошибка: Некорректный километраж');
                                         alert('Введите корректные значения начального и конечного километража (конечный должен быть больше начального)!');
                                         return;
                                     }
@@ -564,9 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
                             } else {
                                 expenseAmount = parseFloat(formToUse.querySelector('input[name="expenseAmount"]').value);
-                                console.log('Сумма для другого расхода:', expenseAmount);
                                 if (isNaN(expenseAmount) || expenseAmount >= 0) {
-                                    console.log('Ошибка: Некорректная сумма для другого расхода');
                                     alert('Укажите корректную отрицательную сумму расхода!');
                                     return;
                                 }
@@ -629,6 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           timestamp: new Date().toLocaleString(),
                           isExpense: false,
                           manualPrice: true,
+                          isPaid: isPaid, // Добавляем статус "Выплачено"
                           editHistory: []
                                 };
                             } else {
@@ -644,12 +664,12 @@ document.addEventListener('DOMContentLoaded', () => {
                           workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
                           timestamp: new Date().toLocaleString(),
                           isExpense: false,
+                          isPaid: isPaid, // Добавляем статус "Выплачено"
                           editHistory: []
                                 };
                             }
                         }
 
-                        console.log('Созданный объект:', object);
                         objects.unshift(object);
                         renderObjects();
                         renderWorkerStats();
@@ -666,7 +686,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
                             expenseTypeValue.value = '';
                         }
-                        console.log('Форма сброшена');
                         showForm(null);
                         alert((isExpense ? 'Расход' : 'Объект') + ' добавлен.');
                     }
@@ -685,10 +704,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Очистка кэша
                     clearCacheBtn.addEventListener('click', () => {
-                        if (confirm('Обновить данные из JSON-файлов?')) {
                             caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
                             loadData();
-                        }
                     });
 
                     // Переключение режима редактирования
@@ -757,6 +774,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             });
                             serviceOptions.appendChild(li);
                         });
+
+                        // Сброс при загрузке
+                        serviceSelect.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                        serviceSelect.value = '';
+                        toggleInputState(customServiceForm, 'serviceName', serviceSelect);
                     }
 
                     function populateExpenseTypeSelect(types) {
@@ -773,6 +795,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             });
                             expenseTypeOptions.appendChild(li);
                         });
+
+                        // Сброс при загрузке
+                        expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
+                        expenseTypeValue.value = '';
+                        toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
                     }
 
                     // Отрисовка списка объектов
@@ -874,6 +901,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                                 const entry = document.createElement('div');
                                 entry.className = `calculation ${obj.isExpense ? 'expense' : ''} ${obj.manualPrice ? 'manual-price' : ''} ${obj.isCustomService ? 'custom-service' : ''} ${editMode ? 'editable' : ''}`;
+                                const areaMatch = obj.area ? obj.area.match(/([\d.]+)\s*x\s*([\d.]+)\s*=\s*([\d.]+)\s*м²/) || obj.area.match(/([\d.]+)\s*м²/) : null;
+                                const areaValue = areaMatch ? parseFloat(areaMatch[areaMatch.length === 4 ? 3 : 1]) : 0;
+                                const pricePerSquare = obj.manualPrice ? (parseFloat(obj.cost) / areaValue).toFixed(2) : null;
+
                                 entry.innerHTML = `
                                 <div class="header-line">
                                 <strong>•</strong>
@@ -886,30 +917,141 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${obj.area ? `<div class="info-line area"><span class="label">Площадь:</span><span class="value">${obj.area}</span></div>` : ''}
                                 <div class="info-line service"><span class="label">Услуга:</span><span class="value">${obj.isExpense ? obj.name : obj.service}</span></div>
                                 <div class="info-line cost"><span class="label">Стоимость:</span><span class="value">${costFormula}</span></div>
+                                ${obj.manualPrice ? `<div class="info-line price-per-square"><span class="label">Цена за м²:</span><span class="value">${pricePerSquare} ₽</span></div>` : ''}
                                 ${obj.startMileage && obj.endMileage ? `
                                     <div class="info-line mileage"><span class="label">Километраж:</span><span class="value">${obj.startMileage} км → ${obj.endMileage} км = ${obj.distance} км</span></div>
                                     ` : ''}
                                     ${obj.distance && !obj.startMileage ? `
                                         <div class="info-line distance"><span class="label">Расстояние:</span><span class="value">${obj.distance} км</span></div>
                                         ` : ''}
-                                        <div class="info-line workers"><span class="label">${obj.isExpense ? 'Участники (списание)' : 'Участники'}:</span><span class="value">${obj.isExpense ? obj.workers.join(', ') : obj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}</span></div>
-                                        ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line receivers"><span class="label">Участники (начисление):</span><span class="value">${obj.receivers.join(', ')}</span></div>` : ''}
                                         <div class="info-line cost-per-worker"><span class="label">${obj.isExpense ? 'На одного (списание)' : 'Распределение'}:</span><span class="value">${costPerWorker}</span></div>
                                         ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line cost-per-receiver"><span class="label">На одного (начисление):</span><span class="value">${costPerReceiver} ₽</span></div>` : ''}
                                         ${obj.editedTimestamp ? `<div class="edit-history">Последнее редактирование: ${obj.editedTimestamp}</div>` : ''}
+                                        <button class="btn copy-btn" data-index="${index}">Скопировать</button>
+                                        <button class="btn paid-btn ${obj.isPaid ? 'paid' : ''}" data-index="${index}">${obj.isPaid ? 'Выплачено' : 'Не выплачено'}</button>
                                         `;
                                         entry.dataset.index = index;
                                         if (editMode) {
                                             entry.addEventListener('click', (e) => {
-                                                if (!e.target.classList.contains('delete-cross') && !e.target.classList.contains('calendar-btn')) editObject(index);
+                                                if (!e.target.classList.contains('delete-cross') && !e.target.classList.contains('calendar-btn') && !e.target.classList.contains('copy-btn') && !e.target.classList.contains('paid-btn')) editObject(index);
                                             });
                                         }
                                         resultsDiv.appendChild(entry);
                             });
+
+                            // Привязка обработчиков для кнопок "Скопировать"
+                            document.querySelectorAll('.copy-btn').forEach(btn => {
+                                btn.addEventListener('click', (e) => {
+                                    e.stopPropagation(); // Предотвращаем срабатывание других событий
+                                    const index = parseInt(e.target.getAttribute('data-index'));
+                                    const card = resultsDiv.querySelector(`.calculation[data-index="${index}"]`);
+                                    const textToCopy = Array.from(card.querySelectorAll('.info-line, .header-line'))
+                                    .map(line => {
+                                        const label = line.querySelector('.label')?.textContent || '';
+                                        const value = line.querySelector('.value')?.textContent || '';
+                                        const timestamp = line.querySelector('.timestamp')?.textContent || '';
+                                        return label ? `${label} ${value}` : timestamp;
+                                    })
+                                    .filter(Boolean)
+                                    .join('\n')
+                                    .trim();
+
+                                    navigator.clipboard.writeText(textToCopy).then(() => {
+                                        alert('Информация скопирована в буфер обмена!');
+                                    }).catch(err => {
+                                        console.error('Ошибка копирования:', err);
+                                    });
+                                });
+                            });
                         }
 
+                        bindCopyButtons();
+                        bindPaidButtons();
                         bindDeleteCrosses();
                         bindCalendarButtons();
+                    }
+
+                    // Привязка кнопок "Скопировать"
+                    function bindCopyButtons() {
+                        document.querySelectorAll('.copy-btn').forEach(btn => {
+                            btn.removeEventListener('click', handleCopy);
+                            btn.addEventListener('click', handleCopy);
+                        });
+                    }
+
+                    function handleCopy(e) {
+                        e.stopPropagation();
+                        const index = parseInt(e.target.getAttribute('data-index'));
+                        const card = resultsDiv.querySelector(`.calculation[data-index="${index}"]`);
+
+                        if (!card) {
+                            console.error(`Карточка с индексом ${index} не найдена`);
+                            return;
+                        }
+
+                        const textToCopy = Array.from(card.querySelectorAll('.info-line, .header-line'))
+                        .map(line => {
+                            const label = line.querySelector('.label')?.textContent || '';
+                            const value = line.querySelector('.value')?.textContent || '';
+                            const timestamp = line.querySelector('.timestamp')?.textContent || '';
+                            return label ? `${label} ${value}` : timestamp;
+                        })
+                        .filter(Boolean)
+                        .join('\n')
+                        .trim();
+
+                        // Проверка поддержки clipboard API и fallback-метод
+                        if (navigator.clipboard && window.isSecureContext) {
+                            navigator.clipboard.writeText(textToCopy)
+                            .then(() => {
+                                alert('Информация скопирована в буфер обмена!');
+                            })
+                            .catch(err => {
+                                console.error('Ошибка копирования через clipboard API:', err);
+                                fallbackCopy(textToCopy);
+                            });
+                        } else {
+                            fallbackCopy(textToCopy);
+                        }
+                    }
+
+                    // Альтернативный метод копирования через textarea
+                    function fallbackCopy(text) {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = text;
+                        textArea.style.position = 'fixed';
+                        textArea.style.opacity = '0';
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+
+                        try {
+                            document.execCommand('copy');
+                            alert('Информация скопирована в буфер обмена!');
+                        } catch (err) {
+                            console.error('Ошибка копирования через execCommand:', err);
+                            alert('Не удалось скопировать текст. Пожалуйста, скопируйте вручную.');
+                        } finally {
+                            document.body.removeChild(textArea);
+                        }
+                    }
+
+                    // Привязка кнопок "Выплачено"
+                    function bindPaidButtons() {
+                        document.querySelectorAll('.paid-btn').forEach(btn => {
+                            btn.removeEventListener('click', handlePaidToggle);
+                            btn.addEventListener('click', handlePaidToggle);
+                        });
+                    }
+
+                    function handlePaidToggle(e) {
+                        e.stopPropagation();
+                        const index = parseInt(e.target.getAttribute('data-index'));
+                        const obj = objects[index];
+                        obj.isPaid = !obj.isPaid; // Переключаем статус
+                        e.target.textContent = obj.isPaid ? 'Выплачено' : 'Не выплачено';
+                        e.target.classList.toggle('paid', obj.isPaid);
+                        renderWorkerStats(); // Обновляем статистику, если она зависит от статуса
                     }
 
                     // Привязка обработчиков удаления
@@ -1051,6 +1193,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         formToUse.dataset.isEditing = 'true';
                         formToUse.dataset.editIndex = index;
 
+                        // Заполняем чекбокс "Выплачено"
+                        formToUse.querySelector('input[name="isPaid"]').checked = obj.isPaid || false;
+
                         if (isExpense) {
                             expenseNameInput.value = obj.name;
                             expenseForm.querySelector('input[name="expenseAmount"]').value = obj.cost;
@@ -1168,6 +1313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const index = parseInt(formToUse.dataset.editIndex);
                             const oldObj = objects[index];
                             const changes = [];
+                            const newIsPaid = formToUse.querySelector('input[name="isPaid"]').checked; // Новый статус "Выплачено"
 
                             if (isExpense) {
                                 const newName = expenseNameInput.disabled ? expenseTypeValue.value : expenseNameInput.value.trim();
@@ -1216,6 +1362,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 oldObj.cost = newAmount.toFixed(2);
                                 oldObj.workers = newWorkers;
                                 oldObj.receivers = newReceivers;
+                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
+                                oldObj.isPaid = newIsPaid;
                             } else if (isCustomService) {
                                 const newName = serviceNameInput.disabled ? serviceSelect.value : serviceNameInput.value.trim();
                                 const newCost = parseFloat(customServiceForm.querySelector('input[name="servicePrice"]').value);
@@ -1240,6 +1388,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 oldObj.service = newName;
                                 oldObj.cost = newCost.toFixed(2);
                                 oldObj.workers = newWorkersWithCost;
+                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
+                                oldObj.isPaid = newIsPaid;
                             } else {
                                 const newName = (obj.manualPrice ? manualObjectNameInput : objectNameInput).value.trim();
                                 const selectedOption = obj.manualPrice ? manualSelectedValue.value : selectedValue.value;
@@ -1293,6 +1443,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 oldObj.service = newService;
                                 oldObj.cost = newCost;
                                 oldObj.workers = newWorkersWithCost;
+                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
+                                oldObj.isPaid = newIsPaid;
                             }
 
                             if (changes.length > 0) {
@@ -1318,7 +1470,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     function renderWorkerStats() {
                         const statsGrid = document.getElementById('worker-stats');
                         if (!statsGrid) {
-                            console.error('worker-stats not found');
                             return;
                         }
                         statsGrid.innerHTML = '';
@@ -1351,23 +1502,36 @@ document.addEventListener('DOMContentLoaded', () => {
                                         workerContribution += Math.abs(parseFloat(obj.cost)) / obj.receivers.length;
                                         className = 'receiver-earning';
                                     }
-                                    return { value: workerContribution.toFixed(2), index, className };
+                                    return { value: workerContribution.toFixed(2), index, className, isPaid: obj.isPaid };
                                 });
 
-                                const totalEarnings = earningsBreakdown.reduce((sum, val) => sum + parseFloat(val.value), 0);
-                                const formattedEarnings = totalEarnings.toFixed(2)
+                                // Разделяем на оплаченные и неоплаченные
+                                const paidEarnings = earningsBreakdown.filter(e => e.isPaid);
+                                const pendingEarnings = earningsBreakdown.filter(e => !e.isPaid);
+
+                                const totalPaid = paidEarnings.reduce((sum, val) => sum + parseFloat(val.value), 0);
+                                const totalPending = pendingEarnings.reduce((sum, val) => sum + parseFloat(val.value), 0);
+                                const totalEarnings = totalPaid + totalPending;
+
+                                const formatEarnings = (amount) => amount.toFixed(2)
                                 .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
                                 .replace('.00', '');
 
-                                const earningsHtml = earningsBreakdown
-                                .map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`)
-                                .join(' ') + ` = ${formattedEarnings} ₽`;
+                                const paidEarningsHtml = paidEarnings.length > 0
+                                ? paidEarnings.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalPaid)} ₽`
+                                : '0 ₽';
+                                const pendingEarningsHtml = pendingEarnings.length > 0
+                                ? pendingEarnings.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalPending)} ₽`
+                                : '0 ₽';
+                                const totalEarningsHtml = `${formatEarnings(totalEarnings)} ₽`;
 
                                 const card = document.createElement('div');
                                 card.className = 'worker-card';
                                 card.innerHTML = `
                                 <div class="worker-name">${worker}</div>
-                                <div class="earnings">${earningsHtml}</div>
+                                <div class="earnings paid-earnings"><strong>Заработано:</strong> ${paidEarningsHtml}</div>
+                                <div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingEarningsHtml}</div>
+                                <div class="earnings total-earnings"><strong>Итого:</strong> ${totalEarningsHtml}</div>
                                 <ul class="stats-list">
                                 <li data-filter="regular">Обычные объекты: <span>${regularObjects}</span></li>
                                 <li data-filter="manual">Ручная цена: <span>${manualObjects}</span></li>
@@ -1394,36 +1558,21 @@ document.addEventListener('DOMContentLoaded', () => {
                                         e.stopPropagation();
                                         const filterType = li.dataset.filter;
                                         let filterValue = `${worker} `;
-
                                         switch (filterType) {
-                                            case 'regular':
-                                                filterValue += 'обычных объектов';
-                                                break;
-                                            case 'manual':
-                                                filterValue += 'объектов с ручной ценой';
-                                                break;
-                                            case 'services':
-                                                filterValue += 'услуги';
-                                                break;
-                                            case 'expenses':
-                                                filterValue += 'расходов';
-                                                break;
-                                            case 'lowKtu':
-                                                filterValue += 'КТУ ниже нормы';
-                                                break;
+                                            case 'regular': filterValue += 'обычных объектов'; break;
+                                            case 'manual': filterValue += 'объектов с ручной ценой'; break;
+                                            case 'services': filterValue += 'услуги'; break;
+                                            case 'expenses': filterValue += 'расходов'; break;
+                                            case 'lowKtu': filterValue += 'КТУ ниже нормы'; break;
                                         }
-
                                         filterInput.value = filterValue;
                                         renderObjects();
 
                                         setTimeout(() => {
                                             const filteredCards = resultsDiv.querySelectorAll('.calculation');
                                             if (filteredCards.length > 0) {
-                                                filteredCards.forEach(card => {
-                                                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                                                });
+                                                filteredCards.forEach(card => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
                                             }
-
                                             const filterGroup = document.querySelector('.filter-group');
                                             if (!filterGroup.querySelector('.filter-reset')) {
                                                 const resetFilter = document.createElement('span');
@@ -1449,9 +1598,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         renderObjects();
                                         setTimeout(() => {
                                             const card = resultsDiv.querySelector(`.calculation[data-index="${index}"]`);
-                                            if (card) {
-                                                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                            }
+                                            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                         }, 100);
                                     });
                                 });
@@ -1571,6 +1718,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         const widthInput = document.getElementById(`${formPrefix}-width`);
                         const areaInput = document.getElementById(`${formPrefix}-area`);
 
+                        function updateArea() {
+                            const length = parseFloat(lengthInput.value) || 0;
+                            const width = parseFloat(widthInput.value) || 0;
+                            if (length > 0 && width > 0) {
+                                areaInput.value = (length * width).toFixed(2);
+                                areaInput.disabled = true;
+                            } else {
+                                areaInput.value = '';
+                                areaInput.disabled = false;
+                            }
+                        }
+
                         areaInput.addEventListener('input', () => {
                             if (areaInput.value && parseFloat(areaInput.value) > 0) {
                                 lengthInput.disabled = true;
@@ -1580,28 +1739,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             } else {
                                 lengthInput.disabled = false;
                                 widthInput.disabled = false;
+                                updateArea();
                             }
                         });
 
-                        lengthInput.addEventListener('input', () => {
-                            if (lengthInput.value && parseFloat(lengthInput.value) > 0) {
-                                areaInput.disabled = true;
-                                areaInput.value = '';
-                            } else if (!widthInput.value) {
-                                areaInput.disabled = false;
-                            }
-                        });
-
-                        widthInput.addEventListener('input', () => {
-                            if (widthInput.value && parseFloat(widthInput.value) > 0) {
-                                areaInput.disabled = true;
-                                areaInput.value = '';
-                            } else if (!lengthInput.value) {
-                                areaInput.disabled = false;
-                            }
-                        });
+                        lengthInput.addEventListener('input', updateArea);
+                        widthInput.addEventListener('input', updateArea);
                     }
 
                     toggleDimensionFields('object');
                     toggleDimensionFields('manual');
+
 });

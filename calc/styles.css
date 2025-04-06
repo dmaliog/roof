@@ -8,6 +8,80 @@ body {
     overflow-x: hidden;
 }
 
+.calculation .info-line.name span.value {
+    background: rgba(46, 204, 113, 0.15); /* Зеленый фон, как у "Распределение" */
+    color: #27ae60; /* Зеленый текст */
+}
+
+.calculation .info-line.price-per-square span.value {
+    background: rgba(230, 126, 34, 0.15); /* Оранжевый фон, как у "Стоимость" */
+    color: #e67e22; /* Оранжевый текст */
+}
+
+/* Стили для кнопки "Выплачено" */
+.btn.paid-btn {
+    background: linear-gradient(135deg, #f1c40f, #e67e22);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
+    margin-left: 10px;
+}
+
+.btn.paid-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(241, 196, 15, 0.6);
+    background: linear-gradient(135deg, #e67e22, #d35400);
+}
+
+.btn.paid-btn.paid {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+}
+
+.btn.paid-btn.paid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
+    background: linear-gradient(135deg, #27ae60, #219653);
+}
+
+/* Стили для чекбокса "Выплачено" в форме */
+.form-group.paid-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group.paid-checkbox label {
+    margin-bottom: 0;
+    text-transform: none;
+    font-size: 16px;
+}
+
+.worker-card .earnings.paid-earnings {
+    background: rgba(46, 204, 113, 0.1); /* Зеленый фон для оплаченных */
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.worker-card .earnings.pending-earnings {
+    background: rgba(241, 196, 15, 0.1); /* Желтый фон для ожидающих */
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.worker-card .earnings.total-earnings {
+    background: rgba(52, 152, 219, 0.1); /* Синий фон для итога */
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.worker-card .earnings strong {
+    margin-right: 8px;
+    color: #34495e;
+}
+
 .radio-group {
     display: flex;
     gap: 20px;
@@ -403,6 +477,18 @@ h2::after {
 .checkbox-group .ktu-input:focus {
     border-color: #3498db;
     outline: none;
+}
+
+.copy-btn {
+    margin-top: 10px !important;
+    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4) !important;
+}
+
+.copy-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6) !important;
+    background: linear-gradient(135deg, #27ae60, #219653) !important;
 }
 
 .btn {
