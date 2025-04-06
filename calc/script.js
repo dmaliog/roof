@@ -832,6 +832,28 @@ document.addEventListener('DOMContentLoaded', () => {
                                     }
                                 }
 
+                                // Логика для кастомных услуг (добавьте свои изображения, если нужно)
+                                else if (obj.isCustomService) {
+                                    switch (obj.service) {
+                                        case 'Электросварка перил и лестниц на кровле':
+                                            imageUrl = '/calc/img/lestnica.png';
+                                            break;
+                                        case 'Погрузо-разгрузочные работы':
+                                            imageUrl = '/calc/img/pogruzka.png';
+                                            break;
+                                        case 'Уборка территории':
+                                            imageUrl = '/calc/img/cleaning.png';
+                                            break;
+                                    }
+                                }
+                                // Логика для объектов из prices.json
+                                else {
+                                    const priceEntry = prices.find(p => p.name === obj.service);
+                                    if (priceEntry && priceEntry.image) {
+                                        imageUrl = priceEntry.image;
+                                    }
+                                }
+
                                 // Формула для бензина
                                 let costFormula = `${obj.cost} ₽`;
                                 if (obj.isExpense && obj.name.toLowerCase() === 'бензин' && obj.receivers.length > 0) { // Убрано условие на "Артём"
