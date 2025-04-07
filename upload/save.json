@@ -1,5 +1,35 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-882.79",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "07.04.2025, 20:19:20",
+    "isExpense": true,
+    "distance": "216.00",
+    "editHistory": []
+  },
+  {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-700.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "07.04.2025, 19:52:58",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
     "name": "Займ",
     "service": "Расход",
     "cost": "-2500.00",
