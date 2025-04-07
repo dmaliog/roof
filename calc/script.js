@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
 
                 Promise.all([
-                    fetch('../save.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
+                    fetch('../upload/save.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
                             fetch('../workers.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => ['Артём', 'Коля', 'Слава', 'Женя']),
                             fetch('../prices.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
                             fetch('../custom-services.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
