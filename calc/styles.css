@@ -871,6 +871,11 @@ margin-top: 40px;
     color: #3498db;
 }
 
+.calculation .info-line.distance span.value {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+}
+
 .calculation .info-line.area span.value {
     background: rgba(52, 152, 219, 0.15);
     color: #3498db;
