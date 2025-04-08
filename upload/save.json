@@ -1,5 +1,56 @@
 [
   {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-652.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "08.04.2025, 12:25:51",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-326.00",
+    "workers": [
+      "Илья"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "08.04.2025, 12:25:06",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-465.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "08.04.2025, 12:24:34",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": [
+      {
+        "timestamp": "08.04.2025, 12:25:28",
+        "changes": "Название: \"Займ\" → \"Еда\""
+      }
+    ],
+    "editedTimestamp": "08.04.2025, 12:25:28"
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-882.79",
