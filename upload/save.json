@@ -1,5 +1,56 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-882.79",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "4/8/2025, 11:16:11 PM",
+    "isExpense": true,
+    "distance": "216.00",
+    "editHistory": []
+  },
+  {
+    "name": "УЗТМ Фонарь 3",
+    "length": null,
+    "width": null,
+    "area": "766.76 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "46005.60",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "11796.31"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "11796.31"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "11796.31"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.9,
+        "cost": "10616.68"
+      }
+    ],
+    "timestamp": "4/8/2025, 11:13:58 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
     "name": "Займ",
     "service": "Расход",
     "cost": "-2900.00",
@@ -68,25 +119,11 @@
     "editHistory": []
   },
   {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-326.00",
-    "workers": [
-      "Илья"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "08.04.2025, 12:25:06",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-882.79",
     "workers": [
+      "Артём",
       "Слава"
     ],
     "receivers": [
@@ -103,10 +140,14 @@
       {
         "timestamp": "08.04.2025, 19:57:31",
         "changes": "Участники (списание): \"Артём, Слава\" → \"Слава\""
+      },
+      {
+        "timestamp": "4/8/2025, 11:15:00 PM",
+        "changes": "Участники (списание): \"Слава\" → \"Артём, Слава\""
       }
     ],
     "isPaid": false,
-    "editedTimestamp": "08.04.2025, 19:57:31"
+    "editedTimestamp": "4/8/2025, 11:15:00 PM"
   },
   {
     "name": "УЗТМ Фонарь 1-2",
