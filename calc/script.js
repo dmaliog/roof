@@ -1543,15 +1543,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             if (workerObjects.length === 0) return;
 
-                            // Статистика объектов (учитываем только неоплаченные расходы)
+                            // Статистика объектов
                             const regularObjects = workerObjects.filter(obj => !obj.isExpense && !obj.manualPrice && !obj.isCustomService).length;
                             const manualObjects = workerObjects.filter(obj => obj.manualPrice).length;
                             const services = workerObjects.filter(obj => obj.isCustomService).length;
                             const expenses = workerObjects.filter(obj => obj.isExpense).length;
-                            const lowKtuCount = workerObjects.filter(obj =>
-                            !obj.isExpense && obj.workers &&
-                            obj.workers.some(w => getWorkerName(w) === worker && w.ktu < 1)
-                            ).length;
 
                             // Разделяем доходы и расходы
                             const incomeObjects = workerObjects.filter(obj => !obj.isExpense);
@@ -1569,48 +1565,99 @@ document.addEventListener('DOMContentLoaded', () => {
                             const totalPaidIncome = paidIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
                             const totalPendingIncome = pendingIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
 
-                            // Расчёт расходов (только неоплаченные уже отфильтрованы)
-                            const expenseBreakdown = expenseObjects.map((obj, index) => {
-                                let contribution = 0;
-                                let className = 'expense-earning';
-                                if (obj.workers.some(w => getWorkerName(w) === worker)) {
-                                    contribution += parseFloat(obj.cost) / obj.workers.length; // Списание
-                                }
-                                if (obj.receivers && obj.receivers.includes(worker)) {
-                                    contribution += Math.abs(parseFloat(obj.cost)) / obj.receivers.length; // Начисление
-                                    className = 'receiver-earning';
-                                }
-                                return { value: contribution.toFixed(2), index, className };
-                            });
-                            const totalExpenses = expenseBreakdown.reduce((sum, val) => sum + parseFloat(val.value), 0);
+                            // Расчет расходов с группировкой по получателям (кому должен текущий работник)
+                            const expenseBreakdownByReceiver = {};
+                            expenseObjects.forEach((obj, index) => {
+                                const totalCost = parseFloat(obj.cost);
+                                const workersCount = obj.workers.length;
+                                const receiversCount = obj.receivers.length || 1;
+                                const writeOffPerWorker = totalCost / workersCount; // Отрицательное значение
+                                const accrualPerReceiver = receiversCount > 0 ? Math.abs(totalCost) / receiversCount : 0;
 
-                            // Итог: доходы + расходы
-                            const totalEarnings = totalPaidIncome + totalPendingIncome + totalExpenses;
+                                if (obj.workers.some(w => getWorkerName(w) === worker)) {
+                                    obj.receivers.forEach(receiver => {
+                                        if (!expenseBreakdownByReceiver[receiver]) {
+                                            expenseBreakdownByReceiver[receiver] = [];
+                                        }
+                                        const contribution = receiversCount > 0 ? -accrualPerReceiver : writeOffPerWorker; // Минус для расходов
+                                        expenseBreakdownByReceiver[receiver].push({
+                                            value: contribution.toFixed(2),
+                                                                                  index,
+                                                                                  className: 'expense-earning'
+                                        });
+                                    });
+                                }
+                            });
+                            const totalExpenses = Object.values(expenseBreakdownByReceiver).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
+
+                            // Расчет долгов мне (кто должен текущему работнику)
+                            const debtsOwedToWorker = {};
+                            expenseObjects.forEach((obj, index) => {
+                                const totalCost = parseFloat(obj.cost);
+                                const workersCount = obj.workers.length;
+                                const receiversCount = obj.receivers.length || 1;
+                                const accrualPerReceiver = receiversCount > 0 ? Math.abs(totalCost) / receiversCount : 0;
+
+                                if (obj.receivers.includes(worker)) {
+                                    obj.workers.forEach(debtor => {
+                                        if (debtor !== worker) { // Исключаем долг самому себе
+                                            const debtorName = getWorkerName(debtor);
+                                            if (!debtsOwedToWorker[debtorName]) {
+                                                debtsOwedToWorker[debtorName] = [];
+                                            }
+                                            debtsOwedToWorker[debtorName].push({
+                                                value: accrualPerReceiver.toFixed(2),
+                                                                               index,
+                                                                               className: 'receiver-earning'
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                            const totalDebtsOwedToWorker = Object.values(debtsOwedToWorker).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
+
+                            // Итог: доходы + долги мне + расходы
+                            const totalEarnings = totalPaidIncome + totalPendingIncome + totalDebtsOwedToWorker + totalExpenses;
 
                             const formatEarnings = (amount) => amount.toFixed(2)
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
                             .replace('.00', '');
 
-                            const paidIncomeHtml = paidIncome.length > 0
-                            ? paidIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalPaidIncome)} ₽`
-                            : '0 ₽';
-                            const pendingIncomeHtml = pendingIncome.length > 0
-                            ? pendingIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalPendingIncome)} ₽`
-                            : '0 ₽';
-                            const expensesHtml = expenseBreakdown.length > 0
-                            ? expenseBreakdown.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value >= 0 ? '+' : ''}${e.value}</span>`).join(' ') + ` = ${formatEarnings(totalExpenses)} ₽`
-                            : '0 ₽';
-
-                            // Условное отображение блоков
+                            // Формируем HTML для доходов (как было)
                             let earningsHtml = '';
                             if (totalPaidIncome !== 0) {
-                                earningsHtml += `<div class="earnings paid-earnings"><strong>Заработано:</strong> ${paidIncomeHtml}</div>`;
+                                const paidIncomeHtml = paidIncome.length > 0
+                                ? paidIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">+${e.value}</span>`).join(' ')
+                                : '0 ₽';
+                                earningsHtml += `<div class="earnings paid-earnings"><strong>Заработано:</strong> ${paidIncomeHtml} = ${formatEarnings(totalPaidIncome)} ₽</div>`;
                             }
                             if (totalPendingIncome !== 0) {
-                                earningsHtml += `<div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingIncomeHtml}</div>`;
+                                const pendingIncomeHtml = pendingIncome.length > 0
+                                ? pendingIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">+${e.value}</span>`).join(' ')
+                                : '0 ₽';
+                                earningsHtml += `<div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingIncomeHtml} = ${formatEarnings(totalPendingIncome)} ₽</div>`;
                             }
-                            if (totalExpenses !== 0) {
-                                earningsHtml += `<div class="earnings expense-earnings"><strong>Расходы:</strong> ${expensesHtml}</div>`;
+
+                            // Формируем HTML для долгов мне (кто должен работнику)
+                            if (Object.keys(debtsOwedToWorker).length > 0) {
+                                earningsHtml += '<div class="earnings receiver-earnings"><strong>Долги мне:</strong>';
+                                Object.entries(debtsOwedToWorker).forEach(([debtor, debts]) => {
+                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-index="${debt.index}">+${debt.value}</span>`).join(' + ');
+                                    const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
+                                    earningsHtml += `<div>${debtor} → ${worker}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
+                                });
+                                earningsHtml += '</div>';
+                            }
+
+                            // Формируем HTML для расходов (кому должен работник, с минусом)
+                            if (Object.keys(expenseBreakdownByReceiver).length > 0) {
+                                earningsHtml += '<div class="earnings expense-earnings"><strong>Расходы:</strong>';
+                                Object.entries(expenseBreakdownByReceiver).forEach(([receiver, debts]) => {
+                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-index="${debt.index}">${debt.value}</span>`).join(' + ');
+                                    const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
+                                    earningsHtml += `<div>${worker} → ${receiver}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
+                                });
+                                earningsHtml += '</div>';
                             }
 
                             const card = document.createElement('div');
@@ -1624,7 +1671,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             <li data-filter="manual">Ручная цена: <span>${manualObjects}</span></li>
                             <li data-filter="services">Услуги: <span>${services}</span></li>
                             <li data-filter="expenses">Расходы: <span>${expenses}</span></li>
-                            ${lowKtuCount > 0 ? `<li data-filter="lowKtu">КТУ ниже нормы: <span>${lowKtuCount}</span></li>` : ''}
                             </ul>
                             <div class="worker-chart" data-earnings="${totalEarnings}" data-worker="${worker}"></div>
                             `;
@@ -1650,7 +1696,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                         case 'manual': filterValue += 'объектов с ручной ценой'; break;
                                         case 'services': filterValue += 'услуги'; break;
                                         case 'expenses': filterValue += 'расходов'; break;
-                                        case 'lowKtu': filterValue += 'КТУ ниже нормы'; break;
                                     }
                                     filterInput.value = filterValue;
                                     renderObjects();
