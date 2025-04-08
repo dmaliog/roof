@@ -119,6 +119,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     (f === manualPriceForm ? (e) => addObject(e, false, true) : (e) => addObject(e)));
                     showForm(null);
                 };
+
+                // Обработчики для object-form
+                if (f === objectForm) {
+                    selectDisplay.removeEventListener('click', toggleServiceOptions);
+                    selectDisplay.addEventListener('click', toggleServiceOptions);
+
+                    function toggleServiceOptions() {
+                        optionsList.classList.toggle('show');
+                    }
+
+                    optionsList.querySelectorAll('li').forEach(li => {
+                        li.removeEventListener('click', selectServiceOption);
+                        li.addEventListener('click', selectServiceOption);
+                    });
+
+                    function selectServiceOption(e) {
+                        const selectedValueText = e.target.getAttribute('data-value');
+                        selectDisplay.innerHTML = `${e.target.textContent} <span class="dropdown-icon">▾</span>`;
+                        selectedValue.value = selectedValueText;
+                        optionsList.classList.remove('show');
+                    }
+                }
+
+                // Обработчики для manual-price-form
+                if (f === manualPriceForm) {
+                    manualSelectDisplay.removeEventListener('click', toggleManualServiceOptions);
+                    manualSelectDisplay.addEventListener('click', toggleManualServiceOptions);
+
+                    function toggleManualServiceOptions() {
+                        manualOptionsList.classList.toggle('show');
+                    }
+
+                    manualOptionsList.querySelectorAll('li').forEach(li => {
+                        li.removeEventListener('click', selectManualServiceOption);
+                        li.addEventListener('click', selectManualServiceOption);
+                    });
+
+                    function selectManualServiceOption(e) {
+                        const selectedValueText = e.target.getAttribute('data-value');
+                        const [name, unit] = selectedValueText.split('|');
+                        manualSelectDisplay.innerHTML = `${name} (${unit}) <span class="dropdown-icon">▾</span>`;
+                        manualSelectedValue.value = selectedValueText;
+                        manualPriceLabel.textContent = `Цена за ${unit} (₽):`;
+                        manualOptionsList.classList.remove('show');
+                    }
+                }
             } else {
                 f.style.display = 'none';
             }
