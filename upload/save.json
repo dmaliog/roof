@@ -43,7 +43,7 @@
     "timestamp": "08.04.2025, 19:51:52",
     "isExpense": false,
     "isCustomService": true,
-    "isPaid": false,
+    "isPaid": true,
     "editHistory": [
       {
         "timestamp": "08.04.2025, 19:51:52",
@@ -83,27 +83,6 @@
     "editHistory": []
   },
   {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-465.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "08.04.2025, 12:24:34",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": [
-      {
-        "timestamp": "08.04.2025, 12:25:28",
-        "changes": "Название: \"Займ\" → \"Еда\""
-      }
-    ],
-    "editedTimestamp": "08.04.2025, 12:25:28"
-  },
-  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-882.79",
@@ -128,36 +107,6 @@
     ],
     "isPaid": false,
     "editedTimestamp": "08.04.2025, 19:57:31"
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-700.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "07.04.2025, 19:52:58",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-2500.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/6/2025, 9:50:17 PM",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
   },
   {
     "name": "УЗТМ Фонарь 1-2",
@@ -191,7 +140,7 @@
     "timestamp": "4/6/2025, 7:07:50 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "editHistory": []
   },
   {
@@ -216,7 +165,7 @@
     "timestamp": "4/4/2025, 10:19:02 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "editHistory": []
   },
   {
