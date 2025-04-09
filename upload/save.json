@@ -51,21 +51,6 @@
     "editHistory": []
   },
   {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-2900.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "08.04.2025, 20:02:53",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
     "name": "Погрузо-разгрузочные работы",
     "service": "Погрузо-разгрузочные работы",
     "cost": "4000.00",
