@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterInput = document.getElementById('object-filter');
 
     // Переменные состояния
-    let objects = [];
+    window.objects = []; // Делаем objects глобальной
+    let objects = window.objects; // Локальная ссылка для удобства
     let workers = [];
     let editMode = false;
     let prices = [];
