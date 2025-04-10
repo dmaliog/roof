@@ -47,8 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterInput = document.getElementById('object-filter');
 
     // Переменные состояния
-    window.objects = []; // Делаем objects глобальной
-    let objects = window.objects; // Локальная ссылка для удобства
+    window.objects = []; // Глобальная переменная
     let workers = [];
     let editMode = false;
     let prices = [];
@@ -64,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.tagName === 'LI') {
             const selectedValue = e.target.getAttribute('data-value');
             serviceSelect.innerHTML = `${selectedValue} <span class="dropdown-icon">▾</span>`;
-            serviceSelect.value = selectedValue; // Устанавливаем значение
+            serviceSelect.value = selectedValue;
             toggleInputState(customServiceForm, 'serviceName', serviceSelect);
             serviceOptions.classList.remove('show');
         }
@@ -121,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     showForm(null);
                 };
 
-                // Обработчики для object-form
                 if (f === objectForm) {
                     selectDisplay.removeEventListener('click', toggleServiceOptions);
                     selectDisplay.addEventListener('click', toggleServiceOptions);
@@ -143,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Обработчики для manual-price-form
                 if (f === manualPriceForm) {
                     manualSelectDisplay.removeEventListener('click', toggleManualServiceOptions);
                     manualSelectDisplay.addEventListener('click', toggleManualServiceOptions);
@@ -201,12 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (form === customServiceForm) {
             if (selectedValue && selectedValue !== "Своё название" && selectedValue !== "Выберите") {
-                inputWrapper.style.display = 'none'; // Скрываем поле
-                input.disabled = true; // Отключаем поле
-                input.value = ''; // Очищаем значение
+                inputWrapper.style.display = 'none';
+                input.disabled = true;
+                input.value = '';
             } else {
-                inputWrapper.style.display = 'block'; // Показываем поле
-                input.disabled = false; // Включаем поле
+                inputWrapper.style.display = 'block';
+                input.disabled = false;
                 input.focus();
             }
         } else if (form === expenseForm) {
@@ -337,8 +334,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateSuggestions(activeForm) {
-        const uniqueObjectNames = [...new Set(objects.filter(obj => !obj.isExpense && !obj.isCustomService).map(obj => obj.name))];
-        const uniqueExpenseNames = [...new Set(objects.filter(obj => obj.isExpense).map(obj => obj.name))];
+        const uniqueObjectNames = [...new Set(window.objects.filter(obj => !obj.isExpense && !obj.isCustomService).map(obj => obj.name))];
+        const uniqueExpenseNames = [...new Set(window.objects.filter(obj => obj.isExpense).map(obj => obj.name))];
 
         const renderSuggestions = (input, suggestionsList, names) => {
             suggestionsList.innerHTML = '';
@@ -385,8 +382,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     expenseNameInput.addEventListener('input', () => {
-        toggleFuelCalcMode(); // Обновляем режим бензина при вводе
-        populateSuggestions(expenseForm); // Обновляем автокомплит
+        toggleFuelCalcMode();
+        populateSuggestions(expenseForm);
     });
 
     expenseReceiversCheckboxGroup.addEventListener('change', toggleFuelCalcMode);
@@ -415,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 const fetchOptions = {
-                    cache: 'no-store', // Отключаем кэширование
+                    cache: 'no-store',
                     headers: {
                         'Cache-Control': 'no-store'
                     }
@@ -428,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             fetch('../custom-services.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
                             fetch('../expense-types.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => [])
                 ]).then(([objectsData, workersData, pricesData, customServicesData, expenseTypesData]) => {
-                    objects = objectsData;
+                    window.objects = objectsData; // Присваиваем данные глобальной переменной
                     workers = workersData;
                     prices = pricesData;
                     customServices = customServicesData;
@@ -438,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     expenseTypes.push({ name: "Еда" }, { name: "Займ" });
                     customServices.unshift({ name: "Своё название" });
 
-                    customServiceNames = [...new Set(objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
+                    customServiceNames = [...new Set(window.objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
                     renderObjects();
                     renderWorkerStats();
                     populateWorkers();
@@ -453,13 +450,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         }
 
-        // Обновленный обработчик кнопки "Очистить кэш"
         clearCacheBtn.addEventListener('click', () => {
-            loadData(); // Просто перезагружаем данные
+            loadData();
             alert('Данные обновлены из JSON-файлов.');
         });
 
-        // Обработчики кнопок для показа форм
         showObjectFormBtn.addEventListener('click', () => showForm(objectForm));
         showExpenseFormBtn.addEventListener('click', () => showForm(expenseForm));
         showManualPriceFormBtn.addEventListener('click', () => showForm(manualPriceForm));
@@ -495,13 +490,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                            timestamp: new Date().toLocaleString(),
                                            isExpense: false,
                                            isCustomService: true,
-                                           isPaid: isPaid, // Добавляем статус "Выплачено"
-                                           editHistory: isEditing ? objects[customServiceForm.dataset.editIndex]?.editHistory || [] : []
+                                           isPaid: isPaid,
+                                           editHistory: isEditing ? window.objects[customServiceForm.dataset.editIndex]?.editHistory || [] : []
             };
 
             if (isEditing) {
                 const index = parseInt(customServiceForm.dataset.editIndex);
-                const oldObj = objects[index];
+                const oldObj = window.objects[index];
                 const changes = [];
                 if (serviceName !== oldObj.name) changes.push(`Название: "${oldObj.name}" → "${serviceName}"`);
                 if (servicePrice !== parseFloat(oldObj.cost)) changes.push(`Стоимость: ${oldObj.cost} → ${servicePrice}`);
@@ -510,13 +505,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     object.editedTimestamp = new Date().toLocaleString();
                     object.editHistory.push({ timestamp: object.editedTimestamp, changes: changes.join(', ') });
                 }
-                object.isPaid = isPaid; // Обновляем статус "Выплачено" при редактировании
-                objects[index] = object;
+                object.isPaid = isPaid;
+                window.objects[index] = object;
             } else {
-                objects.unshift(object);
+                window.objects.unshift(object);
             }
 
-            customServiceNames = [...new Set(objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
+            customServiceNames = [...new Set(window.objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
             renderObjects();
             renderWorkerStats();
             populateSuggestions(customServiceForm);
@@ -527,7 +522,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(isEditing ? 'Услуга изменена.' : 'Услуга добавлена.');
         });
 
-        // Обработчики отправки других форм
         objectForm.addEventListener('submit', (e) => {
             if (objectForm.dataset.isEditing !== 'true') addObject(e);
         });
@@ -540,7 +534,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (manualPriceForm.dataset.isEditing !== 'true') addObject(e, false, true);
                 });
 
-                    // Заполнение списка участников
                     function populateWorkers() {
                         const createCheckbox = (name, group, prefix, withKtu = false) => {
                             const label = document.createElement('label');
@@ -575,7 +568,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
 
-                    // Автокомплит
                     function addObject(e, isExpense = false, isManual = false) {
                         e.preventDefault();
                         const formToUse = isExpense ? expenseForm : (isManual ? manualPriceForm : objectForm);
@@ -598,8 +590,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             if (expenseName.toLowerCase() === 'бензин' && receivers.length > 0) {
                                 const fuelMode = formToUse.querySelector('input[name="fuelMode"]:checked').value;
-                                const fuelConsumption = 6.7; // 6,7 литров на 100 км
-                                const fuelPrice = 61; // 61 рубль за литр
+                                const fuelConsumption = 6.7;
+                                const fuelPrice = 61;
 
                                 if (fuelMode === 'amount') {
                                     expenseAmount = parseFloat(formToUse.querySelector('input[name="expenseAmount"]').value);
@@ -727,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           timestamp: new Date().toLocaleString(),
                           isExpense: false,
                           manualPrice: true,
-                          isPaid: isPaid, // Добавляем статус "Выплачено"
+                          isPaid: isPaid,
                           editHistory: []
                                 };
                             } else {
@@ -743,13 +735,13 @@ document.addEventListener('DOMContentLoaded', () => {
                           workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
                           timestamp: new Date().toLocaleString(),
                           isExpense: false,
-                          isPaid: isPaid, // Добавляем статус "Выплачено"
+                          isPaid: isPaid,
                           editHistory: []
                                 };
                             }
                         }
 
-                        objects.unshift(object);
+                        window.objects.unshift(object);
                         renderObjects();
                         renderWorkerStats();
                         populateSuggestions(formToUse);
@@ -770,9 +762,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert((isExpense ? 'Расход' : 'Объект') + ' добавлен.');
                     }
 
-                    // Экспорт в JSON
                     exportBtn.addEventListener('click', () => {
-                        const json = JSON.stringify(objects, null, 2);
+                        const json = JSON.stringify(window.objects, null, 2);
                         const blob = new Blob([json], { type: 'application/json' });
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');
@@ -782,13 +773,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         URL.revokeObjectURL(url);
                     });
 
-                    // Очистка кэша
                     clearCacheBtn.addEventListener('click', () => {
                         caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
                         loadData();
                     });
 
-                    // Переключение режима редактирования
                     toggleEditModeBtn.addEventListener('click', () => {
                         editMode = !editMode;
                         toggleEditModeBtn.textContent = `Режим редактирования: ${editMode ? 'вкл' : 'выкл'}`;
@@ -796,17 +785,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderObjects();
                     });
 
-                    // Закрытие модального окна истории
                     closeHistoryBtn.addEventListener('click', () => {
                         historyModal.style.display = 'none';
                     });
 
-                    // Фильтрация объектов
                     filterInput.addEventListener('input', () => {
                         renderObjects();
                     });
 
-                    // Заполнение списка услуг
                     function populateServiceSelect(prices, display, hiddenInput, list) {
                         list.innerHTML = '';
                         prices.forEach(price => {
@@ -855,7 +841,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             serviceOptions.appendChild(li);
                         });
 
-                        // Сброс при загрузке
                         serviceSelect.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
                         serviceSelect.value = '';
                         toggleInputState(customServiceForm, 'serviceName', serviceSelect);
@@ -876,18 +861,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             expenseTypeOptions.appendChild(li);
                         });
 
-                        // Сброс при загрузке
                         expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
                         expenseTypeValue.value = '';
                         toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
                     }
 
-                    // Отрисовка списка объектов
                     function renderObjects() {
                         const filterText = filterInput.value.trim().toLowerCase();
                         resultsDiv.innerHTML = '';
 
-                        let filteredObjects = !filterText ? [...objects] : objects.filter(obj => {
+                        let filteredObjects = !filterText ? [...window.objects] : window.objects.filter(obj => {
                             const workerMatch = filterText.split(' ')[0];
                             const typeMatch = filterText.replace(workerMatch, '').trim();
                             const hasWorker = obj.workers.some(w => (typeof w === 'string' ? w : w.name).toLowerCase() === workerMatch) ||
@@ -919,7 +902,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             filteredObjects.forEach((obj, index) => {
                                 let costDetailsHtml = '';
                                 if (obj.isExpense) {
-                                    // Расходы: формируем списания и начисления в двух строках
                                     const writeOffPerWorker = parseFloat(obj.cost) / obj.workers.length;
                                     const accrualPerReceiver = obj.receivers.length > 0 ? Math.abs(parseFloat(obj.cost)) / obj.receivers.length : 0;
 
@@ -937,7 +919,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ${accrualDetails ? `<div class="info-line cost-per-receiver"><span class="label">Начисление:</span><span class="value accrual">${accrualDetails}</span></div>` : ''}
                                     `;
                                 } else {
-                                    // Доходы: оставляем как есть
                                     const costPerWorker = obj.workers.map(w => `${w.name}: ${w.cost} ₽ (КТУ ${w.ktu})`).join(', ');
                                     costDetailsHtml = `<div class="info-line cost-per-worker"><span class="label">Распределение:</span><span class="value">${costPerWorker}</span></div>`;
                                 }
@@ -976,8 +957,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                                 let costFormula = `${obj.cost} ₽`;
                                 if (obj.isExpense && obj.name.toLowerCase() === 'бензин' && obj.receivers.length > 0) {
-                                    const fuelConsumption = 6.7; // 6,7 литров на 100 км
-                                    const fuelPrice = 61; // 61 рубль за литр
+                                    const fuelConsumption = 6.7;
+                                    const fuelPrice = 61;
                                     if (obj.distance && !obj.startMileage) {
                                         const distance = parseFloat(obj.distance);
                                         const liters = (distance * fuelConsumption) / 100;
@@ -1037,7 +1018,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    // Привязка кнопок "Скопировать"
                     function bindCopyButtons() {
                         document.querySelectorAll('.copy-btn').forEach(btn => {
                             btn.removeEventListener('click', handleCopy);
@@ -1066,11 +1046,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         .join('\n')
                         .trim();
 
-                        // Проверка поддержки clipboard API и fallback-метод
                         if (navigator.clipboard && window.isSecureContext) {
                             navigator.clipboard.writeText(textToCopy)
-                            .then(() => {
-                            })
+                            .then(() => {})
                             .catch(err => {
                                 fallbackCopy(textToCopy);
                             });
@@ -1079,7 +1057,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    // Альтернативный метод копирования через textarea
                     function fallbackCopy(text) {
                         const textArea = document.createElement('textarea');
                         textArea.value = text;
@@ -1096,7 +1073,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    // Привязка кнопок "Выплачено"
                     function bindPaidButtons() {
                         document.querySelectorAll('.paid-btn').forEach(btn => {
                             btn.removeEventListener('click', handlePaidToggle);
@@ -1107,14 +1083,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     function handlePaidToggle(e) {
                         e.stopPropagation();
                         const index = parseInt(e.target.getAttribute('data-index'));
-                        const obj = objects[index];
-                        obj.isPaid = !obj.isPaid; // Переключаем статус
+                        const obj = window.objects[index];
+                        obj.isPaid = !obj.isPaid;
                         e.target.textContent = obj.isPaid ? 'Выплачено' : 'Не выплачено';
                         e.target.classList.toggle('paid', obj.isPaid);
-                        renderWorkerStats(); // Обновляем статистику, если она зависит от статуса
+                        renderWorkerStats();
                     }
 
-                    // Привязка обработчиков удаления
                     function bindDeleteCrosses() {
                         document.querySelectorAll('.delete-cross').forEach(cross => {
                             cross.removeEventListener('click', handleDelete);
@@ -1124,15 +1099,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     function handleDelete(e) {
                         const index = parseInt(e.target.getAttribute('data-index'));
-                        if (confirm(`Удалить "${objects[index].isExpense ? 'расход' : 'объект'} "${objects[index].name}"?`)) {
-                            objects.splice(index, 1);
+                        if (confirm(`Удалить "${window.objects[index].isExpense ? 'расход' : 'объект'} "${window.objects[index].name}"?`)) {
+                            window.objects.splice(index, 1);
                             renderObjects();
                             renderWorkerStats();
                             populateSuggestions(objectForm);
                         }
                     }
 
-                    // Привязка обработчиков истории
                     function bindCalendarButtons() {
                         document.querySelectorAll('.calendar-btn').forEach(btn => {
                             btn.removeEventListener('click', showHistory);
@@ -1142,7 +1116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     function showHistory(e) {
                         const index = parseInt(e.target.getAttribute('data-index'));
-                        const obj = objects[index];
+                        const obj = window.objects[index];
                         historyList.innerHTML = '';
 
                         const originalEntry = document.createElement('div');
@@ -1208,7 +1182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     function renderTemporaryObject(index, hIndex) {
-                        const obj = objects[index];
+                        const obj = window.objects[index];
                         const tempObj = hIndex === null ? obj : getObjectAtHistory(obj, hIndex);
                         const entry = resultsDiv.querySelector(`[data-index="${index}"]`);
                         const costPerWorker = tempObj.isExpense
@@ -1237,9 +1211,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         bindCalendarButtons();
                     }
 
-                    // Редактирование объекта
                     function editObject(index) {
-                        const obj = objects[index];
+                        const obj = window.objects[index];
                         const isExpense = obj.isExpense;
                         const isCustomService = obj.isCustomService;
                         const formToUse = isExpense ? expenseForm : (isCustomService ? customServiceForm : (obj.manualPrice ? manualPriceForm : objectForm));
@@ -1253,7 +1226,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         formToUse.dataset.isEditing = 'true';
                         formToUse.dataset.editIndex = index;
 
-                        // Заполняем чекбокс "Выплачено"
                         formToUse.querySelector('input[name="isPaid"]').checked = obj.isPaid || false;
 
                         if (isExpense) {
@@ -1295,12 +1267,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             const areaMatch = obj.area.match(/([\d.]+)\s*x\s*([\d.]+)\s*=\s*([\d.]+)\s*м²/) || obj.area.match(/([\d.]+)\s*м²/);
                             if (areaMatch) {
-                                if (areaMatch.length === 4) { // Если есть длина и ширина
+                                if (areaMatch.length === 4) {
                                     formToUse.querySelector('input[name="length"]').value = parseFloat(areaMatch[1]);
                                     formToUse.querySelector('input[name="width"]').value = parseFloat(areaMatch[2]);
                                     formToUse.querySelector('input[name="area"]').value = '';
                                     formToUse.querySelector('input[name="area"]').disabled = true;
-                                } else { // Только площадь
+                                } else {
                                     formToUse.querySelector('input[name="area"]').value = parseFloat(areaMatch[1]);
                                     formToUse.querySelector('input[name="length"]').value = '';
                                     formToUse.querySelector('input[name="width"]').value = '';
@@ -1371,9 +1343,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         formToUse.onsubmit = (e) => {
                             e.preventDefault();
                             const index = parseInt(formToUse.dataset.editIndex);
-                            const oldObj = objects[index];
+                            const oldObj = window.objects[index];
                             const changes = [];
-                            const newIsPaid = formToUse.querySelector('input[name="isPaid"]').checked; // Новый статус "Выплачено"
+                            const newIsPaid = formToUse.querySelector('input[name="isPaid"]').checked;
 
                             if (isExpense) {
                                 const newName = expenseNameInput.disabled ? expenseTypeValue.value : expenseNameInput.value.trim();
@@ -1400,8 +1372,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                             alert('Введите корректное расстояние!');
                                             return;
                                         }
-                                        const fuelConsumption = 6.7; // 6,7 литров на 100 км
-                                        const fuelPrice = 61; // 61 рубль за литр
+                                        const fuelConsumption = 6.7;
+                                        const fuelPrice = 61;
                                         const liters = (distance * fuelConsumption) / 100;
                                         newAmount = -(liters * fuelPrice);
                                     }
@@ -1512,7 +1484,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 oldObj.editHistory.push({ timestamp: oldObj.editedTimestamp, changes: changes.join(', ') });
                             }
 
-                            customServiceNames = [...new Set(objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
+                            customServiceNames = [...new Set(window.objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
                             renderObjects();
                             renderWorkerStats();
                             formToUse.reset();
@@ -1535,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const getWorkerName = (w) => typeof w === 'string' ? w : (w && w.name ? w.name : '');
 
                         workers.forEach(worker => {
-                            const workerObjects = objects.filter(obj =>
+                            const workerObjects = window.objects.filter(obj =>
                             (!obj.isExpense || (obj.isExpense && !obj.isPaid)) &&
                             ((obj.workers && obj.workers.some(w => getWorkerName(w) === worker)) ||
                             (obj.receivers && obj.receivers.includes(worker)))
@@ -1551,7 +1523,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             const incomeObjects = workerObjects.filter(obj => !obj.isExpense);
                             const expenseObjects = workerObjects.filter(obj => obj.isExpense);
 
-                            // Доходы
                             const incomeBreakdown = incomeObjects.map((obj, index) => {
                                 const workerData = obj.workers.find(w => getWorkerName(w) === worker);
                                 const contribution = workerData ? parseFloat(workerData.cost) : 0;
@@ -1563,22 +1534,20 @@ document.addEventListener('DOMContentLoaded', () => {
                             const totalPaidIncome = paidIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
                             const totalPendingIncome = pendingIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
 
-                            // Расходы и долги
-                            const expenseBreakdownByReceiver = {}; // Кому должен работник
-                            const debtsOwedToWorker = {}; // Кто должен работнику
+                            const expenseBreakdownByReceiver = {};
+                            const debtsOwedToWorker = {};
 
                             expenseObjects.forEach((obj, index) => {
-                                const totalCost = parseFloat(obj.cost); // -882.79
-                                const workersCount = obj.workers.length; // 2
-                                const writeOffPerWorker = totalCost / workersCount; // -441.39
+                                const totalCost = parseFloat(obj.cost);
+                                const workersCount = obj.workers.length;
+                                const writeOffPerWorker = totalCost / workersCount;
 
-                                // Если работник в workers (списание)
                                 if (obj.workers.some(w => getWorkerName(w) === worker)) {
                                     obj.receivers.forEach(receiver => {
-                                        if (receiver !== worker) { // Исключаем долг самому себе
+                                        if (receiver !== worker) {
                                             if (!expenseBreakdownByReceiver[receiver]) expenseBreakdownByReceiver[receiver] = [];
                                             expenseBreakdownByReceiver[receiver].push({
-                                                value: writeOffPerWorker.toFixed(2), // -441.39
+                                                value: writeOffPerWorker.toFixed(2),
                                                                                       index,
                                                                                       className: 'expense-earning'
                                             });
@@ -1586,14 +1555,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                     });
                                 }
 
-                                // Если работник в receivers (долги мне)
                                 if (obj.receivers.includes(worker)) {
                                     obj.workers.forEach(debtor => {
                                         const debtorName = getWorkerName(debtor);
-                                        if (debtorName !== worker) { // Исключаем долг от самого себя
+                                        if (debtorName !== worker) {
                                             if (!debtsOwedToWorker[debtorName]) debtsOwedToWorker[debtorName] = [];
                                             debtsOwedToWorker[debtorName].push({
-                                                value: Math.abs(writeOffPerWorker).toFixed(2), // 441.39
+                                                value: Math.abs(writeOffPerWorker).toFixed(2),
                                                                                index,
                                                                                className: 'receiver-earning'
                                             });
@@ -1720,7 +1688,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderWorkerCharts();
                     }
 
-                    // Фильтрация по работнику
                     function filterByWorker(worker) {
                         filterInput.value = worker;
                         renderObjects();
@@ -1737,13 +1704,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (!filterGroup.querySelector('.filter-reset')) filterGroup.appendChild(resetFilter);
                     }
 
-
                     function renderWorkerCharts() {
                         document.querySelectorAll('.worker-chart').forEach(chartDiv => {
                             const worker = chartDiv.dataset.worker;
                             const earnings = parseFloat(chartDiv.dataset.earnings);
 
-                            const workerObjects = objects.filter(obj =>
+                            const workerObjects = window.objects.filter(obj =>
                             (obj.workers.some(w => (typeof w === 'string' ? w : w.name) === worker)) ||
                             (obj.receivers && obj.receivers.includes(worker))
                             );
@@ -1859,5 +1825,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     toggleDimensionFields('object');
                     toggleDimensionFields('manual');
-
 });
