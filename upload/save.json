@@ -2,6 +2,76 @@
   {
     "name": "Займ",
     "service": "Расход",
+    "cost": "-378.00",
+    "workers": [
+      "Артём"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "4/11/2025, 3:10:42 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-412.79",
+    "workers": [
+      "Артём",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "4/11/2025, 3:09:07 PM",
+    "isExpense": true,
+    "startMileage": "263595.00",
+    "endMileage": "263696.00",
+    "distance": "101.00",
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-580.35",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "4/11/2025, 3:07:13 PM",
+    "isExpense": true,
+    "startMileage": "263453.00",
+    "endMileage": "263595.00",
+    "distance": "142.00",
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-490.44",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "4/11/2025, 3:05:27 PM",
+    "isExpense": true,
+    "distance": "120.00",
+    "editHistory": []
+  },
+  {
+    "name": "Займ",
+    "service": "Расход",
     "cost": "-348.00",
     "workers": [
       "Слава"
