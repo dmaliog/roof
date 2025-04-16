@@ -188,6 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
             amountInput.style.display = 'block';
             distanceInput.style.display = 'none';
         }
+        // Сбрасываем галочку "Ростиковская методика"
+        const rostikMethodCheckbox = form.querySelector('input[name="useRostikMethod"]');
+        if (rostikMethodCheckbox) rostikMethodCheckbox.checked = false;
     }
 
     // Управление состоянием полей ввода
@@ -698,7 +701,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
 
                             let totalCost;
-                            const totalKtu = workersData.reduce((sum, w) => sum + w.ktu, 0);
+                            let workersWithCost;
+                            const useRostikMethod = formToUse.querySelector('input[name="useRostikMethod"]').checked;
 
                             if (isManual) {
                                 const pricePerSquare = parseFloat(manualPriceForm.querySelector('input[name="pricePerSquare"]').value);
@@ -708,6 +712,48 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
                                 const [serviceName, unit] = selectedOption.split('|');
                                 totalCost = (area * pricePerSquare).toFixed(2);
+
+                                if (useRostikMethod) {
+                                    // Ростиковская методика: делим на количество участников, затем корректируем по КТУ
+                                    const numWorkers = workersData.length;
+                                    let baseAmountPerWorker = parseFloat(totalCost) / numWorkers;
+                                    let initialWorkersWithCost = workersData.map(w => ({
+                                        name: w.name,
+                                        ktu: w.ktu,
+                                        cost: baseAmountPerWorker * w.ktu
+                                    }));
+
+                                    // Подсчитываем сумму, распределённую на первом этапе
+                                    const distributedAmount = initialWorkersWithCost.reduce((sum, w) => sum + w.cost, 0);
+                                    const remainingAmount = parseFloat(totalCost) - distributedAmount;
+
+                                    // Перераспределяем остаток между участниками с КТУ 1
+                                    const workersWithKtu1 = workersData.filter(w => w.ktu === 1).length;
+                                    if (workersWithKtu1 > 0 && remainingAmount > 0) {
+                                        const additionalPerKtu1Worker = remainingAmount / workersWithKtu1;
+                                        workersWithCost = initialWorkersWithCost.map(w => ({
+                                            name: w.name,
+                                            ktu: w.ktu,
+                                            cost: (w.ktu === 1 ? w.cost + additionalPerKtu1Worker : w.cost).toFixed(2)
+                                        }));
+                                    } else {
+                                        workersWithCost = initialWorkersWithCost.map(w => ({
+                                            name: w.name,
+                                            ktu: w.ktu,
+                                            cost: w.cost.toFixed(2)
+                                        }));
+                                    }
+                                } else {
+                                    // Стандартная методика: делим на суммарный КТУ
+                                    const totalKtu = workersData.reduce((sum, w) => sum + w.ktu, 0);
+                                    const amountPerKtu = parseFloat(totalCost) / totalKtu;
+                                    workersWithCost = workersData.map(w => ({
+                                        name: w.name,
+                                        ktu: w.ktu,
+                                        cost: (amountPerKtu * w.ktu).toFixed(2)
+                                    }));
+                                }
+
                                 object = {
                                     name: objectName,
                                     length: length > 0 ? length.toFixed(2) : null,
@@ -715,16 +761,59 @@ document.addEventListener('DOMContentLoaded', () => {
                           area: length > 0 && width > 0 ? `${length.toFixed(2)} x ${width.toFixed(2)} = ${area.toFixed(2)} м²` : `${area.toFixed(2)} м²`,
                           service: serviceName,
                           cost: totalCost,
-                          workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
+                          workers: workersWithCost,
                           timestamp: new Date().toLocaleString(),
                           isExpense: false,
                           manualPrice: true,
                           isPaid: isPaid,
+                          useRostikMethod: useRostikMethod,
                           editHistory: []
                                 };
                             } else {
                                 const [price, unit, serviceName] = selectedOption.split('|');
                                 totalCost = (area * parseFloat(price)).toFixed(2);
+
+                                if (useRostikMethod) {
+                                    // Ростиковская методика: делим на количество участников, затем корректируем по КТУ
+                                    const numWorkers = workersData.length;
+                                    let baseAmountPerWorker = parseFloat(totalCost) / numWorkers;
+                                    let initialWorkersWithCost = workersData.map(w => ({
+                                        name: w.name,
+                                        ktu: w.ktu,
+                                        cost: baseAmountPerWorker * w.ktu
+                                    }));
+
+                                    // Подсчитываем сумму, распределённую на первом этапе
+                                    const distributedAmount = initialWorkersWithCost.reduce((sum, w) => sum + w.cost, 0);
+                                    const remainingAmount = parseFloat(totalCost) - distributedAmount;
+
+                                    // Перераспределяем остаток между участниками с КТУ 1
+                                    const workersWithKtu1 = workersData.filter(w => w.ktu === 1).length;
+                                    if (workersWithKtu1 > 0 && remainingAmount > 0) {
+                                        const additionalPerKtu1Worker = remainingAmount / workersWithKtu1;
+                                        workersWithCost = initialWorkersWithCost.map(w => ({
+                                            name: w.name,
+                                            ktu: w.ktu,
+                                            cost: (w.ktu === 1 ? w.cost + additionalPerKtu1Worker : w.cost).toFixed(2)
+                                        }));
+                                    } else {
+                                        workersWithCost = initialWorkersWithCost.map(w => ({
+                                            name: w.name,
+                                            ktu: w.ktu,
+                                            cost: w.cost.toFixed(2)
+                                        }));
+                                    }
+                                } else {
+                                    // Стандартная методика: делим на суммарный КТУ
+                                    const totalKtu = workersData.reduce((sum, w) => sum + w.ktu, 0);
+                                    const amountPerKtu = parseFloat(totalCost) / totalKtu;
+                                    workersWithCost = workersData.map(w => ({
+                                        name: w.name,
+                                        ktu: w.ktu,
+                                        cost: (amountPerKtu * w.ktu).toFixed(2)
+                                    }));
+                                }
+
                                 object = {
                                     name: objectName,
                                     length: length > 0 ? length.toFixed(2) : null,
@@ -732,10 +821,11 @@ document.addEventListener('DOMContentLoaded', () => {
                           area: length > 0 && width > 0 ? `${length.toFixed(2)} x ${width.toFixed(2)} = ${area.toFixed(2)} м²` : `${area.toFixed(2)} м²`,
                           service: serviceName,
                           cost: totalCost,
-                          workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (parseFloat(totalCost) * w.ktu / totalKtu).toFixed(2) })),
+                          workers: workersWithCost,
                           timestamp: new Date().toLocaleString(),
                           isExpense: false,
                           isPaid: isPaid,
+                          useRostikMethod: useRostikMethod,
                           editHistory: []
                                 };
                             }
@@ -1305,6 +1395,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                     }
                                 }
                             });
+
+                            const rostikMethodCheckbox = formToUse.querySelector('input[name="useRostikMethod"]');
+                            if (rostikMethodCheckbox) {
+                                rostikMethodCheckbox.checked = obj.useRostikMethod || false;
+                            }
                         }
 
                         cancelBtn.onclick = () => {
@@ -1389,12 +1484,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (newAmount !== parseFloat(oldObj.cost)) changes.push(`Сумма: ${oldObj.cost} → ${newAmount}`);
                                 if (JSON.stringify(newWorkers) !== JSON.stringify(oldObj.workers)) changes.push(`Участники (списание): "${oldObj.workers.join(', ')}" → "${newWorkers.join(', ')}"`);
                                 if (JSON.stringify(newReceivers) !== JSON.stringify(oldObj.receivers)) changes.push(`Участники (начисление): "${oldObj.receivers.join(', ')}" → "${newReceivers.join(', ')}"`);
+                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
 
                                 oldObj.name = newName;
                                 oldObj.cost = newAmount.toFixed(2);
                                 oldObj.workers = newWorkers;
                                 oldObj.receivers = newReceivers;
-                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
                                 oldObj.isPaid = newIsPaid;
                             } else if (isCustomService) {
                                 const newName = serviceNameInput.disabled ? serviceSelect.value : serviceNameInput.value.trim();
@@ -1410,29 +1505,27 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
 
                                 const totalKtu = newWorkers.reduce((sum, w) => sum + w.ktu, 0);
-                                const newWorkersWithCost = newWorkers.map(w => ({ ...w, cost: (newCost * w.ktu / totalKtu).toFixed(2) }));
+                                const workersWithCost = newWorkers.map(w => ({ name: w.name, ktu: w.ktu, cost: (newCost * w.ktu / totalKtu).toFixed(2) }));
 
                                 if (newName !== oldObj.name) changes.push(`Название: "${oldObj.name}" → "${newName}"`);
                                 if (newCost !== parseFloat(oldObj.cost)) changes.push(`Стоимость: ${oldObj.cost} → ${newCost}`);
-                                if (JSON.stringify(newWorkersWithCost) !== JSON.stringify(oldObj.workers)) changes.push(`Участники: "${oldObj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}" → "${newWorkersWithCost.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}"`);
+                                if (JSON.stringify(newWorkers) !== JSON.stringify(oldObj.workers)) changes.push(`Участники: "${oldObj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}" → "${newWorkers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}"`);
+                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
 
                                 oldObj.name = newName;
                                 oldObj.service = newName;
                                 oldObj.cost = newCost.toFixed(2);
-                                oldObj.workers = newWorkersWithCost;
-                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
+                                oldObj.workers = workersWithCost;
                                 oldObj.isPaid = newIsPaid;
                             } else {
                                 const newName = (obj.manualPrice ? manualObjectNameInput : objectNameInput).value.trim();
-                                const selectedOption = obj.manualPrice ? manualSelectedValue.value : selectedValue.value;
-                                if (!selectedOption) {
-                                    alert('Выберите услугу!');
-                                    return;
-                                }
-
                                 const length = parseFloat(formToUse.querySelector('input[name="length"]').value) || 0;
                                 const width = parseFloat(formToUse.querySelector('input[name="width"]').value) || 0;
                                 const areaInput = parseFloat(formToUse.querySelector('input[name="area"]').value) || 0;
+                                const newWorkers = Array.from((obj.manualPrice ? manualWorkersCheckboxGroup : workersCheckboxGroup).querySelectorAll('input:checked')).map(input => {
+                                    const ktuInput = formToUse.querySelector(`input[name="${obj.manualPrice ? 'manual' : ''}ktu_${input.value}"]`);
+                                    return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
+                                });
 
                                 let newArea;
                                 if (areaInput > 0) {
@@ -1444,39 +1537,128 @@ document.addEventListener('DOMContentLoaded', () => {
                                     return;
                                 }
 
-                                const [priceOrService, unit, serviceName] = selectedOption.split('|');
-                                const newService = obj.manualPrice ? priceOrService : serviceName;
-                                const pricePerSquare = obj.manualPrice ? parseFloat(manualPriceForm.querySelector('input[name="pricePerSquare"]').value) : parseFloat(priceOrService);
-                                const newWorkers = Array.from((obj.manualPrice ? manualWorkersCheckboxGroup : workersCheckboxGroup).querySelectorAll('input:checked')).map(input => {
-                                    const ktuInput = formToUse.querySelector(`input[name="${obj.manualPrice ? 'manual' : ''}ktu_${input.value}"]`);
-                                    return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
-                                });
-                                const totalKtu = newWorkers.reduce((sum, w) => sum + w.ktu, 0);
-                                const newCost = (newArea * pricePerSquare).toFixed(2);
-
-                                if (!newName || isNaN(newArea) || newArea <= 0 || isNaN(pricePerSquare) || pricePerSquare <= 0 || newWorkers.length === 0 || newWorkers.some(w => w.ktu <= 0)) {
-                                    alert('Заполните все поля корректно!');
+                                if (!newName || newWorkers.length === 0 || newWorkers.some(w => w.ktu <= 0)) {
+                                    alert('Заполните все обязательные поля: название, услугу и участников!');
                                     return;
                                 }
 
-                                const newWorkersWithCost = newWorkers.map(w => ({ ...w, cost: (parseFloat(newCost) * w.ktu / totalKtu).toFixed(2) }));
-                                const newAreaStr = length > 0 && width > 0 ? `${length.toFixed(2)} x ${width.toFixed(2)} = ${newArea.toFixed(2)} м²` : `${newArea.toFixed(2)} м²`;
+                                let newCost;
+                                let newWorkersWithCost;
+                                const newUseRostikMethod = formToUse.querySelector('input[name="useRostikMethod"]').checked;
+
+                                if (obj.manualPrice) {
+                                    const pricePerSquare = parseFloat(formToUse.querySelector('input[name="pricePerSquare"]').value);
+                                    if (isNaN(pricePerSquare) || pricePerSquare <= 0) {
+                                        alert('Укажите корректную цену за м²!');
+                                        return;
+                                    }
+                                    newCost = (newArea * pricePerSquare).toFixed(2);
+
+                                    if (newUseRostikMethod) {
+                                        const numWorkers = newWorkers.length;
+                                        let baseAmountPerWorker = parseFloat(newCost) / numWorkers;
+                                        let initialWorkersWithCost = newWorkers.map(w => ({
+                                            name: w.name,
+                                            ktu: w.ktu,
+                                            cost: baseAmountPerWorker * w.ktu
+                                        }));
+
+                                        const distributedAmount = initialWorkersWithCost.reduce((sum, w) => sum + w.cost, 0);
+                                        const remainingAmount = parseFloat(newCost) - distributedAmount;
+
+                                        const workersWithKtu1 = newWorkers.filter(w => w.ktu === 1).length;
+                                        if (workersWithKtu1 > 0 && remainingAmount > 0) {
+                                            const additionalPerKtu1Worker = remainingAmount / workersWithKtu1;
+                                            newWorkersWithCost = initialWorkersWithCost.map(w => ({
+                                                name: w.name,
+                                                ktu: w.ktu,
+                                                cost: (w.ktu === 1 ? w.cost + additionalPerKtu1Worker : w.cost).toFixed(2)
+                                            }));
+                                        } else {
+                                            newWorkersWithCost = initialWorkersWithCost.map(w => ({
+                                                name: w.name,
+                                                ktu: w.ktu,
+                                                cost: w.cost.toFixed(2)
+                                            }));
+                                        }
+                                    } else {
+                                        const totalKtu = newWorkers.reduce((sum, w) => sum + w.ktu, 0);
+                                        const amountPerKtu = parseFloat(newCost) / totalKtu;
+                                        newWorkersWithCost = newWorkers.map(w => ({
+                                            name: w.name,
+                                            ktu: w.ktu,
+                                            cost: (amountPerKtu * w.ktu).toFixed(2)
+                                        }));
+                                    }
+                                } else {
+                                    const [price, unit, serviceName] = selectedValue.value.split('|');
+                                    newCost = (newArea * parseFloat(price)).toFixed(2);
+
+                                    if (newUseRostikMethod) {
+                                        const numWorkers = newWorkers.length;
+                                        let baseAmountPerWorker = parseFloat(newCost) / numWorkers;
+                                        let initialWorkersWithCost = newWorkers.map(w => ({
+                                            name: w.name,
+                                            ktu: w.ktu,
+                                            cost: baseAmountPerWorker * w.ktu
+                                        }));
+
+                                        const distributedAmount = initialWorkersWithCost.reduce((sum, w) => sum + w.cost, 0);
+                                        const remainingAmount = parseFloat(newCost) - distributedAmount;
+
+                                        const workersWithKtu1 = newWorkers.filter(w => w.ktu === 1).length;
+                                        if (workersWithKtu1 > 0 && remainingAmount > 0) {
+                                            const additionalPerKtu1Worker = remainingAmount / workersWithKtu1;
+                                            newWorkersWithCost = initialWorkersWithCost.map(w => ({
+                                                name: w.name,
+                                                ktu: w.ktu,
+                                                cost: (w.ktu === 1 ? w.cost + additionalPerKtu1Worker : w.cost).toFixed(2)
+                                            }));
+                                        } else {
+                                            newWorkersWithCost = initialWorkersWithCost.map(w => ({
+                                                name: w.name,
+                                                ktu: w.ktu,
+                                                cost: w.cost.toFixed(2)
+                                            }));
+                                        }
+                                    } else {
+                                        const totalKtu = newWorkers.reduce((sum, w) => sum + w.ktu, 0);
+                                        const amountPerKtu = parseFloat(newCost) / totalKtu;
+                                        newWorkersWithCost = newWorkers.map(w => ({
+                                            name: w.name,
+                                            ktu: w.ktu,
+                                            cost: (amountPerKtu * w.ktu).toFixed(2)
+                                        }));
+                                    }
+                                }
+
+                                const newAreaString = length > 0 && width > 0 ? `${length.toFixed(2)} x ${width.toFixed(2)} = ${newArea.toFixed(2)} м²` : `${newArea.toFixed(2)} м²`;
 
                                 if (newName !== oldObj.name) changes.push(`Название: "${oldObj.name}" → "${newName}"`);
-                                if (newAreaStr !== oldObj.area) changes.push(`Площадь: ${oldObj.area} → ${newAreaStr}`);
-                                if (newService !== oldObj.service) changes.push(`Услуга: "${oldObj.service}" → "${newService}"`);
+                                if (newAreaString !== oldObj.area) changes.push(`Площадь: "${oldObj.area}" → "${newAreaString}"`);
+                                if (obj.manualPrice) {
+                                    const newPricePerSquare = (parseFloat(newCost) / newArea).toFixed(2);
+                                    const oldPricePerSquare = (parseFloat(oldObj.cost) / parseFloat(oldObj.area.match(/([\d.]+)\s*м²/)[1])).toFixed(2);
+                                    if (newPricePerSquare !== oldPricePerSquare) changes.push(`Цена за м²: ${oldPricePerSquare} → ${newPricePerSquare}`);
+                                } else {
+                                    if (selectedValue.value !== oldObj.service) changes.push(`Услуга: "${oldObj.service}" → "${selectedValue.value.split('|')[2]}"`);
+                                }
+                                if (JSON.stringify(newWorkers) !== JSON.stringify(oldObj.workers)) changes.push(`Участники: "${oldObj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}" → "${newWorkers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}"`);
                                 if (newCost !== oldObj.cost) changes.push(`Стоимость: ${oldObj.cost} → ${newCost}`);
-                                if (JSON.stringify(newWorkersWithCost) !== JSON.stringify(oldObj.workers)) changes.push(`Участники: "${oldObj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}" → "${newWorkersWithCost.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}"`);
+                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
+                                if (newUseRostikMethod !== oldObj.useRostikMethod) changes.push(`Методика: "${oldObj.useRostikMethod ? 'Ростиковская' : 'Стандартная'}" → "${newUseRostikMethod ? 'Ростиковская' : 'Стандартная'}"`);
 
                                 oldObj.name = newName;
+                                oldObj.area = newAreaString;
                                 oldObj.length = length > 0 ? length.toFixed(2) : null;
                                 oldObj.width = width > 0 ? width.toFixed(2) : null;
-                                oldObj.area = newAreaStr;
-                                oldObj.service = newService;
                                 oldObj.cost = newCost;
                                 oldObj.workers = newWorkersWithCost;
-                                if (newIsPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${newIsPaid ? 'Выплачено' : 'Не выплачено'}"`);
                                 oldObj.isPaid = newIsPaid;
+                                if (!obj.manualPrice) {
+                                    oldObj.service = selectedValue.value.split('|')[2];
+                                }
+                                oldObj.useRostikMethod = newUseRostikMethod;
                             }
 
                             if (changes.length > 0) {
@@ -1484,15 +1666,32 @@ document.addEventListener('DOMContentLoaded', () => {
                                 oldObj.editHistory.push({ timestamp: oldObj.editedTimestamp, changes: changes.join(', ') });
                             }
 
-                            customServiceNames = [...new Set(window.objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
                             renderObjects();
                             renderWorkerStats();
+                            populateSuggestions(formToUse);
                             formToUse.reset();
                             resetFormFields(formToUse);
                             formToUse.dataset.isEditing = 'false';
                             formToUse.dataset.editIndex = '';
                             submitBtn.textContent = isExpense ? 'Добавить расход' : (isCustomService ? 'Добавить услугу' : 'Добавить объект');
                             cancelBtn.style.display = 'none';
+
+                            if (isExpense) {
+                                expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
+                                expenseTypeValue.value = '';
+                                toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
+                            } else if (isCustomService) {
+                                serviceSelect.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                                serviceSelect.value = '';
+                                toggleInputState(customServiceForm, 'serviceName', serviceSelect);
+                            } else if (obj.manualPrice) {
+                                manualSelectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                                manualSelectedValue.value = '';
+                            } else {
+                                selectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                                selectedValue.value = '';
+                            }
+
                             showForm(null);
                             alert((isExpense ? 'Расход' : (isCustomService ? 'Услуга' : 'Объект')) + ' изменён.');
                         };
