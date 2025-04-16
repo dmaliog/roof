@@ -1068,6 +1068,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const areaValue = areaMatch ? parseFloat(areaMatch[areaMatch.length === 4 ? 3 : 1]) : 0;
                                 const pricePerSquare = obj.manualPrice ? (parseFloat(obj.cost) / areaValue).toFixed(2) : null;
 
+                                let editedTimestampHtml = '';
+                                if (obj.editedTimestamp) {
+                                    editedTimestampHtml = `Последнее редактирование: ${obj.editedTimestamp}`;
+                                    if (obj.useRostikMethod) {
+                                        editedTimestampHtml += ' <span style="color: #555;">(Ростиковская методика)</span>';
+                                    }
+                                }
+
                                 entry.innerHTML = `
                                 <div class="header-line">
                                 <strong>•</strong>
@@ -1088,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <div class="info-line distance"><span class="label">Расстояние:</span><span class="value">${obj.distance} км</span></div>
                                         ` : ''}
                                         ${costDetailsHtml}
-                                        ${obj.editedTimestamp ? `<div class="edit-history">Последнее редактирование: ${obj.editedTimestamp}</div>` : ''}
+                                        ${editedTimestampHtml ? `<div class="edit-history">${editedTimestampHtml}</div>` : ''}
                                         <button class="btn copy-btn" data-index="${index}">Скопировать</button>
                                         <button class="btn paid-btn ${obj.isPaid ? 'paid' : ''}" data-index="${index}">${obj.isPaid ? 'Выплачено' : 'Не выплачено'}</button>
                                         `;
