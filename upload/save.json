@@ -1,114 +1,5 @@
 [
   {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-256.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "17.04.2025, 13:32:25",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-1000.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "16.04.2025, 17:42:13",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-77.65",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/16/2025, 4:04:44 PM",
-    "isExpense": true,
-    "startMileage": "264057.00",
-    "endMileage": "264076.00",
-    "distance": "19.00",
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-543.57",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/16/2025, 4:03:45 PM",
-    "isExpense": true,
-    "startMileage": "263924.00",
-    "endMileage": "264057.00",
-    "distance": "133.00",
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-461.83",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/16/2025, 4:01:39 PM",
-    "isExpense": true,
-    "distance": "113.00",
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-425.05",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/16/2025, 3:59:53 PM",
-    "isExpense": true,
-    "distance": "104.00",
-    "editHistory": [
-      {
-        "timestamp": "4/16/2025, 4:00:07 PM",
-        "changes": "Участники (списание): \"Слава\" → \"Артём, Слава\", Статус выплаты: \"Не выплачено\" → \"Не выплачено\""
-      }
-    ],
-    "isPaid": false,
-    "editedTimestamp": "4/16/2025, 4:00:07 PM"
-  },
-  {
     "name": "КУМЗ Фонарь 1",
     "length": null,
     "width": null,
@@ -155,7 +46,7 @@
     "timestamp": "4/16/2025, 3:17:01 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "editHistory": [
       {
         "timestamp": "16.04.2025, 17:09:38",
@@ -172,113 +63,6 @@
     ],
     "useRostikMethod": true,
     "editedTimestamp": "16.04.2025, 17:35:12"
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-378.00",
-    "workers": [
-      "Артём"
-    ],
-    "receivers": [
-      "Коля"
-    ],
-    "timestamp": "4/11/2025, 3:10:42 PM",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": [
-      {
-        "timestamp": "11.04.2025, 15:15:37",
-        "changes": "Название: \"Займ\" → \"Еда\""
-      }
-    ],
-    "editedTimestamp": "11.04.2025, 15:15:37"
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-412.79",
-    "workers": [
-      "Артём",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/11/2025, 3:09:07 PM",
-    "isExpense": true,
-    "startMileage": "263595.00",
-    "endMileage": "263696.00",
-    "distance": "101.00",
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-580.35",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/11/2025, 3:07:13 PM",
-    "isExpense": true,
-    "startMileage": "263453.00",
-    "endMileage": "263595.00",
-    "distance": "142.00",
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-490.44",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/11/2025, 3:05:27 PM",
-    "isExpense": true,
-    "distance": "120.00",
-    "editHistory": []
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-348.00",
-    "workers": [
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "10.04.2025, 18:35:02",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-882.79",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "4/8/2025, 11:16:11 PM",
-    "isExpense": true,
-    "distance": "216.00",
-    "editHistory": []
   },
   {
     "name": "УЗТМ Фонарь 3",
@@ -312,7 +96,7 @@
     "timestamp": "4/8/2025, 11:13:58 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "editHistory": [
       {
         "timestamp": "16.04.2025, 18:19:03",
@@ -359,52 +143,6 @@
       }
     ],
     "editedTimestamp": "08.04.2025, 19:51:52"
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-652.00",
-    "workers": [
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "08.04.2025, 12:25:51",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-882.79",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "07.04.2025, 20:19:20",
-    "isExpense": true,
-    "distance": "216.00",
-    "editHistory": [
-      {
-        "timestamp": "08.04.2025, 19:54:38",
-        "changes": "Участники (списание): \"Слава\" → \"Артём, Слава\", Статус выплаты: \"Не выплачено\" → \"Не выплачено\""
-      },
-      {
-        "timestamp": "08.04.2025, 19:57:31",
-        "changes": "Участники (списание): \"Артём, Слава\" → \"Слава\""
-      },
-      {
-        "timestamp": "4/8/2025, 11:15:00 PM",
-        "changes": "Участники (списание): \"Слава\" → \"Артём, Слава\""
-      }
-    ],
-    "isPaid": false,
-    "editedTimestamp": "4/8/2025, 11:15:00 PM"
   },
   {
     "name": "УЗТМ Фонарь 1-2",
