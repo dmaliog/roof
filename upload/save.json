@@ -1,5 +1,21 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-220.70",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "18.04.2025, 21:18:04",
+    "isExpense": true,
+    "distance": "54.00",
+    "editHistory": []
+  },
+  {
     "name": "УЗТМ Фонарь 3/1",
     "length": null,
     "width": null,
