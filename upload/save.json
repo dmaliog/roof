@@ -1,21 +1,5 @@
 [
   {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-441.40",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "21.04.2025, 17:57:33",
-    "isExpense": true,
-    "distance": "108.00",
-    "editHistory": []
-  },
-  {
     "name": "Погрузо-разгрузочные работы",
     "service": "Погрузо-разгрузочные работы",
     "cost": "2000.00",
@@ -44,7 +28,7 @@
     "timestamp": "19.04.2025, 19:38:11",
     "isExpense": false,
     "isCustomService": true,
-    "isPaid": false,
+    "isPaid": true,
     "editHistory": [
       {
         "timestamp": "19.04.2025, 19:38:11",
@@ -85,24 +69,8 @@
     "timestamp": "19.04.2025, 19:34:03",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-220.70",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "18.04.2025, 21:18:04",
-    "isExpense": true,
-    "distance": "54.00",
     "editHistory": []
   },
   {
@@ -137,7 +105,7 @@
     "timestamp": "18.04.2025, 20:26:07",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "editHistory": []
   },
@@ -168,7 +136,7 @@
     "timestamp": "4/17/2025, 11:02:57 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "editHistory": [
       {
@@ -181,29 +149,6 @@
       }
     ],
     "editedTimestamp": "18.04.2025, 09:34:05"
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-441.40",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "17.04.2025, 22:55:25",
-    "isExpense": true,
-    "distance": "108.00",
-    "editHistory": [
-      {
-        "timestamp": "17.04.2025, 22:55:44",
-        "changes": "Участники (списание): \"Слава\" → \"Артём, Слава\", Статус выплаты: \"Не выплачено\" → \"Не выплачено\""
-      }
-    ],
-    "isPaid": false,
-    "editedTimestamp": "17.04.2025, 22:55:44"
   },
   {
     "name": "КУМЗ Фонарь 1",
