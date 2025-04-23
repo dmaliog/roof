@@ -1,5 +1,37 @@
 [
   {
+    "name": "ТСЖ Бобровка",
+    "service": "ТСЖ Бобровка",
+    "cost": "68000.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "17000.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "17000.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "17000.00"
+      },
+      {
+        "name": "Нарек",
+        "ktu": 1,
+        "cost": "17000.00"
+      }
+    ],
+    "timestamp": "24.04.2025, 00:39:47",
+    "isExpense": false,
+    "isCustomService": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
     "name": "Еда",
     "service": "Расход",
     "cost": "-1200.00",
