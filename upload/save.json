@@ -1,5 +1,81 @@
 [
   {
+    "name": "КУМЗ Под фонарем",
+    "length": null,
+    "width": null,
+    "area": "127.80 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "7668.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "3834.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "3834.00"
+      }
+    ],
+    "timestamp": "5/1/2025, 11:55:26 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "editHistory": []
+  },
+  {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-2000.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "5/1/2025, 11:52:38 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1250.62",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "5/1/2025, 11:52:21 PM",
+    "isExpense": true,
+    "startMileage": "264910.00",
+    "endMileage": "265216.00",
+    "distance": "306.00",
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-441.40",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "5/1/2025, 11:50:46 PM",
+    "isExpense": true,
+    "distance": "108.00",
+    "editHistory": []
+  },
+  {
     "name": "ТСЖ Бобровка",
     "service": "ТСЖ Бобровка",
     "cost": "8000.00",
