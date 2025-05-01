@@ -3,6 +3,37 @@
     "name": "КУМЗ Под фонарем",
     "length": null,
     "width": null,
+    "area": "1362.20 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "81732.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "27244.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "27244.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "27244.00"
+      }
+    ],
+    "timestamp": "5/1/2025, 11:59:30 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "editHistory": []
+  },
+  {
+    "name": "КУМЗ Под фонарем",
+    "length": null,
+    "width": null,
     "area": "127.80 м²",
     "service": "Монтаж пароизоляции",
     "cost": "7668.00",
