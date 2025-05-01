@@ -1,5 +1,22 @@
 [
   {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-1050.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "5/2/2025, 12:01:34 AM",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
     "name": "КУМЗ Под фонарем",
     "length": null,
     "width": null,
