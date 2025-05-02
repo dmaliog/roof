@@ -1,5 +1,35 @@
 [
   {
+    "name": "Съёмная квартира",
+    "service": "Расход",
+    "cost": "-190.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "03.05.2025, 02:27:34",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
+    "name": "Съёмная квартира",
+    "service": "Расход",
+    "cost": "-766.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "03.05.2025, 02:27:04",
+    "isExpense": true,
+    "isPaid": false,
+    "editHistory": []
+  },
+  {
     "name": "Еда",
     "service": "Расход",
     "cost": "-1050.00",
