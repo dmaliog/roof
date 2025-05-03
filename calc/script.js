@@ -1110,6 +1110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                                 const entry = document.createElement('div');
                                 entry.className = `calculation ${obj.isExpense ? 'expense' : ''} ${obj.manualPrice ? 'manual-price' : ''} ${obj.isCustomService ? 'custom-service' : ''} ${editMode ? 'editable' : ''}`;
+                                entry.dataset.timestamp = obj.timestamp; // Используем timestamp как уникальный идентификатор
                                 const areaMatch = obj.area ? obj.area.match(/([\d.]+)\s*x\s*([\d.]+)\s*=\s*([\d.]+)\s*м²/) || obj.area.match(/([\d.]+)\s*м²/) : null;
                                 const areaValue = areaMatch ? parseFloat(areaMatch[areaMatch.length === 4 ? 3 : 1]) : 0;
                                 const pricePerSquare = obj.manualPrice && areaValue > 0 ? (parseFloat(obj.cost) / areaValue).toFixed(2) : null;
@@ -1126,8 +1127,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="header-line">
                                 <strong>•</strong>
                                 <span class="timestamp">(${obj.timestamp})</span>
-                                ${obj.editHistory.length > 0 ? `<button class="calendar-btn" data-index="${index}">📅 <span class="edit-count">${obj.editHistory.length}</span></button>` : ''}
-                                ${editMode ? `<span class="delete-cross" data-index="${index}">✕</span>` : ''}
+                                ${obj.editHistory.length > 0 ? `<button class="calendar-btn" data-timestamp="${obj.timestamp}">📅 <span class="edit-count">${obj.editHistory.length}</span></button>` : ''}
+                                ${editMode ? `<span class="delete-cross" data-timestamp="${obj.timestamp}">✕</span>` : ''}
                                 </div>
                                 ${imageUrl ? `<div class="card-image" style="background-image: url('${imageUrl}');"></div>` : ''}
                                 ${!obj.isExpense && !obj.isCustomService ? `<div class="info-line name"><span class="label">Название объекта:</span><span class="value">${obj.name}</span></div>` : ''}
@@ -1144,13 +1145,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                         ${costDetailsHtml}
                                         ${issuedMoneyHtml}
                                         ${editedTimestampHtml ? `<div class="edit-history">${editedTimestampHtml}</div>` : ''}
-                                        <button class="btn copy-btn" data-index="${index}">Скопировать</button>
-                                        <button class="btn paid-btn ${obj.isPaid ? 'paid' : ''}" data-index="${index}">${obj.isPaid ? 'Выплачено' : 'Не выплачено'}</button>
+                                        <button class="btn copy-btn" data-timestamp="${obj.timestamp}">Скопировать</button>
+                                        <button class="btn paid-btn ${obj.isPaid ? 'paid' : ''}" data-timestamp="${obj.timestamp}">${obj.isPaid ? 'Выплачено' : 'Не выплачено'}</button>
                                         `;
-                                        entry.dataset.index = index;
                                         if (editMode) {
                                             entry.addEventListener('click', (e) => {
-                                                if (!e.target.classList.contains('delete-cross') && !e.target.classList.contains('calendar-btn') && !e.target.classList.contains('copy-btn') && !e.target.classList.contains('paid-btn')) editObject(index);
+                                                if (!e.target.classList.contains('delete-cross') && !e.target.classList.contains('calendar-btn') && !e.target.classList.contains('copy-btn') && !e.target.classList.contains('paid-btn')) {
+                                                    const objIndex = window.objects.findIndex(o => o.timestamp === obj.timestamp);
+                                                    editObject(objIndex);
+                                                }
                                             });
                                         }
                                         resultsDiv.appendChild(entry);
@@ -1808,23 +1811,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             const incomeObjects = workerObjects.filter(obj => !obj.isExpense);
                             const expenseObjects = workerObjects.filter(obj => obj.isExpense);
 
-                            const incomeBreakdown = incomeObjects.map((obj, index) => {
+                            const incomeBreakdown = incomeObjects.map((obj) => {
                                 const workerData = obj.workers.find(w => getWorkerName(w) === worker);
                                 const contribution = workerData ? parseFloat(workerData.cost) : 0;
                                 const className = obj.isCustomService ? 'service-earning' : 'regular-earning';
-                                return { value: contribution.toFixed(2), index, className, isPaid: obj.isPaid };
+                                return { value: contribution.toFixed(2), timestamp: obj.timestamp, className, isPaid: obj.isPaid };
                             });
                             const paidIncome = incomeBreakdown.filter(e => e.isPaid);
                             const pendingIncome = incomeBreakdown.filter(e => !e.isPaid);
                             const totalPaidIncome = paidIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
                             const totalPendingIncome = pendingIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
 
-                            // Рассчитываем выданные деньги только для невыплаченных объектов
                             const issuedMoneyBreakdown = workerObjects
                             .filter(obj => !obj.isPaid && obj.issuedMoney && obj.issuedMoney.some(im => im.name === worker))
-                            .map((obj, index) => {
+                            .map((obj) => {
                                 const issued = obj.issuedMoney.find(im => im.name === worker);
-                                return issued ? { value: (-parseFloat(issued.amount)).toFixed(2), index, className: 'issued-money-negative' } : null;
+                                return issued ? { value: (-parseFloat(issued.amount)).toFixed(2), timestamp: obj.timestamp, className: 'issued-money-negative' } : null;
                             })
                             .filter(item => item !== null);
                             const totalIssuedMoney = issuedMoneyBreakdown.reduce((sum, val) => sum + parseFloat(val.value), 0);
@@ -1832,7 +1834,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const expenseBreakdownByReceiver = {};
                             const debtsOwedToWorker = {};
 
-                            expenseObjects.forEach((obj, index) => {
+                            expenseObjects.forEach((obj) => {
                                 const totalCost = parseFloat(obj.cost);
                                 const workersCount = obj.workers.length;
                                 const writeOffPerWorker = totalCost / workersCount;
@@ -1843,7 +1845,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                             if (!expenseBreakdownByReceiver[receiver]) expenseBreakdownByReceiver[receiver] = [];
                                             expenseBreakdownByReceiver[receiver].push({
                                                 value: writeOffPerWorker.toFixed(2),
-                                                                                      index,
+                                                                                      timestamp: obj.timestamp,
                                                                                       className: 'expense-earning'
                                             });
                                         }
@@ -1857,7 +1859,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                             if (!debtsOwedToWorker[debtorName]) debtsOwedToWorker[debtorName] = [];
                                             debtsOwedToWorker[debtorName].push({
                                                 value: Math.abs(writeOffPerWorker).toFixed(2),
-                                                                               index,
+                                                                               timestamp: obj.timestamp,
                                                                                className: 'receiver-earning'
                                             });
                                         }
@@ -1868,34 +1870,31 @@ document.addEventListener('DOMContentLoaded', () => {
                             const totalExpenses = Object.values(expenseBreakdownByReceiver).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
                             const totalDebtsOwedToWorker = Object.values(debtsOwedToWorker).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
 
-                            // Вычитаем выданные деньги из "В ожидании"
-                            const totalPendingWithIssued = totalPendingIncome + totalIssuedMoney; // Используем + из-за отрицательного totalIssuedMoney
+                            const totalPendingWithIssued = totalPendingIncome + totalIssuedMoney;
                             const totalEarnings = totalPaidIncome + totalPendingWithIssued + totalDebtsOwedToWorker + totalExpenses;
 
-                            const formatEarnings = (amount) => amount.toFixed(2)
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-                            .replace('.00', '');
+                            const formatEarnings = (amount) => amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ').replace('.00', '');
 
                             let earningsHtml = '';
                             if (totalPaidIncome !== 0) {
                                 const paidIncomeHtml = paidIncome.length > 0
-                                ? paidIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">+${e.value}</span>`).join(' ')
+                                ? paidIncome.map(e => `<span class="earnings-item ${e.className}" data-timestamp="${e.timestamp}">+${e.value}</span>`).join(' ')
                                 : '0 ₽';
                                 earningsHtml += `<div class="earnings paid-earnings"><strong>Заработано:</strong> ${paidIncomeHtml} = ${formatEarnings(totalPaidIncome)} ₽</div>`;
                             }
                             if (totalPendingIncome !== 0 || totalIssuedMoney !== 0) {
                                 const pendingIncomeHtml = pendingIncome.length > 0
-                                ? pendingIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">+${e.value}</span>`).join(' ')
+                                ? pendingIncome.map(e => `<span class="earnings-item ${e.className}" data-timestamp="${e.timestamp}">+${e.value}</span>`).join(' ')
                                 : '0 ₽';
                                 const issuedMoneyHtml = issuedMoneyBreakdown.length > 0
-                                ? issuedMoneyBreakdown.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value}</span>`).join(' ')
+                                ? issuedMoneyBreakdown.map(e => `<span class="earnings-item ${e.className}" data-timestamp="${e.timestamp}">${e.value}</span>`).join(' ')
                                 : '';
                                 earningsHtml += `<div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingIncomeHtml}${issuedMoneyHtml ? ` ${issuedMoneyHtml}` : ''} = ${formatEarnings(totalPendingWithIssued)} ₽</div>`;
                             }
                             if (Object.keys(debtsOwedToWorker).length > 0) {
                                 earningsHtml += '<div class="earnings receiver-earnings"><strong>Долги мне:</strong>';
                                 Object.entries(debtsOwedToWorker).forEach(([debtor, debts]) => {
-                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-index="${debt.index}">+${debt.value}</span>`).join(' + ');
+                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">+${debt.value}</span>`).join(' + ');
                                     const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
                                     earningsHtml += `<div>${debtor} → ${worker}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
                                 });
@@ -1904,7 +1903,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (Object.keys(expenseBreakdownByReceiver).length > 0) {
                                 earningsHtml += '<div class="earnings expense-earnings"><strong>Долги другим:</strong>';
                                 Object.entries(expenseBreakdownByReceiver).forEach(([receiver, debts]) => {
-                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-index="${debt.index}">${debt.value}</span>`).join(' + ');
+                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">${debt.value}</span>`).join(' + ');
                                     const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
                                     earningsHtml += `<div>${worker} → ${receiver}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
                                 });
@@ -1972,13 +1971,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 card.querySelectorAll('.earnings-item').forEach(item => {
                                     item.addEventListener('click', (e) => {
                                         e.stopPropagation();
-                                        const index = parseInt(item.dataset.index);
-                                        filterInput.value = '';
-                                        renderObjects();
-                                        setTimeout(() => {
-                                            const card = resultsDiv.querySelector(`.calculation[data-index="${index}"]`);
-                                            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                        }, 100);
+                                        const timestamp = item.dataset.timestamp;
+                                        scrollToObject(timestamp);
                                     });
                                 });
 
@@ -1986,6 +1980,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
 
                         renderWorkerCharts();
+                    }
+
+                    function scrollToObject(timestamp) {
+                        console.log(`Scrolling to timestamp: ${timestamp}`);
+                        const targetCard = document.querySelector(`.calculation[data-timestamp="${timestamp}"]`);
+                        if (targetCard) {
+                            console.log('Card found, adding highlight');
+                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targetCard.classList.add('highlight');
+                            setTimeout(() => {
+                                console.log('Removing highlight');
+                                targetCard.classList.remove('highlight');
+                            }, 3000);
+                        } else {
+                            console.warn(`Card with timestamp "${timestamp}" not found.`);
+                        }
                     }
 
                     function filterByWorker(worker) {

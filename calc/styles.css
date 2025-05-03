@@ -9,13 +9,13 @@ body {
 }
 
 .calculation .info-line.name span.value {
-    background: rgba(46, 204, 113, 0.15); /* Зеленый фон, как у "Распределение" */
-    color: #27ae60; /* Зеленый текст */
+    background: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
 }
 
 .calculation .info-line.price-per-square span.value {
-    background: rgba(230, 126, 34, 0.15); /* Оранжевый фон, как у "Стоимость" */
-    color: #e67e22; /* Оранжевый текст */
+    background: rgba(230, 126, 34, 0.15);
+    color: #e67e22;
 }
 
 .issued-money-group .checkbox-group label {
@@ -23,14 +23,16 @@ body {
     align-items: center;
     gap: 10px;
 }
+
 .amount-input {
     width: 100px;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
 .earnings-item.issued-money-negative {
-    color: #9b8200; /* Золотой текст */
+    color: #9b8200;
     background: rgb(155 130 0 / 13%);
     padding: 2px 5px;
     border-radius: 3px;
@@ -38,7 +40,6 @@ body {
     cursor: pointer;
 }
 
-/* Стили для кнопки "Выплачено" */
 .btn.paid-btn {
     background: linear-gradient(135deg, #f1c40f, #e67e22);
     color: #fff;
@@ -63,7 +64,6 @@ body {
     background: linear-gradient(135deg, #27ae60, #219653);
 }
 
-/* Стили для чекбокса "Выплачено" в форме */
 .form-group.paid-checkbox {
     display: flex;
     align-items: center;
@@ -77,21 +77,21 @@ body {
 }
 
 .worker-card .earnings.paid-earnings {
-    background: rgba(46, 204, 113, 0.1); /* Зеленый фон для оплаченных */
+    background: rgba(46, 204, 113, 0.1);
     padding: 8px 12px;
     border-radius: 8px;
     margin-bottom: 10px;
 }
 
 .worker-card .earnings.pending-earnings {
-    background: rgba(241, 196, 15, 0.1); /* Желтый фон для ожидающих */
+    background: rgba(241, 196, 15, 0.1);
     padding: 8px 12px;
     border-radius: 8px;
     margin-bottom: 10px;
 }
 
 .worker-card .earnings.total-earnings {
-    background: rgba(52, 152, 219, 0.1); /* Синий фон для итога */
+    background: rgba(52, 152, 219, 0.1);
     padding: 8px 12px;
     border-radius: 8px;
     font-weight: 700;
@@ -388,8 +388,8 @@ h2::after {
     flex-wrap: wrap;
     gap: 5px;
     align-items: center;
-    width: 100%; /* Исправление: полный охват контейнера */
-    overflow-x: auto; /* Исправление: горизонтальная прокрутка при переполнении */
+    width: 100%;
+    overflow-x: auto;
 }
 
 .earnings-label {
@@ -403,9 +403,9 @@ h2::after {
     font-size: 14px;
     cursor: pointer;
     transition: background 0.3s ease;
-    min-width: 60px; /* Исправление: минимальная ширина для предотвращения перекрытия */
-    text-align: center; /* Исправление: выравнивание текста по центру */
-    white-space: nowrap; /* Исправление: текст остается в одной строке */
+    min-width: 60px;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .earnings-item.expense-earning {
@@ -660,7 +660,7 @@ margin-top: 40px;
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    box-sizing: border-box; /* Исправление: учет padding в ширине */
+    box-sizing: border-box;
 }
 
 .worker-card:hover {
@@ -701,7 +701,7 @@ margin-top: 40px;
     font-weight: 600;
     margin-bottom: 15px;
     background: rgba(39, 174, 96, 0.1);
-    padding: 8px 12px 8px 12px; /* Исправление: явный отступ справа */
+    padding: 8px 12px 8px 12px;
     border-radius: 8px;
     display: inline-flex;
     box-sizing: border-box;
@@ -923,23 +923,21 @@ margin-top: 40px;
 
 .calculation .info-line.cost-per-worker .value,
 .calculation .info-line.cost-per-receiver .value {
-    background: none; /* Убираем общий фон */
-    color: #2c3e50; /* Цвет текста по умолчанию */
+    background: none;
+    color: #2c3e50;
 }
 
-/* Стиль для списаний (красный фон) */
 .calculation .info-line.cost-per-worker .value.write-off {
-    background: rgba(231, 76, 60, 0.15); /* Красный фон */
-    color: #e74c3c; /* Красный цвет текста */
-    padding: 3px 8px; /* Отступы для фона */
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    padding: 3px 8px;
     border-radius: 4px;
 }
 
-/* Стиль для начислений (зелёный фон) */
 .calculation .info-line.cost-per-receiver .value.accrual {
-    background: rgba(39, 174, 96, 0.15); /* Зелёный фон */
-    color: #27ae60; /* Зелёный цвет текста */
-    padding: 3px 8px; /* Отступы для фона */
+    background: rgba(39, 174, 96, 0.15);
+    color: #27ae60;
+    padding: 3px 8px;
     border-radius: 4px;
 }
 
@@ -1257,8 +1255,23 @@ background-color: #ff9800;
 }
 
 .calculation.highlight {
-    background: rgba(39, 174, 96, 0.2);
-    transition: background 0.5s ease;
+    background: rgba(155, 153, 255, 0.15) !important;
+    transition: background-color 0.5s ease;
+}
+
+.calculation.expense.highlight {
+    background: rgba(155, 153, 255, 0.15) !important;
+    transition: background-color 0.5s ease;
+}
+
+.calculation.manual-price.highlight {
+    background: rgba(155, 153, 255, 0.15) !important;
+    transition: background-color 0.5s ease;
+}
+
+.calculation.custom-service.highlight {
+    background: rgba(155, 153, 255, 0.15) !important;
+    transition: background-color 0.5s ease;
 }
 
 .btn.cancel-btn {
@@ -1407,7 +1420,7 @@ background-color: #ff9800;
     .worker-stats-grid {
         grid-template-columns: 1fr;
         gap: 20px;
-        padding: 0 10px; /* Исправление: отступы для симметрии */
+        padding: 0 10px;
     }
 
     .worker-card {
