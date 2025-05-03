@@ -18,6 +18,26 @@ body {
     color: #e67e22; /* Оранжевый текст */
 }
 
+.issued-money-group .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.amount-input {
+    width: 100px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.earnings-item.issued-money-negative {
+    color: #9b8200; /* Золотой текст */
+    background: rgb(155 130 0 / 13%);
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin: 0 2px;
+    cursor: pointer;
+}
+
 /* Стили для кнопки "Выплачено" */
 .btn.paid-btn {
     background: linear-gradient(135deg, #f1c40f, #e67e22);
@@ -1091,8 +1111,8 @@ margin-top: 40px;
     position: absolute;
     top: 15px;
     right: 10px;
-    width: 25%;
-    padding-top: 25%;
+    width: 20%;
+    padding-top: 1%;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -1345,16 +1365,7 @@ background-color: #ff9800;
     }
 
     .card-image {
-        position: absolute;
-        top: 20%;
-        right: 15px;
-        width: 20%;
-        padding-top: 20%;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        transform: translateY(-50%);
-        z-index: 1;
+        padding-top: 15%;
     }
 
     .button-group {

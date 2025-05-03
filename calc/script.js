@@ -478,6 +478,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ktuInput = customServiceForm.querySelector(`input[name="servicektu_${input.value}"]`);
                 return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
             });
+            // Собираем данные о выданных деньгах
+            const issuedMoney = Array.from(customServiceForm.querySelectorAll('.issued-money-group input[type="checkbox"]:checked')).map(checkbox => {
+                const workerName = checkbox.value;
+                const amountInput = customServiceForm.querySelector(`input[name="issuedamount_${workerName}"]`);
+                const amount = parseFloat(amountInput.value) || 0;
+                return amount > 0 ? { name: workerName, amount: amount.toFixed(2) } : null;
+            }).filter(item => item !== null);
 
             if (!serviceName || isNaN(servicePrice) || servicePrice <= 0 || workersData.length === 0 || workersData.some(w => w.ktu <= 0)) {
                 alert('Заполните все поля корректно!');
@@ -494,6 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                            isExpense: false,
                                            isCustomService: true,
                                            isPaid: isPaid,
+                                           issuedMoney, // Добавляем выданные деньги
                                            editHistory: isEditing ? window.objects[customServiceForm.dataset.editIndex]?.editHistory || [] : []
             };
 
@@ -504,6 +512,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (serviceName !== oldObj.name) changes.push(`Название: "${oldObj.name}" → "${serviceName}"`);
                 if (servicePrice !== parseFloat(oldObj.cost)) changes.push(`Стоимость: ${oldObj.cost} → ${servicePrice}`);
                 if (JSON.stringify(object.workers) !== JSON.stringify(oldObj.workers)) changes.push(`Участники: "${oldObj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}" → "${object.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}"`);
+                if (isPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${isPaid ? 'Выплачено' : 'Не выплачено'}"`);
+                // Проверяем изменения в "Выданные деньги"
+                const oldIssuedMoneyStr = oldObj.issuedMoney ? oldObj.issuedMoney.map(im => `${im.name}: ${im.amount}`).join(', ') : 'Нет';
+                const newIssuedMoneyStr = issuedMoney.length > 0 ? issuedMoney.map(im => `${im.name}: ${im.amount}`).join(', ') : 'Нет';
+                if (oldIssuedMoneyStr !== newIssuedMoneyStr) {
+                    changes.push(`Выданные деньги: "${oldIssuedMoneyStr}" → "${newIssuedMoneyStr}"`);
+                }
+
                 if (changes.length > 0) {
                     object.editedTimestamp = new Date().toLocaleString();
                     object.editHistory.push({ timestamp: object.editedTimestamp, changes: changes.join(', ') });
@@ -538,12 +554,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                     function populateWorkers() {
-                        const createCheckbox = (name, group, prefix, withKtu = false) => {
+                        const createCheckbox = (name, group, prefix, withKtu = false, withAmount = false) => {
                             const label = document.createElement('label');
                             label.innerHTML = `
                             <input type="checkbox" name="${prefix}workers" value="${name}">
                             ${name}
                             ${withKtu ? `<input type="number" class="ktu-input" name="${prefix}ktu_${name}" step="0.1" min="0" placeholder="КТУ" disabled>` : ''}
+                            ${withAmount ? `<input type="number" class="amount-input" name="${prefix}amount_${name}" step="0.01" min="0" placeholder="Сумма (₽)" disabled>` : ''}
                             `;
                             group.appendChild(label);
                             if (withKtu) {
@@ -552,6 +569,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 checkbox.addEventListener('change', () => {
                                     ktuInput.disabled = !checkbox.checked;
                                     if (!checkbox.checked) ktuInput.value = '';
+                                });
+                            }
+                            if (withAmount) {
+                                const checkbox = label.querySelector('input[type="checkbox"]');
+                                const amountInput = label.querySelector('.amount-input');
+                                checkbox.addEventListener('change', () => {
+                                    amountInput.disabled = !checkbox.checked;
+                                    if (!checkbox.checked) amountInput.value = '';
                                 });
                             }
                         };
@@ -568,6 +593,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             createCheckbox(worker, expenseReceiversCheckboxGroup, 'expenseReceivers', false);
                             createCheckbox(worker, manualWorkersCheckboxGroup, 'manual', true);
                             createCheckbox(worker, serviceWorkersCheckboxGroup, 'service', true);
+                            // Добавляем чекбоксы для "Выданные деньги" в .checkbox-group внутри .issued-money-group
+                            createCheckbox(worker, objectForm.querySelector('.issued-money-group .checkbox-group') || document.createElement('div'), 'issued', false, true);
+                            createCheckbox(worker, expenseForm.querySelector('.issued-money-group .checkbox-group') || document.createElement('div'), 'issued', false, true);
+                            createCheckbox(worker, manualPriceForm.querySelector('.issued-money-group .checkbox-group') || document.createElement('div'), 'issued', false, true);
+                            createCheckbox(worker, customServiceForm.querySelector('.issued-money-group .checkbox-group') || document.createElement('div'), 'issued', false, true);
                         });
                     }
 
@@ -575,6 +605,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         e.preventDefault();
                         const formToUse = isExpense ? expenseForm : (isManual ? manualPriceForm : objectForm);
                         const isPaid = formToUse.querySelector('input[name="isPaid"]').checked;
+                        // Собираем данные о выданных деньгах
+                        const issuedMoney = Array.from(formToUse.querySelectorAll('.issued-money-group input[type="checkbox"]:checked')).map(checkbox => {
+                            const workerName = checkbox.value;
+                            const amountInput = formToUse.querySelector(`input[name="issuedamount_${workerName}"]`);
+                            const amount = parseFloat(amountInput.value) || 0;
+                            return amount > 0 ? { name: workerName, amount: amount.toFixed(2) } : null;
+                        }).filter(item => item !== null);
+
                         let object;
 
                         if (isExpense) {
@@ -611,6 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           timestamp: new Date().toLocaleString(),
                           isExpense: true,
                           isPaid: isPaid,
+                          issuedMoney,
                           editHistory: []
                                     };
                                 } else if (fuelMode === 'distance') {
@@ -630,6 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           timestamp: new Date().toLocaleString(),
                           isExpense: true,
                           distance: distance.toFixed(2),
+                          issuedMoney,
                           editHistory: []
                                     };
                                 } else if (fuelMode === 'mileage') {
@@ -653,6 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           startMileage: startMileage.toFixed(2),
                           endMileage: endMileage.toFixed(2),
                           distance: distance.toFixed(2),
+                          issuedMoney,
                           editHistory: []
                                     };
                                 }
@@ -671,6 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           timestamp: new Date().toLocaleString(),
                           isExpense: true,
                           isPaid: isPaid,
+                          issuedMoney,
                           editHistory: []
                                 };
                             }
@@ -714,7 +756,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 totalCost = (area * pricePerSquare).toFixed(2);
 
                                 if (useRostikMethod) {
-                                    // Ростиковская методика: делим на количество участников, затем корректируем по КТУ
                                     const numWorkers = workersData.length;
                                     let baseAmountPerWorker = parseFloat(totalCost) / numWorkers;
                                     let initialWorkersWithCost = workersData.map(w => ({
@@ -723,11 +764,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                         cost: baseAmountPerWorker * w.ktu
                                     }));
 
-                                    // Подсчитываем сумму, распределённую на первом этапе
                                     const distributedAmount = initialWorkersWithCost.reduce((sum, w) => sum + w.cost, 0);
                                     const remainingAmount = parseFloat(totalCost) - distributedAmount;
 
-                                    // Перераспределяем остаток между участниками с КТУ 1
                                     const workersWithKtu1 = workersData.filter(w => w.ktu === 1).length;
                                     if (workersWithKtu1 > 0 && remainingAmount > 0) {
                                         const additionalPerKtu1Worker = remainingAmount / workersWithKtu1;
@@ -744,7 +783,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                         }));
                                     }
                                 } else {
-                                    // Стандартная методика: делим на суммарный КТУ
                                     const totalKtu = workersData.reduce((sum, w) => sum + w.ktu, 0);
                                     const amountPerKtu = parseFloat(totalCost) / totalKtu;
                                     workersWithCost = workersData.map(w => ({
@@ -767,6 +805,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           manualPrice: true,
                           isPaid: isPaid,
                           useRostikMethod: useRostikMethod,
+                          issuedMoney,
                           editHistory: []
                                 };
                             } else {
@@ -774,7 +813,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 totalCost = (area * parseFloat(price)).toFixed(2);
 
                                 if (useRostikMethod) {
-                                    // Ростиковская методика: делим на количество участников, затем корректируем по КТУ
                                     const numWorkers = workersData.length;
                                     let baseAmountPerWorker = parseFloat(totalCost) / numWorkers;
                                     let initialWorkersWithCost = workersData.map(w => ({
@@ -783,11 +821,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                         cost: baseAmountPerWorker * w.ktu
                                     }));
 
-                                    // Подсчитываем сумму, распределённую на первом этапе
                                     const distributedAmount = initialWorkersWithCost.reduce((sum, w) => sum + w.cost, 0);
                                     const remainingAmount = parseFloat(totalCost) - distributedAmount;
 
-                                    // Перераспределяем остаток между участниками с КТУ 1
                                     const workersWithKtu1 = workersData.filter(w => w.ktu === 1).length;
                                     if (workersWithKtu1 > 0 && remainingAmount > 0) {
                                         const additionalPerKtu1Worker = remainingAmount / workersWithKtu1;
@@ -804,7 +840,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                         }));
                                     }
                                 } else {
-                                    // Стандартная методика: делим на суммарный КТУ
                                     const totalKtu = workersData.reduce((sum, w) => sum + w.ktu, 0);
                                     const amountPerKtu = parseFloat(totalCost) / totalKtu;
                                     workersWithCost = workersData.map(w => ({
@@ -826,10 +861,11 @@ document.addEventListener('DOMContentLoaded', () => {
                           isExpense: false,
                           isPaid: isPaid,
                           useRostikMethod: useRostikMethod,
+                          issuedMoney,
                           editHistory: []
                                 };
                             }
-                        }
+                        } // Добавлена закрывающая скобка для if (isExpense) { ... } else { ... }
 
                         window.objects.unshift(object);
                         renderObjects();
@@ -964,7 +1000,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             const workerMatch = filterText.split(' ')[0];
                             const typeMatch = filterText.replace(workerMatch, '').trim();
                             const hasWorker = obj.workers.some(w => (typeof w === 'string' ? w : w.name).toLowerCase() === workerMatch) ||
-                            (obj.receivers && obj.receivers.some(r => r.toLowerCase() === workerMatch));
+                            (obj.receivers && obj.receivers.some(r => r.toLowerCase() === workerMatch)) ||
+                            (obj.issuedMoney && obj.issuedMoney.some(im => im.name.toLowerCase() === workerMatch));
 
                             if (!hasWorker) return false;
                             if (!typeMatch) return true;
@@ -982,6 +1019,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 obj.cost.toLowerCase().includes(filterText) ||
                                 obj.workers.some(worker => (typeof worker === 'string' ? worker : worker.name).toLowerCase().includes(filterText)) ||
                                 (obj.receivers && obj.receivers.some(receiver => receiver.toLowerCase().includes(filterText))) ||
+                                (obj.issuedMoney && obj.issuedMoney.some(im => im.name.toLowerCase().includes(filterText))) ||
                                 obj.timestamp.toLowerCase().includes(filterText)
                             );
                         });
@@ -1011,6 +1049,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 } else {
                                     const costPerWorker = obj.workers.map(w => `${w.name}: ${w.cost} ₽ (КТУ ${w.ktu})`).join(', ');
                                     costDetailsHtml = `<div class="info-line cost-per-worker"><span class="label">Распределение:</span><span class="value">${costPerWorker}</span></div>`;
+                                }
+
+                                let issuedMoneyHtml = '';
+                                if (obj.issuedMoney && obj.issuedMoney.length > 0) {
+                                    const issuedMoneyDetails = obj.issuedMoney.map(im => `${im.name}: ${im.amount} ₽`).join(', ');
+                                    issuedMoneyHtml = `<div class="info-line issued-money"><span class="label">Выданные деньги:</span><span class="value">${issuedMoneyDetails}</span></div>`;
                                 }
 
                                 let imageUrl = null;
@@ -1044,6 +1088,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                         imageUrl = priceEntry.image;
                                     }
                                 }
+
+                                // Отладка: выводим imageUrl для каждого объекта
+                                console.log(`Object: ${obj.name}, Service: ${obj.service}, imageUrl: ${imageUrl}`);
 
                                 let costFormula = `${obj.cost} ₽`;
                                 if (obj.isExpense && obj.name.toLowerCase() === 'бензин' && obj.receivers.length > 0) {
@@ -1083,12 +1130,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${obj.editHistory.length > 0 ? `<button class="calendar-btn" data-index="${index}">📅 <span class="edit-count">${obj.editHistory.length}</span></button>` : ''}
                                 ${editMode ? `<span class="delete-cross" data-index="${index}">✕</span>` : ''}
                                 </div>
-                                ${imageUrl ? `<div class="card-image" style="background-image: url('${imageUrl}');"></div>` : ''}
-                                ${!obj.isExpense && !obj.isCustomService ? `<div class="info-line name"><span class="label">Название объекта:</span><span class="value">${obj.name}</span></div>` : ''}
+                                ${imageUrl ? `<img src="${imageUrl}" alt="${obj.service}" class="card-image" />` : ''}
                                 ${obj.area ? `<div class="info-line area"><span class="label">Площадь:</span><span class="value">${obj.area}</span></div>` : ''}
-                                <div class="info-line service"><span class="label">Услуга:</span><span class="value">${obj.isExpense ? obj.name : obj.service}</span></div>
+                                <div class="info-line service"><span class="label">Услуга:</span><span class="value">${obj.service}</span></div>
                                 <div class="info-line cost"><span class="label">Стоимость:</span><span class="value">${costFormula}</span></div>
-                                ${obj.manualPrice ? `<div class="info-line price-per-square"><span class="label">Цена за м²:</span><span class="value">${pricePerSquare} ₽</span></div>` : ''}
+                                <div class="info-line workers"><span class="label">${obj.isExpense ? 'Участники (списание)' : 'Участники'}:</span><span class="value">${obj.isExpense ? obj.workers.join(', ') : obj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}</span></div>
+                                ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line receivers"><span class="label">Участники (начисление):</span><span class="value">${obj.receivers.join(', ')}</span></div>` : ''}
                                 ${obj.startMileage && obj.endMileage ? `
                                     <div class="info-line mileage"><span class="label">Километраж:</span><span class="value">${obj.startMileage} км → ${obj.endMileage} км = ${obj.distance} км</span></div>
                                     ` : ''}
@@ -1096,6 +1143,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <div class="info-line distance"><span class="label">Расстояние:</span><span class="value">${obj.distance} км</span></div>
                                         ` : ''}
                                         ${costDetailsHtml}
+                                        ${issuedMoneyHtml}
                                         ${editedTimestampHtml ? `<div class="edit-history">${editedTimestampHtml}</div>` : ''}
                                         <button class="btn copy-btn" data-index="${index}">Скопировать</button>
                                         <button class="btn paid-btn ${obj.isPaid ? 'paid' : ''}" data-index="${index}">${obj.isPaid ? 'Выплачено' : 'Не выплачено'}</button>
@@ -1326,6 +1374,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         formToUse.querySelector('input[name="isPaid"]').checked = obj.isPaid || false;
 
+                        // Заполняем поле "Выданные деньги"
+                        workers.forEach(worker => {
+                            const checkbox = formToUse.querySelector(`.issued-money-group input[value="${worker}"]`);
+                            const amountInput = formToUse.querySelector(`input[name="issuedamount_${worker}"]`);
+                            if (checkbox && amountInput) {
+                                const issued = obj.issuedMoney && obj.issuedMoney.find(im => im.name === worker);
+                                checkbox.checked = !!issued;
+                                amountInput.disabled = !issued;
+                                amountInput.value = issued ? issued.amount : '';
+                            }
+                        });
+
                         if (isExpense) {
                             expenseNameInput.value = obj.name;
                             expenseForm.querySelector('input[name="expenseAmount"]').value = obj.cost;
@@ -1450,6 +1510,21 @@ document.addEventListener('DOMContentLoaded', () => {
                             const changes = [];
                             const newIsPaid = formToUse.querySelector('input[name="isPaid"]').checked;
 
+                            // Собираем новые данные о выданных деньгах
+                            const newIssuedMoney = Array.from(formToUse.querySelectorAll('.issued-money-group input[type="checkbox"]:checked')).map(checkbox => {
+                                const workerName = checkbox.value;
+                                const amountInput = formToUse.querySelector(`input[name="issuedamount_${workerName}"]`);
+                                const amount = parseFloat(amountInput.value) || 0;
+                                return amount > 0 ? { name: workerName, amount: amount.toFixed(2) } : null;
+                            }).filter(item => item !== null);
+
+                            // Проверяем изменения в "Выданные деньги"
+                            const oldIssuedMoneyStr = oldObj.issuedMoney ? oldObj.issuedMoney.map(im => `${im.name}: ${im.amount}`).join(', ') : 'Нет';
+                            const newIssuedMoneyStr = newIssuedMoney.length > 0 ? newIssuedMoney.map(im => `${im.name}: ${im.amount}`).join(', ') : 'Нет';
+                            if (oldIssuedMoneyStr !== newIssuedMoneyStr) {
+                                changes.push(`Выданные деньги: "${oldIssuedMoneyStr}" → "${newIssuedMoneyStr}"`);
+                            }
+
                             if (isExpense) {
                                 const newName = expenseNameInput.disabled ? expenseTypeValue.value : expenseNameInput.value.trim();
                                 let newAmount;
@@ -1499,6 +1574,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 oldObj.workers = newWorkers;
                                 oldObj.receivers = newReceivers;
                                 oldObj.isPaid = newIsPaid;
+                                oldObj.issuedMoney = newIssuedMoney;
                             } else if (isCustomService) {
                                 const newName = serviceNameInput.disabled ? serviceSelect.value : serviceNameInput.value.trim();
                                 const newCost = parseFloat(customServiceForm.querySelector('input[name="servicePrice"]').value);
@@ -1525,6 +1601,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 oldObj.cost = newCost.toFixed(2);
                                 oldObj.workers = workersWithCost;
                                 oldObj.isPaid = newIsPaid;
+                                oldObj.issuedMoney = newIssuedMoney;
                             } else {
                                 const newName = (obj.manualPrice ? manualObjectNameInput : objectNameInput).value.trim();
                                 const length = parseFloat(formToUse.querySelector('input[name="length"]').value) || 0;
@@ -1667,6 +1744,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     oldObj.service = selectedValue.value.split('|')[2];
                                 }
                                 oldObj.useRostikMethod = newUseRostikMethod;
+                                oldObj.issuedMoney = newIssuedMoney;
                             }
 
                             if (changes.length > 0) {
@@ -1687,11 +1765,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (isExpense) {
                                 expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
                                 expenseTypeValue.value = '';
-                                toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
+                                toggleInputState(formToUse, 'expenseName', expenseTypeValue);
                             } else if (isCustomService) {
                                 serviceSelect.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
                                 serviceSelect.value = '';
-                                toggleInputState(customServiceForm, 'serviceName', serviceSelect);
+                                toggleInputState(formToUse, 'serviceName', serviceSelect);
                             } else if (obj.manualPrice) {
                                 manualSelectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
                                 manualSelectedValue.value = '';
@@ -1717,7 +1795,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             const workerObjects = window.objects.filter(obj =>
                             (!obj.isExpense || (obj.isExpense && !obj.isPaid)) &&
                             ((obj.workers && obj.workers.some(w => getWorkerName(w) === worker)) ||
-                            (obj.receivers && obj.receivers.includes(worker)))
+                            (obj.receivers && obj.receivers.includes(worker)) ||
+                            (obj.issuedMoney && obj.issuedMoney.some(im => im.name === worker)))
                             );
 
                             if (workerObjects.length === 0) return;
@@ -1740,6 +1819,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             const pendingIncome = incomeBreakdown.filter(e => !e.isPaid);
                             const totalPaidIncome = paidIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
                             const totalPendingIncome = pendingIncome.reduce((sum, val) => sum + parseFloat(val.value), 0);
+
+                            // Рассчитываем выданные деньги только для невыплаченных объектов
+                            const issuedMoneyBreakdown = workerObjects
+                            .filter(obj => !obj.isPaid && obj.issuedMoney && obj.issuedMoney.some(im => im.name === worker))
+                            .map((obj, index) => {
+                                const issued = obj.issuedMoney.find(im => im.name === worker);
+                                return issued ? { value: (-parseFloat(issued.amount)).toFixed(2), index, className: 'issued-money-negative' } : null;
+                            })
+                            .filter(item => item !== null);
+                            const totalIssuedMoney = issuedMoneyBreakdown.reduce((sum, val) => sum + parseFloat(val.value), 0);
 
                             const expenseBreakdownByReceiver = {};
                             const debtsOwedToWorker = {};
@@ -1780,7 +1869,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             const totalExpenses = Object.values(expenseBreakdownByReceiver).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
                             const totalDebtsOwedToWorker = Object.values(debtsOwedToWorker).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
 
-                            const totalEarnings = totalPaidIncome + totalPendingIncome + totalDebtsOwedToWorker + totalExpenses;
+                            // Вычитаем выданные деньги из "В ожидании"
+                            const totalPendingWithIssued = totalPendingIncome + totalIssuedMoney; // Используем + из-за отрицательного totalIssuedMoney
+                            const totalEarnings = totalPaidIncome + totalPendingWithIssued + totalDebtsOwedToWorker + totalExpenses;
 
                             const formatEarnings = (amount) => amount.toFixed(2)
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
@@ -1793,11 +1884,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 : '0 ₽';
                                 earningsHtml += `<div class="earnings paid-earnings"><strong>Заработано:</strong> ${paidIncomeHtml} = ${formatEarnings(totalPaidIncome)} ₽</div>`;
                             }
-                            if (totalPendingIncome !== 0) {
+                            if (totalPendingIncome !== 0 || totalIssuedMoney !== 0) {
                                 const pendingIncomeHtml = pendingIncome.length > 0
                                 ? pendingIncome.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">+${e.value}</span>`).join(' ')
                                 : '0 ₽';
-                                earningsHtml += `<div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingIncomeHtml} = ${formatEarnings(totalPendingIncome)} ₽</div>`;
+                                const issuedMoneyHtml = issuedMoneyBreakdown.length > 0
+                                ? issuedMoneyBreakdown.map(e => `<span class="earnings-item ${e.className}" data-index="${e.index}">${e.value}</span>`).join(' ')
+                                : '';
+                                earningsHtml += `<div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingIncomeHtml}${issuedMoneyHtml ? ` ${issuedMoneyHtml}` : ''} = ${formatEarnings(totalPendingWithIssued)} ₽</div>`;
                             }
                             if (Object.keys(debtsOwedToWorker).length > 0) {
                                 earningsHtml += '<div class="earnings receiver-earnings"><strong>Долги мне:</strong>';
