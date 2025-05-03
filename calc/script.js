@@ -1089,7 +1089,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     }
                                 }
 
-                                // Отладка: выводим imageUrl для каждого объекта
                                 console.log(`Object: ${obj.name}, Service: ${obj.service}, imageUrl: ${imageUrl}`);
 
                                 let costFormula = `${obj.cost} ₽`;
@@ -1113,7 +1112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 entry.className = `calculation ${obj.isExpense ? 'expense' : ''} ${obj.manualPrice ? 'manual-price' : ''} ${obj.isCustomService ? 'custom-service' : ''} ${editMode ? 'editable' : ''}`;
                                 const areaMatch = obj.area ? obj.area.match(/([\d.]+)\s*x\s*([\d.]+)\s*=\s*([\d.]+)\s*м²/) || obj.area.match(/([\d.]+)\s*м²/) : null;
                                 const areaValue = areaMatch ? parseFloat(areaMatch[areaMatch.length === 4 ? 3 : 1]) : 0;
-                                const pricePerSquare = obj.manualPrice ? (parseFloat(obj.cost) / areaValue).toFixed(2) : null;
+                                const pricePerSquare = obj.manualPrice && areaValue > 0 ? (parseFloat(obj.cost) / areaValue).toFixed(2) : null;
 
                                 let editedTimestampHtml = '';
                                 if (obj.editedTimestamp) {
@@ -1130,12 +1129,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${obj.editHistory.length > 0 ? `<button class="calendar-btn" data-index="${index}">📅 <span class="edit-count">${obj.editHistory.length}</span></button>` : ''}
                                 ${editMode ? `<span class="delete-cross" data-index="${index}">✕</span>` : ''}
                                 </div>
-                                ${imageUrl ? `<img src="${imageUrl}" alt="${obj.service}" class="card-image" />` : ''}
+                                ${imageUrl ? `<div class="card-image" style="background-image: url('${imageUrl}');"></div>` : ''}
+                                ${!obj.isExpense && !obj.isCustomService ? `<div class="info-line name"><span class="label">Название объекта:</span><span class="value">${obj.name}</span></div>` : ''}
                                 ${obj.area ? `<div class="info-line area"><span class="label">Площадь:</span><span class="value">${obj.area}</span></div>` : ''}
-                                <div class="info-line service"><span class="label">Услуга:</span><span class="value">${obj.service}</span></div>
+                                <div class="info-line service"><span class="label">Услуга:</span><span class="value">${obj.isExpense ? obj.name : obj.service}</span></div>
                                 <div class="info-line cost"><span class="label">Стоимость:</span><span class="value">${costFormula}</span></div>
-                                <div class="info-line workers"><span class="label">${obj.isExpense ? 'Участники (списание)' : 'Участники'}:</span><span class="value">${obj.isExpense ? obj.workers.join(', ') : obj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}</span></div>
-                                ${obj.isExpense && obj.receivers.length > 0 ? `<div class="info-line receivers"><span class="label">Участники (начисление):</span><span class="value">${obj.receivers.join(', ')}</span></div>` : ''}
+                                ${obj.manualPrice && pricePerSquare ? `<div class="info-line price-per-square"><span class="label">Цена за м²:</span><span class="value">${pricePerSquare} ₽</span></div>` : ''}
                                 ${obj.startMileage && obj.endMileage ? `
                                     <div class="info-line mileage"><span class="label">Километраж:</span><span class="value">${obj.startMileage} км → ${obj.endMileage} км = ${obj.distance} км</span></div>
                                     ` : ''}
