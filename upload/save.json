@@ -1,5 +1,42 @@
 [
   {
+    "name": "УЗТМ Фонарь 3/2",
+    "length": null,
+    "width": null,
+    "area": "780.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "46800.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "11700.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "11700.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "11700.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "11700.00"
+      }
+    ],
+    "timestamp": "04.05.2025, 16:10:09",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Съёмная квартира",
     "service": "Расход",
     "cost": "-190.00",
