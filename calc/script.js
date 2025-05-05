@@ -1297,8 +1297,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     function showHistory(e) {
-                        const index = parseInt(e.target.getAttribute('data-index'));
-                        const obj = window.objects[index];
+                        e.stopPropagation();
+                        const timestamp = e.target.closest('.calendar-btn').getAttribute('data-timestamp');
+                        const obj = window.objects.find(o => o.timestamp === timestamp);
+                        if (!obj) return;
+                        
                         historyList.innerHTML = '';
 
                         const originalEntry = document.createElement('div');
@@ -1308,7 +1311,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${renderObjectDetails(getOriginalObject(obj))}
                         `;
                         originalEntry.addEventListener('click', () => {
-                            renderTemporaryObject(index, null);
+                            renderTemporaryObject(timestamp, null);
                             historyModal.style.display = 'none';
                         });
                         historyList.appendChild(originalEntry);
@@ -1321,7 +1324,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="info-line"><span class="label">Изменения:</span><span class="value">${history.changes}</span></div>
                             `;
                             entry.addEventListener('click', () => {
-                                renderTemporaryObject(index, hIndex);
+                                renderTemporaryObject(timestamp, hIndex);
                                 historyModal.style.display = 'none';
                             });
                             historyList.appendChild(entry);
@@ -1363,23 +1366,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         return result;
                     }
 
-                    function renderTemporaryObject(index, hIndex) {
-                        const obj = window.objects[index];
+                    function renderTemporaryObject(timestamp, hIndex) {
+                        const obj = window.objects.find(o => o.timestamp === timestamp);
+                        if (!obj) return;
+                        
                         const tempObj = hIndex === null ? obj : getObjectAtHistory(obj, hIndex);
-                        const entry = resultsDiv.querySelector(`[data-index="${index}"]`);
+                        const entry = resultsDiv.querySelector(`[data-timestamp="${timestamp}"]`);
+                        if (!entry) return;
+                        
                         const costPerWorker = tempObj.isExpense
-                        ? (parseFloat(tempObj.cost) / tempObj.workers.length).toFixed(2)
-                        : tempObj.workers.map(w => `${w.name}: ${w.cost} ₽ (КТУ ${w.ktu})`).join(', ');
+                            ? (parseFloat(tempObj.cost) / tempObj.workers.length).toFixed(2)
+                            : tempObj.workers.map(w => `${w.name}: ${w.cost} ₽ (КТУ ${w.ktu})`).join(', ');
                         const costPerReceiver = tempObj.isExpense && tempObj.receivers.length > 0
-                        ? (Math.abs(parseFloat(tempObj.cost)) / tempObj.receivers.length).toFixed(2)
-                        : '0.00';
+                            ? (Math.abs(parseFloat(tempObj.cost)) / tempObj.receivers.length).toFixed(2)
+                            : '0.00';
 
                         entry.innerHTML = `
                         <div class="header-line">
-                        <strong>•</strong>
-                        <span class="timestamp">(${tempObj.timestamp})</span>
-                        ${tempObj.editHistory.length > 0 ? `<button class="calendar-btn" data-index="${index}">📅 <span class="edit-count">${tempObj.editHistory.length}</span></button>` : ''}
-                        ${editMode ? `<span class="delete-cross" data-index="${index}">✕</span>` : ''}
+                            <strong>•</strong>
+                            <span class="timestamp">(${tempObj.timestamp})</span>
+                            ${tempObj.editHistory.length > 0 ? `<button class="calendar-btn" data-timestamp="${tempObj.timestamp}">📅 <span class="edit-count">${tempObj.editHistory.length}</span></button>` : ''}
+                            ${editMode ? `<span class="delete-cross" data-timestamp="${tempObj.timestamp}">✕</span>` : ''}
                         </div>
                         ${tempObj.area ? `<div class="info-line area"><span class="label">Площадь:</span><span class="value">${tempObj.area}</span></div>` : ''}
                         <div class="info-line service"><span class="label">Услуга:</span><span class="value">${tempObj.service}</span></div>
