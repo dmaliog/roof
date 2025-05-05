@@ -1175,11 +1175,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     function handleCopy(e) {
                         e.stopPropagation();
-                        const index = parseInt(e.target.getAttribute('data-index'));
-                        const card = resultsDiv.querySelector(`.calculation[data-index="${index}"]`);
+                        const timestamp = e.target.getAttribute('data-timestamp'); // Используем data-timestamp вместо data-index
+                        const card = resultsDiv.querySelector(`.calculation[data-timestamp="${timestamp}"]`); // Обновляем селектор
 
                         if (!card) {
-                            console.error(`Карточка с индексом ${index} не найдена`);
+                            console.error(`Карточка с timestamp ${timestamp} не найдена`);
                             return;
                         }
 
@@ -1196,8 +1196,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         if (navigator.clipboard && window.isSecureContext) {
                             navigator.clipboard.writeText(textToCopy)
-                            .then(() => {})
+                            .then(() => {
+                                console.log('Текст успешно скопирован в буфер обмена');
+                            })
                             .catch(err => {
+                                console.error('Ошибка при копировании: ', err);
                                 fallbackCopy(textToCopy);
                             });
                         } else {
@@ -1894,18 +1897,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (Object.keys(debtsOwedToWorker).length > 0) {
                                 earningsHtml += '<div class="earnings receiver-earnings"><strong>Долги мне:</strong>';
                                 Object.entries(debtsOwedToWorker).forEach(([debtor, debts]) => {
-                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">+${debt.value}</span>`).join(' + ');
+                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">+${debt.value}</span>`).join(' ');
                                     const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
-                                    earningsHtml += `<div>${debtor} → ${worker}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
+                                    earningsHtml += `<div>${debtor}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
                                 });
                                 earningsHtml += '</div>';
                             }
                             if (Object.keys(expenseBreakdownByReceiver).length > 0) {
                                 earningsHtml += '<div class="earnings expense-earnings"><strong>Долги другим:</strong>';
                                 Object.entries(expenseBreakdownByReceiver).forEach(([receiver, debts]) => {
-                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">${debt.value}</span>`).join(' + ');
+                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">${debt.value}</span>`).join(' ');
                                     const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
-                                    earningsHtml += `<div>${worker} → ${receiver}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
+                                    earningsHtml += `<div>${receiver}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
                                 });
                                 earningsHtml += '</div>';
                             }

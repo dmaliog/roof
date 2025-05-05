@@ -383,13 +383,17 @@ h2::after {
     color: #fff;
 }
 
-.earnings {
+.earnings, .earnings div {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     align-items: center;
     width: 100%;
     overflow-x: auto;
+}
+
+.earnings div {
+    padding: 5px 0;
 }
 
 .earnings-label {
