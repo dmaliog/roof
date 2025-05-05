@@ -474,6 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : serviceNameInput.value.trim();
             const servicePrice = parseFloat(customServiceForm.querySelector('input[name="servicePrice"]').value);
             const isPaid = customServiceForm.querySelector('input[name="isPaid"]').checked;
+            const useRostikMethod = customServiceForm.querySelector('input[name="useRostikMethod"]').checked;
             const workersData = Array.from(serviceWorkersCheckboxGroup.querySelectorAll('input:checked')).map(input => {
                 const ktuInput = customServiceForm.querySelector(`input[name="servicektu_${input.value}"]`);
                 return { name: input.value, ktu: ktuInput.value ? parseFloat(ktuInput.value) : 1 };
@@ -496,13 +497,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: serviceName,
                 service: serviceName,
                 cost: servicePrice.toFixed(2),
-                                           workers: workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (servicePrice * w.ktu / totalKtu).toFixed(2) })),
-                                           timestamp: new Date().toLocaleString(),
-                                           isExpense: false,
-                                           isCustomService: true,
-                                           isPaid: isPaid,
-                                           issuedMoney, // Добавляем выданные деньги
-                                           editHistory: isEditing ? window.objects[customServiceForm.dataset.editIndex]?.editHistory || [] : []
+                workers: useRostikMethod ? (() => {
+                    const numWorkers = workersData.length;
+                    let baseAmountPerWorker = servicePrice / numWorkers;
+                    let initialWorkersWithCost = workersData.map(w => ({
+                        name: w.name,
+                        ktu: w.ktu,
+                        cost: baseAmountPerWorker * w.ktu
+                    }));
+
+                    const distributedAmount = initialWorkersWithCost.reduce((sum, w) => sum + w.cost, 0);
+                    const remainingAmount = servicePrice - distributedAmount;
+
+                    const workersWithKtu1 = workersData.filter(w => w.ktu === 1).length;
+                    if (workersWithKtu1 > 0 && remainingAmount > 0) {
+                        const additionalPerKtu1Worker = remainingAmount / workersWithKtu1;
+                        return initialWorkersWithCost.map(w => ({
+                            name: w.name,
+                            ktu: w.ktu,
+                            cost: (w.ktu === 1 ? w.cost + additionalPerKtu1Worker : w.cost).toFixed(2)
+                        }));
+                    } else {
+                        return initialWorkersWithCost.map(w => ({
+                            name: w.name,
+                            ktu: w.ktu,
+                            cost: w.cost.toFixed(2)
+                        }));
+                    }
+                })() : workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (servicePrice * w.ktu / totalKtu).toFixed(2) })),
+                timestamp: new Date().toLocaleString(),
+                isExpense: false,
+                isCustomService: true,
+                isPaid: isPaid,
+                useRostikMethod: useRostikMethod,
+                issuedMoney,
+                editHistory: isEditing ? window.objects[customServiceForm.dataset.editIndex]?.editHistory || [] : []
             };
 
             if (isEditing) {
@@ -513,6 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (servicePrice !== parseFloat(oldObj.cost)) changes.push(`Стоимость: ${oldObj.cost} → ${servicePrice}`);
                 if (JSON.stringify(object.workers) !== JSON.stringify(oldObj.workers)) changes.push(`Участники: "${oldObj.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}" → "${object.workers.map(w => `${w.name} (КТУ ${w.ktu})`).join(', ')}"`);
                 if (isPaid !== oldObj.isPaid) changes.push(`Статус выплаты: "${oldObj.isPaid ? 'Выплачено' : 'Не выплачено'}" → "${isPaid ? 'Выплачено' : 'Не выплачено'}"`);
+                if (useRostikMethod !== oldObj.useRostikMethod) changes.push(`Методика: "${oldObj.useRostikMethod ? 'Ростиковская' : 'Стандартная'}" → "${useRostikMethod ? 'Ростиковская' : 'Стандартная'}"`);
                 // Проверяем изменения в "Выданные деньги"
                 const oldIssuedMoneyStr = oldObj.issuedMoney ? oldObj.issuedMoney.map(im => `${im.name}: ${im.amount}`).join(', ') : 'Нет';
                 const newIssuedMoneyStr = issuedMoney.length > 0 ? issuedMoney.map(im => `${im.name}: ${im.amount}`).join(', ') : 'Нет';
@@ -1145,6 +1175,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         ${costDetailsHtml}
                                         ${issuedMoneyHtml}
                                         ${editedTimestampHtml ? `<div class="edit-history">${editedTimestampHtml}</div>` : ''}
+                                        ${obj.useRostikMethod ? `<div class="edit-history"><span style="color: #555;">(Ростиковская методика)</span></div>` : ''}
                                         <button class="btn copy-btn" data-timestamp="${obj.timestamp}">Скопировать</button>
                                         <button class="btn paid-btn ${obj.isPaid ? 'paid' : ''}" data-timestamp="${obj.timestamp}">${obj.isPaid ? 'Выплачено' : 'Не выплачено'}</button>
                                         `;
@@ -1424,6 +1455,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                     }
                                 }
                             });
+                            const rostikMethodCheckbox = customServiceForm.querySelector('input[name="useRostikMethod"]');
+                            if (rostikMethodCheckbox) {
+                                rostikMethodCheckbox.checked = obj.useRostikMethod || false;
+                            }
                         } else {
                             const input = obj.manualPrice ? manualObjectNameInput : objectNameInput;
                             input.value = obj.name;
