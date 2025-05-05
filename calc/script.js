@@ -1873,6 +1873,26 @@ document.addEventListener('DOMContentLoaded', () => {
                             const totalExpenses = Object.values(expenseBreakdownByReceiver).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
                             const totalDebtsOwedToWorker = Object.values(debtsOwedToWorker).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
 
+                            // Объединяем все долги в один баланс
+                            const allDebts = {};
+                            
+                            // Добавляем долги, которые должны работнику
+                            Object.entries(debtsOwedToWorker).forEach(([debtor, debts]) => {
+                                if (!allDebts[debtor]) allDebts[debtor] = [];
+                                allDebts[debtor].push(...debts);
+                            });
+
+                            // Добавляем долги работника другим
+                            Object.entries(expenseBreakdownByReceiver).forEach(([receiver, debts]) => {
+                                if (!allDebts[receiver]) allDebts[receiver] = [];
+                                allDebts[receiver].push(...debts);
+                            });
+
+                            // Сортируем долги по времени
+                            Object.keys(allDebts).forEach(person => {
+                                allDebts[person].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                            });
+
                             const totalPendingWithIssued = totalPendingIncome + totalIssuedMoney;
                             const totalEarnings = totalPaidIncome + totalPendingWithIssued + totalDebtsOwedToWorker + totalExpenses;
 
@@ -1894,23 +1914,41 @@ document.addEventListener('DOMContentLoaded', () => {
                                 : '';
                                 earningsHtml += `<div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingIncomeHtml}${issuedMoneyHtml ? ` ${issuedMoneyHtml}` : ''} = ${formatEarnings(totalPendingWithIssued)} ₽</div>`;
                             }
-                            if (Object.keys(debtsOwedToWorker).length > 0) {
-                                earningsHtml += '<div class="earnings receiver-earnings"><strong>Долги мне:</strong>';
-                                Object.entries(debtsOwedToWorker).forEach(([debtor, debts]) => {
-                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">+${debt.value}</span>`).join(' ');
+
+                            // Отображаем объединенные долги
+                            if (Object.keys(allDebts).length > 0) {
+                                const positiveDebts = [];
+                                const negativeDebts = [];
+
+                                Object.entries(allDebts).forEach(([person, debts]) => {
                                     const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
-                                    earningsHtml += `<div>${debtor}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
+                                    const debtItems = debts.map(debt => {
+                                        const value = parseFloat(debt.value);
+                                        const sign = value > 0 ? '+' : '';
+                                        return `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">${sign}${debt.value}</span>`;
+                                    }).join(' ');
+                                    
+                                    const sign = totalDebt > 0 ? '+' : '';
+                                    const formattedTotal = `${sign}${formatEarnings(totalDebt)}`;
+                                    
+                                    if (totalDebt > 0) {
+                                        positiveDebts.push(`<div class="positive-debt">${person}: ${debtItems} = ${formattedTotal} ₽</div>`);
+                                    } else if (totalDebt < 0) {
+                                        negativeDebts.push(`<div class="negative-debt">${person}: ${debtItems} = ${formattedTotal} ₽</div>`);
+                                    }
                                 });
-                                earningsHtml += '</div>';
-                            }
-                            if (Object.keys(expenseBreakdownByReceiver).length > 0) {
-                                earningsHtml += '<div class="earnings expense-earnings"><strong>Долги другим:</strong>';
-                                Object.entries(expenseBreakdownByReceiver).forEach(([receiver, debts]) => {
-                                    const debtItems = debts.map(debt => `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">${debt.value}</span>`).join(' ');
-                                    const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
-                                    earningsHtml += `<div>${receiver}: ${debtItems} = ${formatEarnings(totalDebt)} ₽</div>`;
-                                });
-                                earningsHtml += '</div>';
+
+                                if (positiveDebts.length > 0) {
+                                    earningsHtml += '<div class="earnings receiver-earnings"><strong>Долги мне:</strong>';
+                                    earningsHtml += positiveDebts.join('');
+                                    earningsHtml += '</div>';
+                                }
+
+                                if (negativeDebts.length > 0) {
+                                    earningsHtml += '<div class="earnings expense-earnings"><strong>Долги другим:</strong>';
+                                    earningsHtml += negativeDebts.join('');
+                                    earningsHtml += '</div>';
+                                }
                             }
 
                             const card = document.createElement('div');
