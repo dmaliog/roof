@@ -1518,3 +1518,91 @@ background-color: #ff9800;
         gap: 12px;
     }
 }
+
+/* Адаптивные стили для модальных окон на мобильных устройствах */
+@media screen and (max-width: 768px) {
+    #history-modal .modal-content {
+        width: 90%;
+        min-height: 200px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .form-container {
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group .custom-select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .checkbox-group {
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+    .suggestions-list {
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+    /* Фиксированная высота для модальных окон */
+    #history-modal {
+    align-items: center;
+    justify-content: center;
+    }
+
+    /* Улучшение отображения кнопок в формах */
+    .form-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Улучшение отображения выпадающих списков */
+    .custom-select {
+        position: relative;
+        width: 100%;
+    }
+
+    .options-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    /* Стили для модальных форм */
+    #object-form,
+    #expense-form,
+    #manual-price-form,
+    #custom-service-form {
+    min-height: 300px;
+    overflow-y: auto;
+    }
+}
+
+/* Стили для очень узких экранов */
+@media screen and (max-width: 320px) {
+    #history-modal .modal-content {
+        width: 95%;
+        padding: 10px;
+        min-height: 150px;
+    }
+
+    .form-container {
+        padding: 10px;
+    }
+
+    .checkbox-group {
+        max-height: 120px;
+    }
+}
+
