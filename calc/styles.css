@@ -1249,6 +1249,7 @@ background-color: #ff9800;
     padding: 25px;
     border-radius: 12px;
     width: 90%;
+    height: 90%;
     max-width: 600px;
     max-height: 80vh;
     overflow-y: auto;
@@ -1454,11 +1455,6 @@ background-color: #ff9800;
 
     .button-group {
         display: grid;
-    }
-
-    .modal-content {
-        width: 95%;
-        padding: 15px;
     }
 
     .close {
