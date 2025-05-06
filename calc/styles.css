@@ -1250,6 +1250,7 @@ background-color: #ff9800;
     border-radius: 12px;
     width: 90%;
     max-width: 600px;
+    max-height: 80vh;
     overflow-y: auto;
     position: relative;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);

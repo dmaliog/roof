@@ -514,7 +514,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         loadData();
 
-
         // Обработчик отправки формы кастомной услуги
         customServiceForm.addEventListener('submit', (e) => {
             e.preventDefault();
