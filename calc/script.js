@@ -404,41 +404,100 @@ document.addEventListener('DOMContentLoaded', () => {
             expenseAmountInput.addEventListener('focus', () => {
                 if (!expenseAmountInput.value.startsWith('-')) expenseAmountInput.value = '-';
             });
-                expenseAmountInput.addEventListener('input', () => {
-                    const value = expenseAmountInput.value;
-                    if (value === '-' || value === '') return;
-                    if (!value.startsWith('-')) {
-                        expenseAmountInput.value = '-' + value.replace('-', '');
-                    } else if (parseFloat(value) >= 0 && value !== '-') {
-                        expenseAmountInput.value = '-' + Math.abs(parseFloat(value)).toString();
+            expenseAmountInput.addEventListener('input', () => {
+                const value = expenseAmountInput.value;
+                if (value === '-' || value === '') return;
+                if (!value.startsWith('-')) {
+                    expenseAmountInput.value = '-' + value.replace('-', '');
+                } else if (parseFloat(value) >= 0 && value !== '-') {
+                    expenseAmountInput.value = '-' + Math.abs(parseFloat(value)).toString();
+                }
+            });
+
+            const fetchOptions = {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-store'
+                }
+            };
+
+            const maxRetries = 3;
+            const retryDelay = 1000; // 1 секунда
+
+            async function fetchWithRetry(url, retryCount = 0) {
+                try {
+                    const response = await fetch(url, fetchOptions);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                });
-
-                const fetchOptions = {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-store'
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error(`Ошибка загрузки ${url}:`, error);
+                    if (retryCount < maxRetries) {
+                        console.log(`Повторная попытка загрузки ${url} (${retryCount + 1}/${maxRetries})...`);
+                        await new Promise(resolve => setTimeout(resolve, retryDelay));
+                        return fetchWithRetry(url, retryCount + 1);
                     }
-                };
+                    console.error(`Не удалось загрузить ${url} после ${maxRetries} попыток`);
+                    return null;
+                }
+            }
 
-                Promise.all([
-                    fetch('../upload/save.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
-                            fetch('../workers.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => ['Артём', 'Коля', 'Слава', 'Женя']),
-                            fetch('../prices.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
-                            fetch('../custom-services.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => []),
-                            fetch('../expense-types.json', fetchOptions).then(res => res.ok ? res.json() : []).catch(() => [])
-                ]).then(([objectsData, workersData, pricesData, customServicesData, expenseTypesData]) => {
-                    window.objects = objectsData; // Присваиваем данные глобальной переменной
-                    workers = workersData;
-                    prices = pricesData;
-                    customServices = customServicesData;
-                    expenseTypes = expenseTypesData;
+            async function loadAllData() {
+                try {
+                    const [objectsData, workersData, pricesData, customServicesData, expenseTypesData] = await Promise.all([
+                        fetchWithRetry('../upload/save.json'),
+                        fetchWithRetry('../workers.json'),
+                        fetchWithRetry('../prices.json'),
+                        fetchWithRetry('../custom-services.json'),
+                        fetchWithRetry('../expense-types.json')
+                    ]);
 
+                    // Проверяем успешность загрузки каждого файла
+                    if (!objectsData) {
+                        console.error('Не удалось загрузить save.json');
+                        window.objects = [];
+                    } else {
+                        window.objects = objectsData;
+                    }
+
+                    if (!workersData) {
+                        console.error('Не удалось загрузить workers.json');
+                        workers = ['Артём', 'Коля', 'Слава', 'Женя'];
+                    } else {
+                        workers = workersData;
+                    }
+
+                    if (!pricesData) {
+                        console.error('Не удалось загрузить prices.json');
+                        prices = [];
+                    } else {
+                        prices = pricesData;
+                    }
+
+                    if (!customServicesData) {
+                        console.error('Не удалось загрузить custom-services.json');
+                        customServices = [];
+                    } else {
+                        customServices = customServicesData;
+                    }
+
+                    if (!expenseTypesData) {
+                        console.error('Не удалось загрузить expense-types.json');
+                        expenseTypes = [];
+                    } else {
+                        expenseTypes = expenseTypesData;
+                    }
+
+                    // Добавляем стандартные значения
                     expenseTypes.unshift({ name: "Своё название" });
                     expenseTypes.push({ name: "Еда" }, { name: "Займ" });
                     customServices.unshift({ name: "Своё название" });
 
                     customServiceNames = [...new Set(window.objects.filter(obj => obj.isCustomService).map(obj => obj.name))];
+                    
+                    // Обновляем UI
                     renderObjects();
                     renderWorkerStats();
                     populateWorkers();
@@ -450,7 +509,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     toggleInputState(expenseForm, 'expenseName', expenseTypeValue);
                     toggleInputState(customServiceForm, 'serviceName', serviceSelect);
-                });
+
+                } catch (error) {
+                    console.error('Ошибка при загрузке данных:', error);
+                    alert('Произошла ошибка при загрузке данных. Пожалуйста, обновите страницу или попробуйте позже.');
+                }
+            }
+
+            loadAllData();
         }
 
         clearCacheBtn.addEventListener('click', () => {
@@ -1264,7 +1330,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     function handlePaidToggle(e) {
                         e.stopPropagation();
-                        const index = parseInt(e.target.getAttribute('data-index'));
+                        const timestamp = e.target.getAttribute('data-timestamp');
+                        const index = window.objects.findIndex(obj => obj.timestamp === timestamp);
+                        if (index === -1) {
+                            console.error(`Объект с timestamp "${timestamp}" не найден`);
+                            return;
+                        }
                         const obj = window.objects[index];
                         obj.isPaid = !obj.isPaid;
                         e.target.textContent = obj.isPaid ? 'Выплачено' : 'Не выплачено';
@@ -1280,7 +1351,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     function handleDelete(e) {
-                        const index = parseInt(e.target.getAttribute('data-index'));
+                        e.stopPropagation(); // Предотвращаем всплытие события к карточке
+                        const timestamp = e.target.getAttribute('data-timestamp');
+                        const index = window.objects.findIndex(obj => obj.timestamp === timestamp);
+                        if (index === -1) {
+                            console.error(`Объект с timestamp "${timestamp}" не найден`);
+                            return;
+                        }
                         if (confirm(`Удалить "${window.objects[index].isExpense ? 'расход' : 'объект'} "${window.objects[index].name}"?`)) {
                             window.objects.splice(index, 1);
                             renderObjects();
