@@ -512,7 +512,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loadAllData();
         }
 
-
         loadData();
 
 
@@ -2776,5 +2775,4 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.addEventListener('DOMContentLoaded', () => {
                         createFloatingButtons();
                     });
-
 });
