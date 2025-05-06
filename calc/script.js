@@ -2,7 +2,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM элементы
     const customServiceForm = document.getElementById('custom-service-form');
-    const showCustomServiceFormBtn = document.getElementById('show-custom-service-form');
     const serviceWorkersCheckboxGroup = document.getElementById('service-workers-checkbox-group');
     const serviceNameInput = customServiceForm.querySelector('input[name="serviceName"]');
     const serviceNameSuggestions = document.getElementById('service-name-suggestions');
@@ -16,9 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const objectForm = document.getElementById('object-form');
     const expenseForm = document.getElementById('expense-form');
     const manualPriceForm = document.getElementById('manual-price-form');
-    const showObjectFormBtn = document.getElementById('show-object-form');
-    const showExpenseFormBtn = document.getElementById('show-expense-form');
-    const showManualPriceFormBtn = document.getElementById('show-manual-price-form');
     const selectDisplay = document.getElementById('service-select');
     const selectedValue = document.getElementById('selected-value');
     const optionsList = document.getElementById('service-options');
@@ -38,9 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const manualObjectNameSuggestions = document.getElementById('manual-object-name-suggestions');
     const resultsDiv = document.getElementById('results');
     const workerStatsDiv = document.getElementById('worker-stats');
-    const exportBtn = document.getElementById('export');
-    const clearCacheBtn = document.getElementById('clear-cache');
-    const toggleEditModeBtn = document.getElementById('toggle-edit-mode');
     const historyModal = document.getElementById('history-modal');
     const closeHistoryBtn = document.getElementById('close-history');
     const historyList = document.getElementById('history-list');
@@ -519,16 +512,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loadAllData();
         }
 
-        clearCacheBtn.addEventListener('click', () => {
-            loadData();
-            alert('Данные обновлены из JSON-файлов.');
-        });
-
-        showObjectFormBtn.addEventListener('click', () => showForm(objectForm));
-        showExpenseFormBtn.addEventListener('click', () => showForm(expenseForm));
-        showManualPriceFormBtn.addEventListener('click', () => showForm(manualPriceForm));
-        showCustomServiceFormBtn.addEventListener('click', () => showForm(customServiceForm));
-
         loadData();
 
         // Обработчик отправки формы кастомной услуги
@@ -984,28 +967,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert((isExpense ? 'Расход' : 'Объект') + ' добавлен.');
                     }
 
-                    exportBtn.addEventListener('click', () => {
-                        const json = JSON.stringify(window.objects, null, 2);
-                        const blob = new Blob([json], { type: 'application/json' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'save.json';
-                        a.click();
-                        URL.revokeObjectURL(url);
-                    });
-
-                    clearCacheBtn.addEventListener('click', () => {
-                        caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
-                        loadData();
-                    });
-
-                    toggleEditModeBtn.addEventListener('click', () => {
-                        editMode = !editMode;
-                        toggleEditModeBtn.textContent = `Режим редактирования: ${editMode ? 'вкл' : 'выкл'}`;
-                        toggleEditModeBtn.classList.toggle('active', editMode);
-                        renderObjects();
-                    });
 
                     closeHistoryBtn.addEventListener('click', () => {
                         historyModal.style.display = 'none';
@@ -1484,6 +1445,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         const formToUse = isExpense ? expenseForm : (isCustomService ? customServiceForm : (obj.manualPrice ? manualPriceForm : objectForm));
 
                         showForm(formToUse);
+
+                        // Добавляем прокрутку к форме
+                        const y = formToUse.getBoundingClientRect().top + window.scrollY;
+                        window.scrollTo({ top: y - 15, behavior: 'smooth' });
+
                         const submitBtn = formToUse.querySelector('button[type="submit"]');
                         const cancelBtn = formToUse.querySelector('.cancel-btn');
 
@@ -1994,7 +1960,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             // Объединяем все долги в один баланс
                             const allDebts = {};
-                            
+
                             // Добавляем долги, которые должны работнику
                             Object.entries(debtsOwedToWorker).forEach(([debtor, debts]) => {
                                 if (!allDebts[debtor]) allDebts[debtor] = [];
@@ -2046,10 +2012,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                         const sign = value > 0 ? '+' : '';
                                         return `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">${sign}${debt.value}</span>`;
                                     }).join(' ');
-                                    
+
                                     const sign = totalDebt > 0 ? '+' : '';
                                     const formattedTotal = `${sign}${formatEarnings(totalDebt)}`;
-                                    
+
                                     if (totalDebt > 0) {
                                         positiveDebts.push(`<div class="positive-debt">${person}: ${debtItems} = ${formattedTotal} ₽</div>`);
                                     } else if (totalDebt < 0) {
@@ -2142,13 +2108,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderWorkerCharts();
                     }
 
-                    function scrollToObject(timestamp) {
+                    function scrollToObject(timestamp, scrollPosition = null) {
                         console.log(`Scrolling to timestamp: ${timestamp}`);
+
+                        if (scrollPosition === null) {
+                            scrollPosition = window.scrollY || document.documentElement.scrollTop;
+                        }
+
                         const targetCard = document.querySelector(`.calculation[data-timestamp="${timestamp}"]`);
                         if (targetCard) {
                             console.log('Card found, adding highlight');
                             targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             targetCard.classList.add('highlight');
+
+                            addBackButton(scrollPosition);
+
                             setTimeout(() => {
                                 console.log('Removing highlight');
                                 targetCard.classList.remove('highlight');
@@ -2157,6 +2131,91 @@ document.addEventListener('DOMContentLoaded', () => {
                             console.warn(`Card with timestamp "${timestamp}" not found.`);
                         }
                     }
+
+                    function addBackButton(scrollPosition) {
+                        const existingBackBtn = document.getElementById('back-to-stats-btn');
+                        if (existingBackBtn) existingBackBtn.remove();
+
+                        const backBtn = document.createElement('button');
+                        backBtn.id = 'back-to-stats-btn';
+                        backBtn.className = 'back-to-stats-btn floating-btn';
+                        backBtn.innerHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="stroke-[2]">
+                        <path d="M6 9L12 15L18 9" stroke="white" stroke-width="2" stroke-linecap="square"/>
+                        </svg>
+                        `;
+
+                        backBtn.style.position = 'fixed';
+                        backBtn.style.bottom = '70px'; // Над троеточием (20px + 40px кнопка + 10px отступ)
+                        backBtn.style.right = '22px'; // Совпадает с floating-btn-container
+                        backBtn.style.zIndex = '1002'; // Выше floatingMenuBtn (z-index: 1001)
+                        backBtn.style.width = '36px'; // Чуть меньше, чем 40px
+                        backBtn.style.height = '36px';
+                        backBtn.style.backgroundColor = '#34495e'; // Как у троеточия
+                        backBtn.style.border = 'none';
+                        backBtn.style.borderRadius = '50%';
+                        backBtn.style.cursor = 'pointer';
+                        backBtn.style.boxShadow = '0 3px 10px rgba(0,0,0,0.3)';
+                        backBtn.style.display = 'flex';
+                        backBtn.style.alignItems = 'center';
+                        backBtn.style.justifyContent = 'center';
+                        backBtn.style.transition = 'all 0.3s ease';
+
+                        backBtn.onmouseover = function() {
+                            this.style.backgroundColor = '#2c3e50';
+                            this.style.transform = 'translateY(-3px)';
+                            this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+                        };
+
+                        backBtn.onmouseout = function() {
+                            this.style.backgroundColor = '#34495e';
+                            this.style.transform = 'translateY(0)';
+                            this.style.boxShadow = '0 3px 10px rgba(0,0,0,0.3)';
+                        };
+
+                        backBtn.addEventListener('click', () => {
+                            console.log(`Back button clicked, returning to scrollPosition: ${scrollPosition}`);
+                            if (typeof scrollPosition === 'number') {
+                                window.scrollTo({
+                                    top: scrollPosition,
+                                    behavior: 'smooth'
+                                });
+                            } else {
+                                document.getElementById('worker-stats').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                            backBtn.remove();
+                        });
+
+                        // Scroll listener to remove button when close to original scroll position
+                        const checkScrollPosition = debounce(() => {
+                            const currentScroll = window.scrollY || document.documentElement.scrollTop;
+                            const isNearScrollPosition = typeof scrollPosition === 'number' && Math.abs(currentScroll - scrollPosition) < 300;
+
+                            if (isNearScrollPosition) {
+                                console.log('Near original scroll position, removing back button', { currentScroll, scrollPosition });
+                                backBtn.remove();
+                                window.removeEventListener('scroll', checkScrollPosition);
+                            }
+                        }, 100);
+
+                        window.addEventListener('scroll', checkScrollPosition);
+
+                        document.body.appendChild(backBtn);
+                    }
+
+                    // Debounce function to limit scroll event frequency
+                    function debounce(func, wait) {
+                        let timeout;
+                        return function executedFunction(...args) {
+                            const later = () => {
+                                clearTimeout(timeout);
+                                func(...args);
+                            };
+                            clearTimeout(timeout);
+                            timeout = setTimeout(later, wait);
+                        };
+                    }
+
 
                     function filterByWorker(worker) {
                         filterInput.value = worker;
@@ -2295,4 +2354,424 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     toggleDimensionFields('object');
                     toggleDimensionFields('manual');
+
+                    function createFloatingButtons() {
+                        // Удаляем существующие плавающие кнопки, если они есть
+                        const existingButtons = document.querySelectorAll('.floating-btn-container, .floating-btn, .sub-btn');
+                        existingButtons.forEach(btn => btn.remove());
+
+                        // Создаем контейнер для кнопок
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.id = 'floating-btn-container';
+                        buttonContainer.className = 'floating-btn-container';
+
+                        // Создаем кнопку меню (троеточие)
+                        const floatingMenuBtn = document.createElement('button');
+                        floatingMenuBtn.id = 'floating-menu-btn';
+                        floatingMenuBtn.className = 'floating-btn menu-btn';
+                        floatingMenuBtn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="5" r="2" fill="white"/>
+                        <circle cx="12" cy="12" r="2" fill="white"/>
+                        <circle cx="12" cy="19" r="2" fill="white"/>
+                        </svg>
+                        `;
+
+                        // Создаем кнопку добавления (плюс)
+                        const floatingAddBtn = document.createElement('button');
+                        floatingAddBtn.id = 'floating-add-btn';
+                        floatingAddBtn.className = 'floating-btn action-btn';
+                        floatingAddBtn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        `;
+                        floatingAddBtn.title = "Добавить объект";
+
+                        // Создаем контейнер для подкнопок внутри кнопки добавления
+                        const subButtonsContainer = document.createElement('div');
+                        subButtonsContainer.id = 'sub-buttons-container';
+                        subButtonsContainer.className = 'sub-buttons-container';
+
+                        const subButtons = [
+                            { id: 'sub-point', color: '#3498db', formId: 'add-point-form', title: 'Добавить объект' },
+                            { id: 'add-line', color: '#e74c3c', formId: 'add-line-form', title: 'Добавить расход' },
+                            { id: 'add-polygon', color: '#27ae60', formId: 'add-polygon-form', title: 'Добавить объект с ручной ценой' },
+                            { id: 'add-collection', color: '#808E8F', formId: 'add-collection-form', title: 'Добавить услугу' }
+                        ];
+
+                        subButtons.forEach(btn => {
+                            const subBtn = document.createElement('button');
+                            subBtn.id = btn.id;
+                            subBtn.className = 'floating-btn sub-btn';
+                            subBtn.style.backgroundColor = btn.color;
+                            subBtn.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 5V19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            `;
+                            subBtn.title = btn.title;
+                            subBtn.addEventListener('click', () => {
+                                let targetForm = null;
+
+                                if (btn.formId === 'add-point-form') {
+                                    targetForm = objectForm;
+                                    showForm(objectForm);
+                                } else if (btn.formId === 'add-line-form') {
+                                    targetForm = expenseForm;
+                                    showForm(expenseForm);
+                                } else if (btn.formId === 'add-polygon-form') {
+                                    targetForm = manualPriceForm;
+                                    showForm(manualPriceForm);
+                                } else if (btn.formId === 'add-collection-form') {
+                                    targetForm = customServiceForm;
+                                    showForm(customServiceForm);
+                                }
+
+                                if (targetForm) {
+                                    console.log(`Scrolling to form: ${btn.formId}`);
+                                    const y = targetForm.getBoundingClientRect().top + window.scrollY;
+                                    window.scrollTo({ top: y - 15, behavior: 'smooth' });
+                                } else {
+                                    console.warn(`Form for ${btn.formId} not found or targetForm is null`);
+                                }
+
+                                // Скрываем все кнопки и субкнопки
+                                floatingAddBtn.classList.remove('show');
+                                floatingExportBtn.classList.remove('show');
+                                floatingEditBtn.classList.remove('show');
+                                floatingStatsBtn.classList.remove('show');
+                                floatingRefreshBtn.classList.remove('show');
+                                subButtons.forEach(sub => {
+                                    document.getElementById(sub.id).classList.remove('show');
+                                });
+                            });
+
+                            subButtonsContainer.appendChild(subBtn);
+                        });
+
+                        // Создаем кнопку экспорта (дискета)
+                        const floatingExportBtn = document.createElement('button');
+                        floatingExportBtn.id = 'floating-export-btn';
+                        floatingExportBtn.className = 'floating-btn action-btn';
+                        floatingExportBtn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7.41421C19 6.88378 18.7893 6.37507 18.4142 6L16 3.58579C15.6249 3.21071 15.1162 3 14.5858 3H7C5.89543 3 5 3.89543 5 5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17 21V15C17 13.8954 16.1046 13 15 13H9C7.89543 13 7 13.8954 7 15V21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 8H15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        `;
+                        floatingExportBtn.title = "Экспорт в JSON";
+
+                        // Создаем кнопку редактирования (карандаш)
+                        const floatingEditBtn = document.createElement('button');
+                        floatingEditBtn.id = 'floating-edit-btn';
+                        floatingEditBtn.className = 'floating-btn action-btn';
+                        floatingEditBtn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 4H4C2.89543 4 2 4.89543 2 6V20C2 21.1046 2.89543 22 4 22H18C19.1046 22 20 21.1046 20 20V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M18.5 2.5C19.3284 1.67157 20.6716 1.67157 21.5 2.5C22.3284 3.32843 22.3284 4.67157 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        `;
+                        floatingEditBtn.title = "Режим редактирования";
+
+                        // Создаем кнопку статистики работников (человечек)
+                        const floatingStatsBtn = document.createElement('button');
+                        floatingStatsBtn.id = 'floating-stats-btn';
+                        floatingStatsBtn.className = 'floating-btn action-btn';
+                        floatingStatsBtn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="6" r="4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 10V18C12 20 10 22 8 22H16C18 22 20 20 20 18V10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        `;
+                        floatingStatsBtn.title = "Статистика работников";
+
+                        // Создаем кнопку обновления страницы (стрелки вращения)
+                        const floatingRefreshBtn = document.createElement('button');
+                        floatingRefreshBtn.id = 'floating-refresh-btn';
+                        floatingRefreshBtn.className = 'floating-btn action-btn';
+                        floatingRefreshBtn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3.07 10.88C3.62 6.44 7.41 3 12 3C14.28 3 16.4 3.85 18.01 5.25V4
+                        C18.01 3.45 18.46 3 19.01 3C19.56 3 20.01 3.45 20.01 4V8C20.01 8.55 19.56 9 19.01 9H15
+                        C14.45 9 14 8.55 14 8C14 7.45 14.45 7 15 7H16.96C15.68 5.76 13.91 5 12 5
+                        C8.43 5 5.48 7.67 5.05 11.12C4.99 11.67 4.49 12.06 3.94 11.99
+                        C3.39 11.92 3 11.42 3.07 10.88ZM20.06 12.01C20.61 12.08 21 12.58 20.93 13.12
+                        C20.38 17.56 16.59 21 12 21C9.72 21 7.61 20.15 6 18.76V20
+                        C6 20.55 5.55 21 5 21C4.45 21 4 20.55 4 20V16
+                        C4 15.45 4.45 15 5 15H9
+                        C9.55 15 10 15.45 10 16
+                        C10 16.55 9.55 17 9 17H7.04
+                        C8.32 18.24 10.09 19 12 19
+                        C15.57 19 18.52 16.33 18.95 12.88
+                        C19.01 12.33 19.51 11.94 20.06 12.01Z"
+                        fill="white"/>
+                        </svg>
+                        `;
+
+                        floatingRefreshBtn.title = "Обновить страницу";
+
+                        // Добавляем стили через CSS
+                        const style = document.createElement('style');
+                        style.textContent = `
+                        .floating-btn-container {
+                            position: fixed;
+                            bottom: 20px;
+                            right: 20px;
+                            z-index: 1000;
+                            display: flex;
+                            flex-direction: row-reverse;
+                            align-items: center;
+                            gap: 10px;
+                        }
+
+                        .sub-buttons-container {
+                            position: absolute;
+                            bottom: 50px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            display: flex;
+                            flex-direction: column-reverse;
+                            align-items: center;
+                            gap: 10px;
+                            z-index: 999;
+                        }
+
+                        .floating-btn {
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            border: none;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+                            transition: all 0.3s ease;
+                            position: relative;
+                        }
+
+                        .sub-btn {
+                            width: 32px;
+                            height: 32px;
+                            transform: scale(0);
+                            opacity: 0;
+                            transition: all 0.3s ease;
+                        }
+
+                        .sub-btn.show {
+                            transform: scale(1);
+                            opacity: 1;
+                        }
+
+                        .menu-btn {
+                            background-color: #34495e;
+                            z-index: 1001;
+                        }
+
+                        .menu-btn:hover {
+                            background-color: #2c3e50;
+                            transform: rotate(90deg);
+                        }
+
+                        .action-btn {
+                            transform: scale(0);
+                            opacity: 0;
+                            transition: all 0.3s ease;
+                        }
+
+                        .action-btn.show {
+                            transform: scale(1);
+                            opacity: 1;
+                        }
+
+                        #floating-add-btn {
+                        background-color: #27ae60;
+                        }
+
+                        #floating-add-btn:hover {
+                        background-color: #219653;
+                        transform: translateY(-3px);
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                        }
+
+                        #floating-export-btn {
+                        background-color: #3498db;
+                        }
+
+                        #floating-export-btn:hover {
+                        background-color: #2980b9;
+                        transform: translateY(-3px);
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                        }
+
+                        #floating-edit-btn {
+                        background-color: #3498db;
+                        }
+
+                        #floating-edit-btn:hover {
+                        background-color: #2980b9;
+                        transform: translateY(-3px);
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                        }
+
+                        #floating-edit-btn.active {
+                        background-color: #e74c3c;
+                        }
+
+                        #floating-edit-btn.active:hover {
+                        background-color: #c0392b;
+                        }
+
+                        #floating-stats-btn {
+                        background-color: #3498db;
+                        }
+
+                        #floating-stats-btn:hover {
+                        background-color: #2980b9;
+                        transform: translateY(-3px);
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                        }
+
+                        #floating-refresh-btn {
+                        background-color: #3498db;
+                        }
+
+                        #floating-refresh-btn:hover {
+                        background-color: #2980b9;
+                        transform: translateY(-3px);
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                        }
+                        `;
+                        document.head.appendChild(style);
+
+                        // Добавляем обработчики событий
+                        floatingMenuBtn.addEventListener('click', () => {
+                            floatingAddBtn.classList.toggle('show');
+                            floatingExportBtn.classList.toggle('show');
+                            floatingEditBtn.classList.toggle('show');
+                            floatingStatsBtn.classList.toggle('show');
+                            floatingRefreshBtn.classList.toggle('show');
+                            // Скрываем подкнопки при нажатии на меню
+                            subButtons.forEach(btn => {
+                                document.getElementById(btn.id).classList.remove('show');
+                            });
+                        });
+
+                        floatingAddBtn.addEventListener('click', () => {
+                            subButtons.forEach(btn => {
+                                document.getElementById(btn.id).classList.toggle('show');
+                            });
+                        });
+
+                        floatingExportBtn.addEventListener('click', () => {
+                            const json = JSON.stringify(window.objects, null, 2);
+                            const blob = new Blob([json], { type: 'application/json' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'save.json';
+                            a.click();
+                            URL.revokeObjectURL(url);
+
+                            // Скрываем все кнопки и субкнопки
+                            floatingAddBtn.classList.remove('show');
+                            floatingExportBtn.classList.remove('show');
+                            floatingEditBtn.classList.remove('show');
+                            floatingStatsBtn.classList.remove('show');
+                            floatingRefreshBtn.classList.remove('show');
+                            subButtons.forEach(sub => {
+                                document.getElementById(sub.id).classList.remove('show');
+                            });
+                        });
+
+                        floatingEditBtn.addEventListener('click', () => {
+                            // Переключаем режим редактирования напрямую
+                            editMode = !editMode;
+
+                            // Обновляем внешний вид кнопки
+                            floatingEditBtn.classList.toggle('active', editMode);
+
+                            // Перерисовываем объекты с учетом нового режима
+                            renderObjects();
+
+                            // Скрываем все кнопки и субкнопки
+                            floatingAddBtn.classList.remove('show');
+                            floatingExportBtn.classList.remove('show');
+                            floatingEditBtn.classList.remove('show');
+                            floatingStatsBtn.classList.remove('show');
+                            floatingRefreshBtn.classList.remove('show');
+                            subButtons.forEach(sub => {
+                                document.getElementById(sub.id).classList.remove('show');
+                            });
+                        });
+
+                        floatingStatsBtn.addEventListener('click', () => {
+                            const statsSection = document.getElementById('worker-stats');
+                            if (statsSection) {
+                                const y = statsSection.getBoundingClientRect().top + window.scrollY;
+                                window.scrollTo({ top: y - 15, behavior: 'smooth' });
+                            } else {
+                                console.warn('Element with id "worker-stats" not found');
+                            }
+
+                            // Скрываем все кнопки и субкнопки
+                            floatingAddBtn.classList.remove('show');
+                            floatingExportBtn.classList.remove('show');
+                            floatingEditBtn.classList.remove('show');
+                            floatingStatsBtn.classList.remove('show');
+                            floatingRefreshBtn.classList.remove('show');
+                            subButtons.forEach(sub => {
+                                document.getElementById(sub.id).classList.remove('show');
+                            });
+                        });
+
+                        floatingRefreshBtn.addEventListener('click', () => {
+                            try {
+                                caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+                                loadData();
+                            } catch (e) {
+                                console.warn('Error in loadData:', e);
+                            }
+                            location.reload();
+
+                            // Скрываем все кнопки и субкнопки
+                            floatingAddBtn.classList.remove('show');
+                            floatingExportBtn.classList.remove('show');
+                            floatingEditBtn.classList.remove('show');
+                            floatingStatsBtn.classList.remove('show');
+                            floatingRefreshBtn.classList.remove('show');
+                            subButtons.forEach(sub => {
+                                document.getElementById(sub.id).classList.remove('show');
+                            });
+                        });
+
+                        if (editMode) {
+                            floatingEditBtn.classList.add('active');
+                        }
+
+                        // Добавляем подкнопки в кнопку добавления
+                        floatingAddBtn.appendChild(subButtonsContainer);
+
+                        // Добавляем кнопки в контейнер
+                        buttonContainer.appendChild(floatingMenuBtn);
+                        buttonContainer.appendChild(floatingAddBtn);
+                        buttonContainer.appendChild(floatingExportBtn);
+                        buttonContainer.appendChild(floatingEditBtn);
+                        buttonContainer.appendChild(floatingStatsBtn);
+                        buttonContainer.appendChild(floatingRefreshBtn);
+
+                        // Добавляем контейнер на страницу
+                        document.body.appendChild(buttonContainer);
+
+                        return { buttonContainer, floatingMenuBtn, floatingAddBtn, floatingExportBtn, floatingEditBtn, floatingStatsBtn, floatingRefreshBtn };
+                    }
+
+                    window.addEventListener('DOMContentLoaded', () => {
+                        createFloatingButtons();
+                    });
 });

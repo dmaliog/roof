@@ -11,15 +11,6 @@
 </head>
 <body>
     <div class="container">
-        <h2>Выберите действие</h2>
-
-        <div class="form-selector">
-            <button id="show-object-form" class="btn">Добавить объект</button>
-            <button id="show-expense-form" class="btn secondary">Добавить расход</button>
-            <button id="show-manual-price-form" class="btn manual">Добавить объект с ручной ценой</button>
-            <button id="show-custom-service-form" class="btn custom">Добавить услугу</button>
-        </div>
-
         <form id="custom-service-form" class="calc-form custom-service-form" style="display: none;">
             <div class="form-group">
                 <label>Название услуги:</label>
@@ -231,23 +222,14 @@
         </form>
 
         <div id="worker-results">
-            <h3>Результаты</h3>
+            <h2>Результаты</h2>
             <div class="filter-group">
                 <input type="text" id="object-filter" placeholder="Фильтр по объектам...">
             </div>
             <div class="results-layout">
                 <div id="results" class="results"></div>
-                <div class="worker-stats-wrapper">
-                    <h3>Участие работников</h3>
+                    <h2>Участие работников</h3>
                     <div id="worker-stats" class="worker-stats-grid"></div>
-                </div>
-            </div>
-            <div class="controls">
-                <div class="button-group">
-                    <button id="export" class="btn">Экспорт объектов в JSON</button>
-                    <button id="clear-cache" class="btn">Очистить кэш</button>
-                    <button id="toggle-edit-mode" class="btn">Режим редактирования: выкл</button>
-                </div>
             </div>
             <div id="history-modal" class="modal" style="display: none;">
                 <div class="modal-content">

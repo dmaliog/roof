@@ -266,7 +266,7 @@ h2, h3 {
 }
 
 h2 {
-    font-size: 28px;
+    font-size: 20px;
     position: relative;
     padding-bottom: 10px;
 }
@@ -300,6 +300,10 @@ h2::after {
 .calc-form.object-form {
     background: #dfe9f3;
     border: 2px dashed #6b7280;
+}
+
+.object-form, .expense-form, .manual-price-form, .custom-service-form {
+    margin-top: 10px;
 }
 
 .calculation:not(.custom-service):not(.expense):not(.manual-price) {
@@ -648,9 +652,6 @@ input[type="checkbox"]:disabled:checked {
     background: linear-gradient(135deg, #7f8c8d, #6c7778);
 }
 
-#worker-results {
-margin-top: 40px;
-}
 
 .delete-cross {
     position: absolute;
@@ -1414,14 +1415,6 @@ background-color: #ff9800;
 
     .filter-group input[type="text"] {
         font-size: 14px;
-    }
-
-    h2 {
-        font-size: 24px;
-    }
-
-    h3 {
-        font-size: 18px;
     }
 
     .delete-cross {
