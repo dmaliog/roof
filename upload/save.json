@@ -1,47 +1,5 @@
 [
   {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-1200.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "05.05.2025, 17:54:06",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": [
-      {
-        "timestamp": "05.05.2025, 17:55:25",
-        "changes": "Выданные деньги: \"\" → \"Нет\", Участники (списание): \"Артём, Коля, Слава, Нарек\" → \"Артём, Коля, Слава, Илья\""
-      }
-    ],
-    "editedTimestamp": "05.05.2025, 17:55:25"
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-441.40",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "04.05.2025, 19:05:15",
-    "isExpense": true,
-    "distance": "108.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
     "name": "УЗТМ Фонарь 3/2",
     "length": null,
     "width": null,
@@ -83,53 +41,6 @@
       }
     ],
     "editedTimestamp": "05.05.2025, 19:16:15"
-  },
-  {
-    "name": "Съёмная квартира",
-    "service": "Расход",
-    "cost": "-190.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "03.05.2025, 02:27:34",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Съёмная квартира",
-    "service": "Расход",
-    "cost": "-766.00",
-    "workers": [
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "03.05.2025, 02:27:04",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-1050.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "5/2/2025, 12:01:34 AM",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
   },
   {
     "name": "КУМЗ Под фонарем",
@@ -211,56 +122,6 @@
     "editedTimestamp": "05.05.2025, 19:17:09"
   },
   {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-2000.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "5/1/2025, 11:52:38 PM",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-1250.62",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "5/1/2025, 11:52:21 PM",
-    "isExpense": true,
-    "startMileage": "264910.00",
-    "endMileage": "265216.00",
-    "distance": "306.00",
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-441.40",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "5/1/2025, 11:50:46 PM",
-    "isExpense": true,
-    "distance": "108.00",
-    "editHistory": []
-  },
-  {
     "name": "ТСЖ Бобровка",
     "service": "ТСЖ Бобровка",
     "cost": "8000.00",
@@ -279,24 +140,6 @@
     "timestamp": "25.04.2025, 13:59:03",
     "isExpense": false,
     "isCustomService": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-2000.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Нарек"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "25.04.2025, 13:57:50",
-    "isExpense": true,
     "isPaid": false,
     "editHistory": []
   },
@@ -367,60 +210,6 @@
       }
     ],
     "editedTimestamp": "03.05.2025, 19:11:27"
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-1200.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Нарек"
-    ],
-    "receivers": [
-      "Коля"
-    ],
-    "timestamp": "24.04.2025, 00:37:53",
-    "isExpense": true,
-    "isPaid": false,
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-461.83",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Нарек"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "24.04.2025, 00:37:11",
-    "isExpense": true,
-    "startMileage": "264695.00",
-    "endMileage": "264808.00",
-    "distance": "113.00",
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-441.40",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "24.04.2025, 00:30:05",
-    "isExpense": true,
-    "distance": "108.00",
-    "editHistory": []
   },
   {
     "name": "Погрузо-разгрузочные работы",
