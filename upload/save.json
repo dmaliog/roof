@@ -19,7 +19,7 @@
   {
     "name": "Авито",
     "service": "Расход",
-    "cost": "-1000.00",
+    "cost": "-1068.00",
     "workers": [
       "Артём",
       "Коля",
@@ -33,7 +33,13 @@
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "19.05.2025, 13:21:42",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -1000.00 → -1068"
+      }
+    ],
+    "editedTimestamp": "19.05.2025, 13:21:42"
   },
   {
     "name": "Еда",
