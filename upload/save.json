@@ -1,5 +1,109 @@
 [
   {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-309.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "5/20/2025, 3:52:26 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-41.00",
+    "workers": [
+      "Артём"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "5/20/2025, 3:51:23 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Масло",
+    "service": "Расход",
+    "cost": "-500.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "5/20/2025, 3:50:00 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-487.00",
+    "workers": [
+      "Артём",
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "5/20/2025, 3:48:14 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-915.49",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "5/20/2025, 3:47:04 PM",
+    "isExpense": true,
+    "startMileage": "266156.00",
+    "endMileage": "266380.00",
+    "distance": "224.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-470.00",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "5/20/2025, 3:46:14 PM",
+    "isExpense": true,
+    "distance": "115.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "УЗТМ Низ 1-2",
     "length": null,
     "width": null,
@@ -56,7 +160,7 @@
   {
     "name": "Авито",
     "service": "Расход",
-    "cost": "-1068.00",
+    "cost": "-1426.00",
     "workers": [
       "Артём",
       "Коля",
@@ -74,9 +178,13 @@
       {
         "timestamp": "19.05.2025, 13:21:42",
         "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -1000.00 → -1068"
+      },
+      {
+        "timestamp": "5/20/2025, 3:50:29 PM",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -1068.00 → -1426"
       }
     ],
-    "editedTimestamp": "19.05.2025, 13:21:42"
+    "editedTimestamp": "5/20/2025, 3:50:29 PM"
   },
   {
     "name": "Еда",
