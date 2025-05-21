@@ -1,5 +1,24 @@
 [
   {
+    "name": "Авито",
+    "service": "Расход",
+    "cost": "-1200.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "21.05.2025, 23:52:08",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "УЗТМ Низ 1-2",
     "length": null,
     "width": null,
