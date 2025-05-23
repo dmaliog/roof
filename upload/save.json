@@ -1,5 +1,22 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-882.79",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "24.05.2025, 00:00:08",
+    "isExpense": true,
+    "distance": "216.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Авито",
     "service": "Расход",
     "cost": "-1200.00",
