@@ -1,5 +1,53 @@
 [
   {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-240.00",
+    "workers": [
+      "Илья"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "24.05.2025, 23:33:57",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-240.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "24.05.2025, 23:33:35",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-360.00",
+    "workers": [
+      "Артём"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "24.05.2025, 23:33:01",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "УЗТМ Низ 2-3",
     "length": null,
     "width": null,
