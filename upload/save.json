@@ -59,7 +59,7 @@
   {
     "name": "Еда",
     "service": "Расход",
-    "cost": "-240.00",
+    "cost": "-480.00",
     "workers": [
       "Илья"
     ],
@@ -70,7 +70,13 @@
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "25.05.2025, 22:23:34",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -240.00 → -480"
+      }
+    ],
+    "editedTimestamp": "25.05.2025, 22:23:34"
   },
   {
     "name": "Еда",
