@@ -1,5 +1,21 @@
 [
   {
+    "name": "Горелка УЗТМ",
+    "service": "Расход",
+    "cost": "-4110.00",
+    "workers": [
+      "Ростик"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "25.05.2025, 22:18:14",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-993.14",
