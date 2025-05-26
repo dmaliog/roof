@@ -1,5 +1,23 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-502.70",
+    "workers": [
+      "Артём",
+      "Слава",
+      "Ростик"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "26.05.2025, 21:56:18",
+    "isExpense": true,
+    "distance": "123.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "КУМЗ Низ 1",
     "length": null,
     "width": null,
