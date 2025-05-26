@@ -1,5 +1,47 @@
 [
   {
+    "name": "УЗТМ Низ 3-3",
+    "length": null,
+    "width": null,
+    "area": "530.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "31800.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "6360.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "6360.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "6360.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "6360.00"
+      },
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "6360.00"
+      }
+    ],
+    "timestamp": "26.05.2025, 21:45:54",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-220.70",
