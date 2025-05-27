@@ -1,5 +1,21 @@
 [
   {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-404.00",
+    "workers": [
+      "Ростик"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "27.05.2025, 13:31:06",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Съёмная квартира",
     "service": "Расход",
     "cost": "-5000.00",
