@@ -1,126 +1,5 @@
 [
   {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-49.04",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "27.05.2025, 22:33:17",
-    "isExpense": true,
-    "distance": "12.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-404.00",
-    "workers": [
-      "Ростик"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "27.05.2025, 13:31:06",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Съёмная квартира",
-    "service": "Расход",
-    "cost": "-5000.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [],
-    "timestamp": "26.05.2025, 22:04:49",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-150.00",
-    "workers": [
-      "Артём"
-    ],
-    "receivers": [
-      "Коля"
-    ],
-    "timestamp": "26.05.2025, 22:01:31",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-502.70",
-    "workers": [
-      "Коля",
-      "Илья",
-      "Андрюха"
-    ],
-    "receivers": [
-      "Коля"
-    ],
-    "timestamp": "26.05.2025, 21:59:05",
-    "isExpense": true,
-    "distance": "123.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-220.70",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "26.05.2025, 21:57:59",
-    "isExpense": true,
-    "distance": "54.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-502.70",
-    "workers": [
-      "Артём",
-      "Слава",
-      "Ростик"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "26.05.2025, 21:56:18",
-    "isExpense": true,
-    "distance": "123.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
     "name": "КУМЗ Низ 1",
     "length": null,
     "width": null,
@@ -253,136 +132,8 @@
     "timestamp": "26.05.2025, 21:45:54",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-220.70",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "25.05.2025, 22:26:35",
-    "isExpense": true,
-    "distance": "54.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Горелка УЗТМ",
-    "service": "Расход",
-    "cost": "-4170.00",
-    "workers": [
-      "Ростик"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "25.05.2025, 22:18:14",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": [
-      {
-        "timestamp": "25.05.2025, 22:18:48",
-        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -4110.00 → -4170"
-      }
-    ],
-    "editedTimestamp": "25.05.2025, 22:18:48"
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-993.14",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Ростик"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "25.05.2025, 22:13:49",
-    "isExpense": true,
-    "distance": "243.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-441.40",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "24.05.2025, 23:36:06",
-    "isExpense": true,
-    "distance": "108.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-480.00",
-    "workers": [
-      "Илья"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "24.05.2025, 23:33:57",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": [
-      {
-        "timestamp": "25.05.2025, 22:23:34",
-        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -240.00 → -480"
-      }
-    ],
-    "editedTimestamp": "25.05.2025, 22:23:34"
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-240.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "24.05.2025, 23:33:35",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-360.00",
-    "workers": [
-      "Артём"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "24.05.2025, 23:33:01",
-    "isExpense": true,
-    "isPaid": false,
     "issuedMoney": [],
     "editHistory": []
   },
@@ -423,7 +174,7 @@
     "timestamp": "24.05.2025, 09:18:03",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -460,44 +211,8 @@
     "timestamp": "24.05.2025, 09:14:27",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-882.79",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "24.05.2025, 00:00:08",
-    "isExpense": true,
-    "distance": "216.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Авито",
-    "service": "Расход",
-    "cost": "-1200.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Коля"
-    ],
-    "timestamp": "21.05.2025, 23:52:08",
-    "isExpense": true,
-    "isPaid": false,
     "issuedMoney": [],
     "editHistory": []
   },
