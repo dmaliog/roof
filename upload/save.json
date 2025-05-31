@@ -1,6 +1,212 @@
 [
   {
-    "name": "КУМЗ Низ 1",
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-482.27",
+    "workers": [
+      "Артём",
+      "Слава",
+      "Илья",
+      "Ростик",
+      "Андрюха"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "5/31/2025, 12:34:28 PM",
+    "isExpense": true,
+    "distance": "118.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-570.00",
+    "workers": [
+      "Артём",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "5/31/2025, 12:29:23 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-440.00",
+    "workers": [
+      "Артём"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "5/31/2025, 12:28:43 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "КУМЗ Низ Капиталка",
+    "length": null,
+    "width": null,
+    "area": "2888.82 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "288882.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "57776.40"
+      },
+      {
+        "name": "Слава",
+        "ktu": 0.8,
+        "cost": "38517.60"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.8,
+        "cost": "38517.60"
+      },
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "57776.40"
+      },
+      {
+        "name": "СлаваКаменский",
+        "ktu": 0.8,
+        "cost": "38517.60"
+      },
+      {
+        "name": "Андрюха",
+        "ktu": 1,
+        "cost": "57776.40"
+      }
+    ],
+    "timestamp": "5/31/2025, 12:20:43 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": true,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "КУМЗ Низ Капиталка",
+    "length": null,
+    "width": null,
+    "area": "1911.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "191100.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "31395.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "31395.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 0.8,
+        "cost": "21840.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.8,
+        "cost": "21840.00"
+      },
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "31395.00"
+      },
+      {
+        "name": "СлаваКаменский",
+        "ktu": 0.8,
+        "cost": "21840.00"
+      },
+      {
+        "name": "Андрюха",
+        "ktu": 1,
+        "cost": "31395.00"
+      }
+    ],
+    "timestamp": "5/31/2025, 12:18:31 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": true,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "КУМЗ Низ Капиталка",
+    "length": null,
+    "width": null,
+    "area": "556.82 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "55682.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "11136.40"
+      },
+      {
+        "name": "Слава",
+        "ktu": 0.8,
+        "cost": "7424.27"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.8,
+        "cost": "7424.27"
+      },
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "11136.40"
+      },
+      {
+        "name": "СлаваКаменский",
+        "ktu": 0.8,
+        "cost": "7424.27"
+      },
+      {
+        "name": "Андрюха",
+        "ktu": 1,
+        "cost": "11136.40"
+      }
+    ],
+    "timestamp": "5/31/2025, 12:15:49 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": true,
+    "issuedMoney": [],
+    "editHistory": [
+      {
+        "timestamp": "5/31/2025, 12:24:20 PM",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Название: \"Кумз Низ Капиталка\" → \"КУМЗ Низ Капиталка\", Участники: \"Артём (КТУ 1), Слава (КТУ 0.8), Илья (КТУ 0.8), Ростик (КТУ 1), СлаваКаменский (КТУ 0.8), Андрюха (КТУ 1)\" → \"Артём (КТУ 1), Слава (КТУ 0.8), Илья (КТУ 0.8), Ростик (КТУ 1), СлаваКаменский (КТУ 0.8), Андрюха (КТУ 1)\""
+      }
+    ],
+    "editedTimestamp": "5/31/2025, 12:24:20 PM"
+  },
+  {
+    "name": "КУМЗ Низ Капиталка",
     "length": null,
     "width": null,
     "area": "387.45 м²",
@@ -29,7 +235,13 @@
     "isPaid": false,
     "useRostikMethod": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "5/31/2025, 12:26:26 PM",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Название: \"КУМЗ Низ 1\" → \"КУМЗ Низ Капиталка\", Участники: \"Артём (КТУ 1), Коля (КТУ 1), Ростик (КТУ 1)\" → \"Артём (КТУ 1), Коля (КТУ 1), Ростик (КТУ 1)\""
+      }
+    ],
+    "editedTimestamp": "5/31/2025, 12:26:26 PM"
   },
   {
     "name": "УЗТМ Низ 3-3",
@@ -53,7 +265,7 @@
     "timestamp": "26.05.2025, 21:49:34",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -90,7 +302,7 @@
     "timestamp": "26.05.2025, 21:47:40",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
