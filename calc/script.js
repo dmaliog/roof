@@ -708,6 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 return;
                             }
 
+
                             if (expenseName.toLowerCase() === 'бензин' && receivers.length > 0) {
                                 const fuelMode = formToUse.querySelector('input[name="fuelMode"]:checked').value;
                                 const fuelConsumption = 6.7;
@@ -1931,32 +1932,63 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const accrualPerReceiver = receiversCount > 0 ? Math.abs(totalCost) / receiversCount : 0;
 
                                 if (obj.workers.some(w => getWorkerName(w) === worker)) {
-                                    obj.receivers.forEach(receiver => {
-                                        if (receiver !== worker) {
-                                            if (!expenseBreakdownByReceiver[receiver]) expenseBreakdownByReceiver[receiver] = [];
-                                            const debtValue = obj.name.toLowerCase() === 'займ' ? (-accrualPerReceiver).toFixed(2) : writeOffPerWorker.toFixed(2);
-                                            expenseBreakdownByReceiver[receiver].push({
-                                                value: debtValue,
-                                                timestamp: obj.timestamp,
-                                                className: 'expense-earning'
-                                            });
-                                        }
-                                    });
+                                    if (obj.receivers.length > 0) {
+                                        obj.receivers.forEach(receiver => {
+                                            if (receiver !== worker) {
+                                                if (!expenseBreakdownByReceiver[receiver]) expenseBreakdownByReceiver[receiver] = [];
+                                                const isLoan = obj.name.toLowerCase() === 'займ';
+                                                const safeReceiversCount = Array.isArray(obj.receivers) && obj.receivers.length > 0 ? obj.receivers.length : 1;
+                                                const debtValue = isLoan
+                                                ? (-Math.abs(writeOffPerWorker) / safeReceiversCount).toFixed(2)
+                                                : writeOffPerWorker.toFixed(2);
+
+                                                expenseBreakdownByReceiver[receiver].push({
+                                                    value: debtValue,
+                                                    timestamp: obj.timestamp,
+                                                    className: 'expense-earning'
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        const anonymousReceiver = 'БОСС';
+                                        if (!expenseBreakdownByReceiver[anonymousReceiver]) expenseBreakdownByReceiver[anonymousReceiver] = [];
+                                        const debtValue = writeOffPerWorker.toFixed(2);
+                                        expenseBreakdownByReceiver[anonymousReceiver].push({
+                                            value: debtValue,
+                                            timestamp: obj.timestamp,
+                                            className: 'expense-earning'
+                                        });
+                                    }
                                 }
 
                                 if (obj.receivers.includes(worker)) {
-                                    obj.workers.forEach(debtor => {
-                                        const debtorName = getWorkerName(debtor);
-                                        if (debtorName !== worker) {
-                                            if (!debtsOwedToWorker[debtorName]) debtsOwedToWorker[debtorName] = [];
-                                            const creditValue = obj.name.toLowerCase() === 'займ' ? accrualPerReceiver.toFixed(2) : Math.abs(writeOffPerWorker).toFixed(2);
-                                            debtsOwedToWorker[debtorName].push({
-                                                value: creditValue,
-                                                timestamp: obj.timestamp,
-                                                className: 'receiver-earning'
-                                            });
-                                        }
-                                    });
+                                    if (obj.workers.length > 0) {
+                                        obj.workers.forEach(debtor => {
+                                            const debtorName = getWorkerName(debtor);
+                                            if (debtorName !== worker) {
+                                                if (!debtsOwedToWorker[debtorName]) debtsOwedToWorker[debtorName] = [];
+                                                const isLoan = obj.name.toLowerCase() === 'займ';
+                                                const safeReceiversCount = Array.isArray(obj.receivers) && obj.receivers.length > 0 ? obj.receivers.length : 1;
+                                                const creditValue = isLoan
+                                                ? (Math.abs(writeOffPerWorker) / safeReceiversCount).toFixed(2)
+                                                : Math.abs(writeOffPerWorker).toFixed(2);
+                                                                                                debtsOwedToWorker[debtorName].push({
+                                                    value: creditValue,
+                                                    timestamp: obj.timestamp,
+                                                    className: 'receiver-earning'
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        const anonymousDebtor = 'БОСС';
+                                        if (!debtsOwedToWorker[anonymousDebtor]) debtsOwedToWorker[anonymousDebtor] = [];
+                                        const creditValue = accrualPerReceiver.toFixed(2);
+                                        debtsOwedToWorker[anonymousDebtor].push({
+                                            value: creditValue,
+                                            timestamp: obj.timestamp,
+                                            className: 'receiver-earning'
+                                        });
+                                    }
                                 }
                             });
 
@@ -2045,7 +2077,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             let pendingWithDebtsHtml = '';
                             if (Object.keys(debtBalances).length > 0) {
                                 const pendingWithDebtsItems = [];
-                                // Определяем класс и timestamp для totalPendingWithIssued
                                 const pendingClassName = totalPendingWithIssued >= 0 ? 'pending-earning' : 'issued-money-negative';
                                 let pendingTimestamp = '';
                                 if (issuedMoneyBreakdown.length > 0) {
@@ -2053,7 +2084,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 } else if (pendingIncome.length > 0) {
                                     pendingTimestamp = pendingIncome[0].timestamp;
                                 }
-                                // Оборачиваем сумму "В ожидании" в span
                                 pendingWithDebtsItems.push(`<span class="earnings-item issued-money-negative">${formatEarnings(totalPendingWithIssued)}</span>`);
 
                                 Object.entries(debtBalances).forEach(([person, balance]) => {
