@@ -1923,19 +1923,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             const debtsOwedToWorker = {};
 
                             expenseObjects.forEach((obj) => {
-                                const totalCost = parseFloat(obj.cost);
-                                const workersCount = obj.workers.length;
-                                const writeOffPerWorker = totalCost / workersCount; // Доля списания на работника
-                                const receiversCount = obj.receivers.length;
+                                const totalCost = parseFloat(obj.cost) || 0;
+                                if (isNaN(totalCost)) return;
+                                const workersCount = obj.workers.length || 1;
+                                const writeOffPerWorker = totalCost / workersCount;
+                                const receiversCount = obj.receivers.length || 1;
                                 const accrualPerReceiver = receiversCount > 0 ? Math.abs(totalCost) / receiversCount : 0;
 
-                                // Списания для работников
                                 if (obj.workers.some(w => getWorkerName(w) === worker)) {
                                     obj.receivers.forEach(receiver => {
                                         if (receiver !== worker) {
                                             if (!expenseBreakdownByReceiver[receiver]) expenseBreakdownByReceiver[receiver] = [];
-                                            // Для "Займа" используем accrualPerReceiver, для других — writeOffPerWorker
-                                            const debtValue = obj.name === 'Займ' ? (-accrualPerReceiver).toFixed(2) : writeOffPerWorker.toFixed(2);
+                                            const debtValue = obj.name.toLowerCase() === 'займ' ? (-accrualPerReceiver).toFixed(2) : writeOffPerWorker.toFixed(2);
                                             expenseBreakdownByReceiver[receiver].push({
                                                 value: debtValue,
                                                 timestamp: obj.timestamp,
@@ -1945,14 +1944,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                     });
                                 }
 
-                                // Начисления для получателей
                                 if (obj.receivers.includes(worker)) {
                                     obj.workers.forEach(debtor => {
                                         const debtorName = getWorkerName(debtor);
                                         if (debtorName !== worker) {
                                             if (!debtsOwedToWorker[debtorName]) debtsOwedToWorker[debtorName] = [];
-                                            // Для "Займа" используем accrualPerReceiver, для других — writeOffPerWorker
-                                            const creditValue = obj.name === 'Займ' ? accrualPerReceiver.toFixed(2) : Math.abs(writeOffPerWorker).toFixed(2);
+                                            const creditValue = obj.name.toLowerCase() === 'займ' ? accrualPerReceiver.toFixed(2) : Math.abs(writeOffPerWorker).toFixed(2);
                                             debtsOwedToWorker[debtorName].push({
                                                 value: creditValue,
                                                 timestamp: obj.timestamp,
@@ -2044,7 +2041,36 @@ document.addEventListener('DOMContentLoaded', () => {
                                 debtHtml += '</div>';
                             }
 
-                            earningsHtml += debtHtml;
+                            // Новый блок: Расчёт в ожидании с долгами
+                            let pendingWithDebtsHtml = '';
+                            if (Object.keys(debtBalances).length > 0) {
+                                const pendingWithDebtsItems = [];
+                                // Определяем класс и timestamp для totalPendingWithIssued
+                                const pendingClassName = totalPendingWithIssued >= 0 ? 'pending-earning' : 'issued-money-negative';
+                                let pendingTimestamp = '';
+                                if (issuedMoneyBreakdown.length > 0) {
+                                    pendingTimestamp = issuedMoneyBreakdown[0].timestamp;
+                                } else if (pendingIncome.length > 0) {
+                                    pendingTimestamp = pendingIncome[0].timestamp;
+                                }
+                                // Оборачиваем сумму "В ожидании" в span
+                                pendingWithDebtsItems.push(`<span class="earnings-item issued-money-negative">${formatEarnings(totalPendingWithIssued)}</span>`);
+
+                                Object.entries(debtBalances).forEach(([person, balance]) => {
+                                    const totalBalance = parseFloat(balance);
+                                    const formattedBalance = totalBalance >= 0 ? `+${formatEarnings(totalBalance)}` : formatEarnings(totalBalance);
+                                    const className = totalBalance >= 0 ? 'receiver-earning' : 'expense-earning';
+                                    const timestamp = allDebts[person] && allDebts[person].length > 0 ? allDebts[person][0].timestamp : '';
+                                    pendingWithDebtsItems.push(`<span class="earnings-item ${className}" ${timestamp ? `data-timestamp="${timestamp}"` : ''}>${formattedBalance}</span>`);
+                                });
+
+                                const pendingWithDebtsTotal = totalPendingWithIssued + Object.values(debtBalances)
+                                .reduce((sum, balance) => sum + parseFloat(balance), 0);
+
+                                pendingWithDebtsHtml = `<div class="earnings pending-with-debts"><strong>Расчёт в ожидании с долгами:</strong> ${pendingWithDebtsItems.join(' ')} = ${formatEarnings(pendingWithDebtsTotal)} ₽</div>`;
+                            }
+
+                            earningsHtml += debtHtml + pendingWithDebtsHtml;
 
                             const card = document.createElement('div');
                             card.className = 'worker-card';

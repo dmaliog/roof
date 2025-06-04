@@ -76,6 +76,16 @@ body {
     font-size: 16px;
 }
 
+.earnings.pending-with-debts {
+    background: #e7e7e7!important;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+.earnings.pending-with-debts strong {
+    font-weight: bold;
+}
+
 .worker-card .earnings.paid-earnings {
     background: rgba(46, 204, 113, 0.1);
     padding: 8px 12px;
