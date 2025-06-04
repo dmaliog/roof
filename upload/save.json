@@ -30,7 +30,7 @@
     ],
     "timestamp": "31.05.2025, 15:22:10",
     "isExpense": true,
-    "isPaid": true,
+    "isPaid": false,
     "issuedMoney": [],
     "editHistory": [
       {
