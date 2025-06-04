@@ -1,5 +1,21 @@
 [
   {
+    "name": "Неправильно дал инфу",
+    "service": "Расход",
+    "cost": "-95.00",
+    "workers": [
+      "Ростик"
+    ],
+    "receivers": [
+      "Денис"
+    ],
+    "timestamp": "04.06.2025, 18:48:22",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Займ",
     "service": "Расход",
     "cost": "-714.00",
