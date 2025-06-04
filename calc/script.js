@@ -1925,58 +1925,70 @@ document.addEventListener('DOMContentLoaded', () => {
                             expenseObjects.forEach((obj) => {
                                 const totalCost = parseFloat(obj.cost);
                                 const workersCount = obj.workers.length;
-                                const writeOffPerWorker = totalCost / workersCount;
+                                const writeOffPerWorker = totalCost / workersCount; // Доля списания на работника
+                                const receiversCount = obj.receivers.length;
+                                const accrualPerReceiver = receiversCount > 0 ? Math.abs(totalCost) / receiversCount : 0;
 
+                                // Списания для работников
                                 if (obj.workers.some(w => getWorkerName(w) === worker)) {
                                     obj.receivers.forEach(receiver => {
                                         if (receiver !== worker) {
                                             if (!expenseBreakdownByReceiver[receiver]) expenseBreakdownByReceiver[receiver] = [];
+                                            // Для "Займа" используем accrualPerReceiver, для других — writeOffPerWorker
+                                            const debtValue = obj.name === 'Займ' ? (-accrualPerReceiver).toFixed(2) : writeOffPerWorker.toFixed(2);
                                             expenseBreakdownByReceiver[receiver].push({
-                                                value: writeOffPerWorker.toFixed(2),
-                                                                                      timestamp: obj.timestamp,
-                                                                                      className: 'expense-earning'
+                                                value: debtValue,
+                                                timestamp: obj.timestamp,
+                                                className: 'expense-earning'
                                             });
                                         }
                                     });
                                 }
 
+                                // Начисления для получателей
                                 if (obj.receivers.includes(worker)) {
                                     obj.workers.forEach(debtor => {
                                         const debtorName = getWorkerName(debtor);
                                         if (debtorName !== worker) {
                                             if (!debtsOwedToWorker[debtorName]) debtsOwedToWorker[debtorName] = [];
+                                            // Для "Займа" используем accrualPerReceiver, для других — writeOffPerWorker
+                                            const creditValue = obj.name === 'Займ' ? accrualPerReceiver.toFixed(2) : Math.abs(writeOffPerWorker).toFixed(2);
                                             debtsOwedToWorker[debtorName].push({
-                                                value: Math.abs(writeOffPerWorker).toFixed(2),
-                                                                               timestamp: obj.timestamp,
-                                                                               className: 'receiver-earning'
+                                                value: creditValue,
+                                                timestamp: obj.timestamp,
+                                                className: 'receiver-earning'
                                             });
                                         }
                                     });
                                 }
                             });
 
-                            const totalExpenses = Object.values(expenseBreakdownByReceiver).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
-                            const totalDebtsOwedToWorker = Object.values(debtsOwedToWorker).flat().reduce((sum, val) => sum + parseFloat(val.value), 0);
-
-                            // Объединяем все долги в один баланс
                             const allDebts = {};
-
-                            // Добавляем долги, которые должны работнику
                             Object.entries(debtsOwedToWorker).forEach(([debtor, debts]) => {
                                 if (!allDebts[debtor]) allDebts[debtor] = [];
-                                allDebts[debtor].push(...debts);
+                                allDebts[debtor].push(...debts.map(debt => ({ ...debt, value: parseFloat(debt.value) })));
                             });
 
-                            // Добавляем долги работника другим
                             Object.entries(expenseBreakdownByReceiver).forEach(([receiver, debts]) => {
                                 if (!allDebts[receiver]) allDebts[receiver] = [];
-                                allDebts[receiver].push(...debts);
+                                allDebts[receiver].push(...debts.map(debt => ({ ...debt, value: parseFloat(debt.value) })));
                             });
 
-                            // Сортируем долги по времени
                             Object.keys(allDebts).forEach(person => {
                                 allDebts[person].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
                             });
+
+                            const debtBalances = {};
+                            Object.entries(allDebts).forEach(([person, debts]) => {
+                                debtBalances[person] = debts.reduce((sum, debt) => sum + debt.value, 0).toFixed(2);
+                            });
+
+                            const totalDebtsOwedToWorker = Object.values(debtBalances)
+                            .filter(balance => parseFloat(balance) > 0)
+                            .reduce((sum, balance) => sum + parseFloat(balance), 0);
+                            const totalExpenses = Object.values(debtBalances)
+                            .filter(balance => parseFloat(balance) < 0)
+                            .reduce((sum, balance) => sum + parseFloat(balance), 0);
 
                             const totalPendingWithIssued = totalPendingIncome + totalIssuedMoney;
                             const totalEarnings = totalPaidIncome + totalPendingWithIssued + totalDebtsOwedToWorker + totalExpenses;
@@ -2000,41 +2012,39 @@ document.addEventListener('DOMContentLoaded', () => {
                                 earningsHtml += `<div class="earnings pending-earnings"><strong>В ожидании:</strong> ${pendingIncomeHtml}${issuedMoneyHtml ? ` ${issuedMoneyHtml}` : ''} = ${formatEarnings(totalPendingWithIssued)} ₽</div>`;
                             }
 
-                            // Отображаем объединенные долги
-                            if (Object.keys(allDebts).length > 0) {
-                                const positiveDebts = [];
-                                const negativeDebts = [];
+                            let debtHtml = '';
+                            const positiveDebts = [];
+                            const negativeDebts = [];
 
-                                Object.entries(allDebts).forEach(([person, debts]) => {
-                                    const totalDebt = debts.reduce((sum, debt) => sum + parseFloat(debt.value), 0);
-                                    const debtItems = debts.map(debt => {
-                                        const value = parseFloat(debt.value);
-                                        const sign = value > 0 ? '+' : '';
-                                        return `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">${sign}${debt.value}</span>`;
-                                    }).join(' ');
+                            Object.entries(debtBalances).forEach(([person, balance]) => {
+                                const debtItems = allDebts[person].map(debt => {
+                                    const sign = debt.value > 0 ? '+' : '';
+                                    return `<span class="earnings-item ${debt.className}" data-timestamp="${debt.timestamp}">${sign}${debt.value.toFixed(2)}</span>`;
+                                }).join(' ');
 
-                                    const sign = totalDebt > 0 ? '+' : '';
-                                    const formattedTotal = `${sign}${formatEarnings(totalDebt)}`;
+                                const totalBalance = parseFloat(balance);
+                                const formattedTotal = totalBalance >= 0 ? `+${formatEarnings(totalBalance)}` : formatEarnings(totalBalance);
 
-                                    if (totalDebt > 0) {
-                                        positiveDebts.push(`<div class="positive-debt">${person}: ${debtItems} = ${formattedTotal} ₽</div>`);
-                                    } else if (totalDebt < 0) {
-                                        negativeDebts.push(`<div class="negative-debt">${person}: ${debtItems} = ${formattedTotal} ₽</div>`);
-                                    }
-                                });
-
-                                if (positiveDebts.length > 0) {
-                                    earningsHtml += '<div class="earnings receiver-earnings"><strong>Долги мне:</strong>';
-                                    earningsHtml += positiveDebts.join('');
-                                    earningsHtml += '</div>';
+                                if (totalBalance > 0) {
+                                    positiveDebts.push(`<div class="positive-debt">${person}: ${debtItems} = ${formattedTotal} ₽</div>`);
+                                } else if (totalBalance < 0) {
+                                    negativeDebts.push(`<div class="negative-debt">${person}: ${debtItems} = ${formattedTotal} ₽</div>`);
                                 }
+                            });
 
-                                if (negativeDebts.length > 0) {
-                                    earningsHtml += '<div class="earnings expense-earnings"><strong>Долги другим:</strong>';
-                                    earningsHtml += negativeDebts.join('');
-                                    earningsHtml += '</div>';
-                                }
+                            if (positiveDebts.length > 0) {
+                                debtHtml += '<div class="earnings receiver-earnings"><strong>Долги мне:</strong>';
+                                debtHtml += positiveDebts.join('');
+                                debtHtml += '</div>';
                             }
+
+                            if (negativeDebts.length > 0) {
+                                debtHtml += '<div class="earnings expense-earnings"><strong>Долги другим:</strong>';
+                                debtHtml += negativeDebts.join('');
+                                debtHtml += '</div>';
+                            }
+
+                            earningsHtml += debtHtml;
 
                             const card = document.createElement('div');
                             card.className = 'worker-card';
