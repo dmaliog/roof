@@ -1,5 +1,75 @@
 [
   {
+    "name": "КУМЗ Термошвы",
+    "length": null,
+    "width": null,
+    "area": "88.56 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "8856.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "3247.20"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.8,
+        "cost": "2361.60"
+      },
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "3247.20"
+      }
+    ],
+    "timestamp": "05.06.2025, 21:49:07",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": true,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "КУМЗ Фонарь 2",
+    "length": null,
+    "width": null,
+    "area": "231.77 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "13906.20",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "5098.94"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.8,
+        "cost": "3708.32"
+      },
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "5098.94"
+      }
+    ],
+    "timestamp": "05.06.2025, 21:47:25",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": true,
+    "issuedMoney": [],
+    "editHistory": [
+      {
+        "timestamp": "05.06.2025, 21:47:58",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Площадь: \"231.00 м²\" → \"231.77 м²\", Участники: \"Коля (КТУ 1), Илья (КТУ 0.8), Ростик (КТУ 1)\" → \"Коля (КТУ 1), Илья (КТУ 0.8), Ростик (КТУ 1)\", Стоимость: 13860.00 → 13906.20"
+      }
+    ],
+    "editedTimestamp": "05.06.2025, 21:47:58"
+  },
+  {
     "name": "КУМЗ Низ Капиталка",
     "length": null,
     "width": null,
