@@ -1,210 +1,5 @@
 [
   {
-    "name": "Неправильно дал инфу",
-    "service": "Расход",
-    "cost": "-95.00",
-    "workers": [
-      "Ростик"
-    ],
-    "receivers": [
-      "Денис"
-    ],
-    "timestamp": "04.06.2025, 18:48:22",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-714.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья",
-      "Ростик",
-      "СлаваКаменский",
-      "Андрюха"
-    ],
-    "receivers": [
-      "Денис"
-    ],
-    "timestamp": "04.06.2025, 18:46:12",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Съёмная квартира",
-    "service": "Расход",
-    "cost": "-6800.00",
-    "workers": [
-      "Денис"
-    ],
-    "receivers": [
-      "Ростик"
-    ],
-    "timestamp": "04.06.2025, 18:45:42",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Съёмная квартира",
-    "service": "Расход",
-    "cost": "-6600.00",
-    "workers": [
-      "Денис"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "04.06.2025, 18:45:18",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Съёмная квартира",
-    "service": "Расход",
-    "cost": "-5000.00",
-    "workers": [
-      "Денис"
-    ],
-    "receivers": [
-      "Коля"
-    ],
-    "timestamp": "04.06.2025, 18:44:41",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-220.70",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "31.05.2025, 15:53:04",
-    "isExpense": true,
-    "distance": "54.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-3750.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём",
-      "Слава",
-      "Илья"
-    ],
-    "timestamp": "31.05.2025, 15:22:10",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": [
-      {
-        "timestamp": "31.05.2025, 15:22:20",
-        "changes": "Выданные деньги: \"\" → \"Нет\", Название: \"Займ\" → \"Съёмная квартира\""
-      },
-      {
-        "timestamp": "31.05.2025, 15:22:43",
-        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -1250.00 → -3750"
-      },
-      {
-        "timestamp": "6/4/2025, 3:36:43 PM",
-        "changes": "Выданные деньги: \"\" → \"Нет\", Название: \"Съёмная квартира\" → \"Займ\""
-      }
-    ],
-    "editedTimestamp": "6/4/2025, 3:36:43 PM"
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-6000.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "31.05.2025, 15:10:58",
-    "isExpense": true,
-    "isPaid": true,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-482.27",
-    "workers": [
-      "Артём",
-      "Слава",
-      "Илья",
-      "Ростик",
-      "Андрюха"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "5/31/2025, 12:34:28 PM",
-    "isExpense": true,
-    "distance": "118.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-570.00",
-    "workers": [
-      "Артём",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "5/31/2025, 12:29:23 PM",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-440.00",
-    "workers": [
-      "Артём"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "5/31/2025, 12:28:43 PM",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
     "name": "КУМЗ Низ Капиталка",
     "length": null,
     "width": null,
@@ -246,7 +41,7 @@
     "timestamp": "5/31/2025, 12:20:43 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": true,
     "issuedMoney": [
       {
@@ -321,7 +116,7 @@
     "timestamp": "5/31/2025, 12:18:31 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": true,
     "issuedMoney": [],
     "editHistory": [
@@ -374,7 +169,7 @@
     "timestamp": "5/31/2025, 12:15:49 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": true,
     "issuedMoney": [],
     "editHistory": [
@@ -416,7 +211,7 @@
     "timestamp": "26.05.2025, 21:52:43",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": [
