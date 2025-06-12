@@ -1,5 +1,194 @@
 [
   {
+    "name": "Авито",
+    "service": "Расход",
+    "cost": "-300.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "6/12/2025, 3:53:55 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-10000.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "6/12/2025, 3:42:07 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Денис должен",
+    "service": "Денис должен",
+    "cost": "714.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "102.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "102.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "102.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "102.00"
+      },
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "102.00"
+      },
+      {
+        "name": "СлаваКаменский",
+        "ktu": 1,
+        "cost": "102.00"
+      },
+      {
+        "name": "Андрюха",
+        "ktu": 1,
+        "cost": "102.00"
+      }
+    ],
+    "timestamp": "6/12/2025, 3:41:12 PM",
+    "isExpense": false,
+    "isCustomService": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "УЗТМ Парка 1-1",
+    "length": null,
+    "width": null,
+    "area": "1287.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "77220.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "38610.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "38610.00"
+      }
+    ],
+    "timestamp": "6/12/2025, 3:39:48 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Кумз Броня",
+    "length": null,
+    "width": null,
+    "area": "373.52 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "37352.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "18676.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "18676.00"
+      }
+    ],
+    "timestamp": "6/12/2025, 3:37:50 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Фундамент",
+    "length": null,
+    "width": null,
+    "area": "325.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "32500.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "16250.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "16250.00"
+      }
+    ],
+    "timestamp": "6/12/2025, 3:35:56 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Аэраторы",
+    "service": "Аэраторы",
+    "cost": "7000.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "3500.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "3500.00"
+      }
+    ],
+    "timestamp": "6/12/2025, 3:34:23 PM",
+    "isExpense": false,
+    "isCustomService": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "КУМЗ Термошвы",
     "length": null,
     "width": null,
