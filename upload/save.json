@@ -19,22 +19,6 @@
     "editHistory": []
   },
   {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-10000.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "6/12/2025, 3:42:07 PM",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
     "name": "Денис должен",
     "service": "Денис должен",
     "cost": "714.00",
@@ -78,7 +62,7 @@
     "timestamp": "6/12/2025, 3:41:12 PM",
     "isExpense": false,
     "isCustomService": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -105,7 +89,7 @@
     "timestamp": "6/12/2025, 3:39:48 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -132,7 +116,7 @@
     "timestamp": "6/12/2025, 3:37:50 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -159,7 +143,7 @@
     "timestamp": "6/12/2025, 3:35:56 PM",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -183,7 +167,7 @@
     "timestamp": "6/12/2025, 3:34:23 PM",
     "isExpense": false,
     "isCustomService": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -215,7 +199,7 @@
     "timestamp": "05.06.2025, 21:49:07",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": true,
     "issuedMoney": [],
     "editHistory": []
@@ -247,7 +231,7 @@
     "timestamp": "05.06.2025, 21:47:25",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": true,
     "issuedMoney": [],
     "editHistory": [
