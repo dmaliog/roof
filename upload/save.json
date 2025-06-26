@@ -1,79 +1,5 @@
 [
   {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-2166.11",
-    "workers": [
-      "Артём",
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "26.06.2025, 10:12:20",
-    "isExpense": true,
-    "distance": "530.00",
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Авито",
-    "service": "Расход",
-    "cost": "-800.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Коля"
-    ],
-    "timestamp": "26.06.2025, 10:08:08",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": [
-      {
-        "timestamp": "26.06.2025, 10:13:07",
-        "changes": "Выданные деньги: \"\" → \"Нет\", Участники (начисление): \"\" → \"Коля\""
-      }
-    ],
-    "editedTimestamp": "26.06.2025, 10:13:07"
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-240.00",
-    "workers": [
-      "Артём"
-    ],
-    "receivers": [
-      "Слава"
-    ],
-    "timestamp": "26.06.2025, 10:07:29",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Займ",
-    "service": "Расход",
-    "cost": "-807.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "26.06.2025, 10:06:56",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
     "name": "УЗТМ низ широкий",
     "length": null,
     "width": null,
@@ -105,7 +31,7 @@
     "timestamp": "26.06.2025, 10:00:32",
     "isExpense": false,
     "manualPrice": true,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": [
@@ -115,25 +41,6 @@
       }
     ],
     "editedTimestamp": "26.06.2025, 10:01:22"
-  },
-  {
-    "name": "Авито",
-    "service": "Расход",
-    "cost": "-300.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [
-      "Коля"
-    ],
-    "timestamp": "6/12/2025, 3:53:55 PM",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
   },
   {
     "name": "Денис должен",
