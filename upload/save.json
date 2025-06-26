@@ -1,5 +1,54 @@
 [
   {
+    "name": "Авито",
+    "service": "Расход",
+    "cost": "-800.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [],
+    "timestamp": "26.06.2025, 10:08:08",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-240.00",
+    "workers": [
+      "Артём"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "26.06.2025, 10:07:29",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-807.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "26.06.2025, 10:06:56",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "УЗТМ низ широкий",
     "length": null,
     "width": null,
