@@ -26,12 +26,20 @@
       "Слава",
       "Илья"
     ],
-    "receivers": [],
+    "receivers": [
+      "Коля"
+    ],
     "timestamp": "26.06.2025, 10:08:08",
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "26.06.2025, 10:13:07",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Участники (начисление): \"\" → \"Коля\""
+      }
+    ],
+    "editedTimestamp": "26.06.2025, 10:13:07"
   },
   {
     "name": "Займ",
