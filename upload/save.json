@@ -1,5 +1,21 @@
 [
   {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-290.00",
+    "workers": [
+      "Артём"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "27.06.2025, 15:25:18",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "УЗТМ низ широкий",
     "length": null,
     "width": null,
