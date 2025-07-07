@@ -1,5 +1,55 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-931.84",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "07.07.2025, 22:45:35",
+    "isExpense": true,
+    "distance": "228.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-625.31",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "07.07.2025, 22:44:20",
+    "isExpense": true,
+    "distance": "153.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-708.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "07.07.2025, 22:43:29",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Еда",
     "service": "Расход",
     "cost": "-468.00",
