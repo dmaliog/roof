@@ -1,5 +1,24 @@
 [
   {
+    "name": "Авито",
+    "service": "Расход",
+    "cost": "-1607.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "07.07.2025, 22:46:34",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-931.84",
