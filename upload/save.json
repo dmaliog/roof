@@ -1,5 +1,24 @@
 [
   {
+    "name": "Разнорабочие",
+    "service": "Расход",
+    "cost": "-4500.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "12.07.2025, 22:03:17",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Авито",
     "service": "Расход",
     "cost": "-1607.00",
@@ -137,7 +156,7 @@
   {
     "name": "Займ",
     "service": "Расход",
-    "cost": "-1000.00",
+    "cost": "-5000.00",
     "workers": [
       "Коля"
     ],
@@ -148,7 +167,13 @@
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "12.07.2025, 22:04:48",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -1000.00 → -5000"
+      }
+    ],
+    "editedTimestamp": "12.07.2025, 22:04:48"
   },
   {
     "name": "Займ",
