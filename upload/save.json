@@ -1,5 +1,24 @@
 [
   {
+    "name": "Садик",
+    "service": "Расход",
+    "cost": "-4500.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "14.07.2025, 00:00:03",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Первый день Саши",
     "service": "Расход",
     "cost": "-6100.00",
