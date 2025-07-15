@@ -1,5 +1,24 @@
 [
   {
+    "name": "Саня второй день",
+    "service": "Расход",
+    "cost": "-3150.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Саша"
+    ],
+    "timestamp": "15.07.2025, 16:15:34",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Займ",
     "service": "Расход",
     "cost": "-9000.00",
