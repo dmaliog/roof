@@ -1,5 +1,42 @@
 [
   {
+    "name": "Фонарь 2 Узтм",
+    "length": null,
+    "width": null,
+    "area": "752.68 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "150536.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "37634.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "37634.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "37634.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "37634.00"
+      }
+    ],
+    "timestamp": "18.07.2025, 20:55:51",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Фонарь 1 Узтм",
     "length": null,
     "width": null,
