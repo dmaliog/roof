@@ -1,5 +1,73 @@
 [
   {
+    "name": "Параизоляция между фонарями",
+    "service": "Параизоляция между фонарями",
+    "cost": "61002.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "15250.50"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "15250.50"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "15250.50"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "15250.50"
+      }
+    ],
+    "timestamp": "18.07.2025, 20:52:41",
+    "isExpense": false,
+    "isCustomService": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Термошов",
+    "service": "Термошов",
+    "cost": "5060.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "1265.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "1265.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "1265.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "1265.00"
+      }
+    ],
+    "timestamp": "18.07.2025, 20:51:43",
+    "isExpense": false,
+    "isCustomService": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Аэраторы",
     "service": "Аэраторы",
     "cost": "26500.00",
