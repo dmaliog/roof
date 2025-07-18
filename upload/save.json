@@ -1,5 +1,24 @@
 [
   {
+    "name": "Саша третий день",
+    "service": "Расход",
+    "cost": "-10000.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Саша"
+    ],
+    "timestamp": "18.07.2025, 20:49:03",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-980.88",
@@ -84,7 +103,7 @@
     ],
     "timestamp": "15.07.2025, 16:15:34",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": []
   },
@@ -103,7 +122,7 @@
     ],
     "timestamp": "15.07.2025, 15:47:37",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": [
       {
@@ -128,7 +147,7 @@
     ],
     "timestamp": "13.07.2025, 23:58:08",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": []
   },
