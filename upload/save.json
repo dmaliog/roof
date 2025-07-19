@@ -1,5 +1,24 @@
 [
   {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-11180.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Саша"
+    ],
+    "timestamp": "19.07.2025, 19:43:55",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Фонарь 2 Узтм",
     "length": null,
     "width": null,
