@@ -2,7 +2,24 @@
   {
     "name": "Бензин",
     "service": "Расход",
-    "cost": "-500.00",
+    "cost": "-980.88",
+    "workers": [
+      "Артём",
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "20.07.2025, 05:59:11",
+    "isExpense": true,
+    "distance": "240.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1000.00",
     "workers": [
       "Саша"
     ],
@@ -13,7 +30,13 @@
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "20.07.2025, 05:57:20",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -500.00 → -1000"
+      }
+    ],
+    "editedTimestamp": "20.07.2025, 05:57:20"
   },
   {
     "name": "Займ",
