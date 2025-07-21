@@ -1,5 +1,69 @@
 [
   {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-1800.00",
+    "workers": [
+      "Саша"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "7/21/2025, 10:22:18 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-270.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "7/21/2025, 10:21:32 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-160.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "7/21/2025, 10:21:00 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-170.00",
+    "workers": [
+      "Артём"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "7/21/2025, 10:20:34 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-980.88",
@@ -252,7 +316,7 @@
     ],
     "timestamp": "18.07.2025, 20:49:03",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": []
   },
