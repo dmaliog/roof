@@ -1,5 +1,22 @@
 [
   {
+    "name": "Ден дал",
+    "service": "Расход",
+    "cost": "-200000.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [],
+    "timestamp": "23.07.2025, 21:32:38",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Обклейка аэраторов",
     "service": "Обклейка аэраторов",
     "cost": "4000.00",
