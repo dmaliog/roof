@@ -1,5 +1,152 @@
 [
   {
+    "name": "квадратура ильи",
+    "length": null,
+    "width": null,
+    "area": "434.56 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "43456.00",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "43456.00"
+      }
+    ],
+    "timestamp": "7/23/2025, 9:39:15 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "квадратура коли",
+    "length": null,
+    "width": null,
+    "area": "772.12 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "77212.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "77212.00"
+      }
+    ],
+    "timestamp": "7/23/2025, 9:38:39 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "квадратура саши на всех",
+    "length": null,
+    "width": null,
+    "area": "345.32 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "17266.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "4316.50"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "4316.50"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "4316.50"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "4316.50"
+      }
+    ],
+    "timestamp": "7/23/2025, 9:37:57 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "квадратура саши",
+    "length": null,
+    "width": null,
+    "area": "345.32 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "17266.00",
+    "workers": [
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "17266.00"
+      }
+    ],
+    "timestamp": "7/23/2025, 9:37:20 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "квадратура славы",
+    "length": null,
+    "width": null,
+    "area": "599.46 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "59946.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "59946.00"
+      }
+    ],
+    "timestamp": "7/23/2025, 9:36:35 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "квадратура артема",
+    "length": null,
+    "width": null,
+    "area": "673.18 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "67318.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "67318.00"
+      }
+    ],
+    "timestamp": "7/23/2025, 9:35:45 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Ден дал",
     "service": "Расход",
     "cost": "-200000.00",
