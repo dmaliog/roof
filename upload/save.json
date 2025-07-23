@@ -1,5 +1,27 @@
 [
   {
+    "name": "ростиковская поляна",
+    "length": null,
+    "width": null,
+    "area": "2169.96 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "216996.00",
+    "workers": [
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "216996.00"
+      }
+    ],
+    "timestamp": "7/23/2025, 9:46:43 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "квадратура ильи",
     "length": null,
     "width": null,
