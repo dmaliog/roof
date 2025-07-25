@@ -1,5 +1,37 @@
 [
   {
+    "name": "Еда",
+    "service": "Расход",
+    "cost": "-230.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "25.07.2025, 08:07:19",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1000.00",
+    "workers": [
+      "Саша"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "25.07.2025, 08:06:50",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Разнорабочий новый",
     "service": "Расход",
     "cost": "-3500.00",
