@@ -1,5 +1,42 @@
 [
   {
+    "name": "Парка без илюхи",
+    "length": null,
+    "width": null,
+    "area": "328.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "19680.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "4920.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "4920.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "4920.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "4920.00"
+      }
+    ],
+    "timestamp": "26.07.2025, 19:42:06",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "саня маленькая поляна",
     "length": null,
     "width": null,
