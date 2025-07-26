@@ -122,8 +122,35 @@
     "manualPrice": true,
     "isPaid": false,
     "useRostikMethod": false,
-    "issuedMoney": [],
-    "editHistory": []
+    "issuedMoney": [
+      {
+        "name": "Артём",
+        "amount": "130000.00"
+      },
+      {
+        "name": "Коля",
+        "amount": "130000.00"
+      },
+      {
+        "name": "Слава",
+        "amount": "70000.00"
+      },
+      {
+        "name": "Илья",
+        "amount": "70000.00"
+      }
+    ],
+    "editHistory": [
+      {
+        "timestamp": "7/26/2025, 5:17:09 PM",
+        "changes": "Выданные деньги: \"\" → \"Артём: 80000.00, Коля: 80000.00, Слава: 20000.00, Илья: 20000.00\", Участники: \"Ростик (КТУ 1)\" → \"Ростик (КТУ 1)\""
+      },
+      {
+        "timestamp": "7/26/2025, 5:18:42 PM",
+        "changes": "Выданные деньги: \"Артём: 80000.00, Коля: 80000.00, Слава: 20000.00, Илья: 20000.00\" → \"Артём: 130000.00, Коля: 130000.00, Слава: 70000.00, Илья: 70000.00\", Участники: \"Ростик (КТУ 1)\" → \"Ростик (КТУ 1)\""
+      }
+    ],
+    "editedTimestamp": "7/26/2025, 5:18:42 PM"
   },
   {
     "name": "квадратура ильи",
@@ -269,23 +296,6 @@
     "manualPrice": true,
     "isPaid": false,
     "useRostikMethod": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Ден дал",
-    "service": "Расход",
-    "cost": "-200000.00",
-    "workers": [
-      "Артём",
-      "Коля",
-      "Слава",
-      "Илья"
-    ],
-    "receivers": [],
-    "timestamp": "23.07.2025, 21:32:38",
-    "isExpense": true,
-    "isPaid": false,
     "issuedMoney": [],
     "editHistory": []
   },
