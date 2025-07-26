@@ -1,5 +1,121 @@
 [
   {
+    "name": "саня маленькая поляна",
+    "length": null,
+    "width": null,
+    "area": "109.70 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "10970.00",
+    "workers": [
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "10970.00"
+      }
+    ],
+    "timestamp": "7/26/2025, 5:33:59 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "илюха маленькая поляна",
+    "length": null,
+    "width": null,
+    "area": "123.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "12300.00",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "12300.00"
+      }
+    ],
+    "timestamp": "7/26/2025, 5:32:13 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "колян маленькая поляна",
+    "length": null,
+    "width": null,
+    "area": "346.90 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "34690.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "34690.00"
+      }
+    ],
+    "timestamp": "7/26/2025, 5:31:41 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "слава маленькая поляна",
+    "length": null,
+    "width": null,
+    "area": "314.56 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "31456.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "31456.00"
+      }
+    ],
+    "timestamp": "7/26/2025, 5:29:47 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "артем маленькая поляна",
+    "length": null,
+    "width": null,
+    "area": "306.38 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "30638.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "30638.00"
+      }
+    ],
+    "timestamp": "7/26/2025, 5:28:43 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": [
+      {
+        "timestamp": "7/26/2025, 5:36:03 PM",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Название: \"маленькая поляна\" → \"артем маленькая поляна\", Участники: \"Артём (КТУ 1)\" → \"Артём (КТУ 1)\""
+      }
+    ],
+    "editedTimestamp": "7/26/2025, 5:36:03 PM"
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-425.05",
