@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Калькулятор расхода кровельных материалов</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-blue-100 flex items-center justify-center min-h-screen p-4">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-3xl fade-in">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">Калькулятор кровельных рулонов</h1>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label for="area" class="block text-sm font-semibold text-gray-800 mb-2">Площадь кровли (м²)</label>
+        <input type="number" id="area" class="mt-1 p-3 w-full border border-gray-300 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-400" placeholder="Введите площадь" step="0.01" min="0">
+      </div>
+
+      <div>
+        <label for="material" class="block text-sm font-semibold text-gray-800 mb-2">Выберите материал</label>
+        <select id="material" class="w-full p-3 rounded-lg border border-gray-300 bg-gray-50">
+          <option value="technoelast-p-epp.pdf">Техноэласт П ЭПП</option>
+          <option value="technoelast-k-ekp.pdf">Техноэласт К ЭКП</option>
+          <option value="technoelast-p-hpp.pdf">Техноэласт П ХПП</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-6 flex flex-col md:flex-row gap-4">
+      <button onclick="calculate()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300">Рассчитать</button>
+      <button onclick="renderPDF()" class="w-full bg-gray-200 text-gray-700 p-3 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-300">Показать PDF</button>
+    </div>
+
+    <div id="result" class="mt-6 text-center"></div>
+
+    <div class="mt-6">
+      <canvas id="pdf-canvas" class="rounded shadow hidden border w-full h-auto max-w-full"></canvas>
+
+      <div id="pdf-controls" class="mt-4 hidden flex justify-between items-center gap-4">
+        <button onclick="prevPage()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded">← Назад</button>
+        <span class="text-sm text-gray-700">Страница <span id="page-num">1</span> из <span id="page-count">1</span></span>
+        <button onclick="nextPage()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded">Вперёд →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let pdfDoc = null;
+    let currentPage = 1;
+    let totalPages = 0;
+
+    async function fetchPDFText(url) {
+      const pdf = await pdfjsLib.getDocument(url).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        content.items.forEach(item => fullText += item.str + ' ');
+      }
+      return fullText;
+    }
+
+function extractRollArea(text) {
+  const simplified = text.replace(/\s+/g, ' ').toLowerCase();
+
+  const lengthMatch = simplified.match(/длина[^0-9]{0,15}[\d.,%±]{0,10}[\s]{0,3}([\d.,]+)/i);
+  const widthMatch  = simplified.match(/ширина[^0-9]{0,15}[\d.,%±]{0,10}[\s]{0,3}([\d.,]+)/i);
+
+  if (lengthMatch && widthMatch) {
+    const length = parseFloat(lengthMatch[1].replace(',', '.'));
+    const width  = parseFloat(widthMatch[1].replace(',', '.'));
+    return length * width;
+  }
+
+  throw new Error("Не удалось определить размеры рулона.");
+}
+
+    async function calculate() {
+      const areaInput = document.getElementById('area').value;
+      const pdfUrl = document.getElementById('material').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!areaInput || areaInput <= 0) {
+        resultDiv.innerHTML = '<p class="text-red-600 font-medium fade-in">Введите корректную площадь.</p>';
+        return;
+      }
+
+      try {
+        const text = await fetchPDFText(pdfUrl);
+        const rollArea = extractRollArea(text);
+        const area = parseFloat(areaInput);
+        const requiredArea = area * 1.15;
+        const rollsNeeded = Math.ceil(requiredArea / rollArea);
+
+        resultDiv.innerHTML = `
+          <p class="text-green-600 font-semibold text-lg fade-in">Необходимо: ${rollsNeeded} рулон(ов)</p>
+          <p class="fade-in text-sm text-gray-700">Площадь с запасом 15%: ${requiredArea.toFixed(2)} м²</p>
+          <p class="fade-in text-sm text-gray-700">Площадь одного рулона: ${rollArea.toFixed(2)} м²</p>
+        `;
+      } catch (err) {
+        resultDiv.innerHTML = `<p class="text-red-600 font-medium fade-in">Ошибка: ${err.message}</p>`;
+      }
+    }
+
+    async function renderPDF() {
+      const url = document.getElementById('material').value;
+      const canvas = document.getElementById('pdf-canvas');
+      const context = canvas.getContext('2d');
+
+      try {
+        pdfDoc = await pdfjsLib.getDocument(url).promise;
+        totalPages = pdfDoc.numPages;
+        currentPage = 1;
+        document.getElementById('page-count').textContent = totalPages;
+        document.getElementById('pdf-controls').classList.remove('hidden');
+        canvas.classList.remove('hidden');
+        await renderPage(currentPage);
+      } catch (err) {
+        alert("Ошибка загрузки PDF: " + err.message);
+      }
+    }
+
+    async function renderPage(pageNum) {
+      const canvas = document.getElementById('pdf-canvas');
+      const context = canvas.getContext('2d');
+
+      const page = await pdfDoc.getPage(pageNum);
+      const viewport = page.getViewport({ scale: 1.3 }); // адаптивный масштаб
+
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      await page.render({
+        canvasContext: context,
+        viewport
+      }).promise;
+
+      document.getElementById('page-num').textContent = pageNum;
+    }
+
+    function prevPage() {
+      if (currentPage <= 1) return;
+      currentPage--;
+      renderPage(currentPage);
+    }
+
+    function nextPage() {
+      if (currentPage >= totalPages) return;
+      currentPage++;
+      renderPage(currentPage);
+    }
+  </script>
+</body>
+</html>
