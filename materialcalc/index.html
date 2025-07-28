@@ -29,9 +29,17 @@
       <div>
         <label for="material" class="block text-sm font-semibold text-gray-800 mb-2">Выберите материал</label>
         <select id="material" class="w-full p-3 rounded-lg border border-gray-300 bg-gray-50">
-          <option value="technoelast-p-epp.pdf">Техноэласт П ЭПП</option>
-          <option value="technoelast-k-ekp.pdf">Техноэласт К ЭКП</option>
-          <option value="technoelast-p-hpp.pdf">Техноэласт П ХПП</option>
+          <option value="technoelast-p-epp.pdf">Техноэласт П ЭПП, 10x1 м</option>
+          <option value="technoelast-k-ekp.pdf">Техноэласт К ЭКП, 10x1 м</option>
+          <option value="technoelast-termo-p-epp.pdf">Техноэласт ТЕРМО П ЭПП, 10x1 м</option>
+          <option value="technoelast-termo-k-ekp.pdf">Техноэласт ТЕРМО К ЭКП, 10x1 м</option>
+          <option value="technoelast-green-p-epp.pdf">Техноэласт ГРИН П ЭПП, 10x1 м</option>
+          <option value="technoelast-green-k-ekp.pdf">Техноэласт ГРИН К ЭКП, 10x1 м</option>
+          <option value="technoelast-p-hpp.pdf">Техноэласт П ХПП, 10x1 м</option>
+          <option value="technoelast-barer-lite.pdf">Техноэласт БАРЬЕР ЛАЙТ, 20х1 м</option>
+          <option value="parob-sa500.pdf">Паробарьер СА 500, 50х1,08 м</option>
+          <option value="parob-sf1000.pdf">Паробарьер СФ 1000, 30x1,08 м</option>
+
         </select>
       </div>
     </div>
@@ -70,20 +78,28 @@
       return fullText;
     }
 
-function extractRollArea(text) {
-  const simplified = text.replace(/\s+/g, ' ').toLowerCase();
+    function extractRollArea(text) {
+    const simplified = text.replace(/\s+/g, ' ').toLowerCase();
 
-  const lengthMatch = simplified.match(/длина[^0-9]{0,15}[\d.,%±]{0,10}[\s]{0,3}([\d.,]+)/i);
-  const widthMatch  = simplified.match(/ширина[^0-9]{0,15}[\d.,%±]{0,10}[\s]{0,3}([\d.,]+)/i);
+    const lengthMatch = simplified.match(/длина[^0-9]*?±?\d*%{0,1}\s*(\d+[,.]?\s*\d*)/i);
+    const widthMatch = simplified.match(/ширина[^0-9]*?±?\d*%{0,1}\s*(\d+[,.]?\s*\d*)/i);
 
-  if (lengthMatch && widthMatch) {
-    const length = parseFloat(lengthMatch[1].replace(',', '.'));
-    const width  = parseFloat(widthMatch[1].replace(',', '.'));
-    return length * width;
-  }
+    if (lengthMatch && widthMatch) {
+        const normalize = str => str.replace(/\s+/g, '').replace(',', '.');
 
-  throw new Error("Не удалось определить размеры рулона.");
-}
+        const length = parseFloat(normalize(lengthMatch[1]));
+        const width = parseFloat(normalize(widthMatch[1]));
+
+        if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
+        throw new Error("Некорректные размеры рулона.");
+        }
+
+        console.log(`Извлеченная длина: ${length}, ширина: ${width}`); // Для отладки
+        return +(length * width).toFixed(2);
+    }
+
+    throw new Error("Не удалось определить размеры рулона из PDF.");
+    }
 
     async function calculate() {
       const areaInput = document.getElementById('area').value;
