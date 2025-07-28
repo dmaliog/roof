@@ -13,6 +13,12 @@
     }
 
     const correctPassword = base64ToUtf8(encodedPassword);
+    const storageKey = 'access_granted';
+
+    // Проверяем, есть ли уже подтверждённый доступ в localStorage
+    if (localStorage.getItem(storageKey) === 'true') {
+        return;
+    }
 
     while (true) {
         const input = prompt("Введите пароль для доступа:");
@@ -20,12 +26,16 @@
             alert("Доступ отменён.");
             throw new Error("Пользователь отменил ввод пароля.");
         }
-        if (input === correctPassword) break;
+        if (input === correctPassword) {
+            // Запоминаем в localStorage
+            localStorage.setItem(storageKey, 'true');
+            break;
+        }
         alert("Неверный пароль. Попробуйте снова.");
     }
+
     alert("Доступ разрешён!");
 })();
-
 
 document.addEventListener('DOMContentLoaded', () => {
 
