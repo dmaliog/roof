@@ -1,5 +1,21 @@
 [
   {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-4500.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Андрюха"
+    ],
+    "timestamp": "29.07.2025, 07:50:39",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Парка без илюхи",
     "length": null,
     "width": null,
