@@ -2,6 +2,22 @@
   {
     "name": "Займ",
     "service": "Расход",
+    "cost": "-10000.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Илья"
+    ],
+    "timestamp": "29.07.2025, 07:51:54",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Займ",
+    "service": "Расход",
     "cost": "-4500.00",
     "workers": [
       "Коля"
