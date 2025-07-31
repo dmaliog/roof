@@ -1,5 +1,47 @@
 [
   {
+    "name": "Парка остатки с илюхой",
+    "length": null,
+    "width": null,
+    "area": "873.70 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "52422.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "10484.40"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "10484.40"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "10484.40"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "10484.40"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "10484.40"
+      }
+    ],
+    "timestamp": "31.07.2025, 18:51:28",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Парка без илюхи",
     "length": null,
     "width": null,
