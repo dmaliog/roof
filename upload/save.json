@@ -1,5 +1,167 @@
 [
   {
+    "name": "слава фонарь 2",
+    "length": null,
+    "width": null,
+    "area": "127.60 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "12760.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "12760.00"
+      }
+    ],
+    "timestamp": "7/31/2025, 8:35:56 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Илья фонарь 2",
+    "length": null,
+    "width": null,
+    "area": "120.96 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "12096.00",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "12096.00"
+      }
+    ],
+    "timestamp": "7/31/2025, 8:35:12 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "колян фонарь 2",
+    "length": null,
+    "width": null,
+    "area": "490.60 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "49060.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "49060.00"
+      }
+    ],
+    "timestamp": "7/31/2025, 8:32:58 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "артем фонарь 2",
+    "length": null,
+    "width": null,
+    "area": "490.60 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "49060.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "49060.00"
+      }
+    ],
+    "timestamp": "7/31/2025, 8:32:16 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-298.35",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Саша"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "7/31/2025, 8:30:52 PM",
+    "isExpense": true,
+    "distance": "73.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-220.70",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "7/31/2025, 8:25:36 PM",
+    "isExpense": true,
+    "distance": "54.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-220.70",
+    "workers": [
+      "Артём",
+      "Коля"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "7/31/2025, 8:25:20 PM",
+    "isExpense": true,
+    "distance": "54.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1226.10",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья",
+      "Саша"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "7/31/2025, 8:23:40 PM",
+    "isExpense": true,
+    "distance": "300.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Парка остатки с илюхой",
     "length": null,
     "width": null,
