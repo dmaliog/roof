@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "name": "Узтм парка",
+    "length": null,
+    "width": null,
+    "area": "632.44 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "37946.40",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "7589.28"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "7589.28"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "7589.28"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "7589.28"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "7589.28"
+      }
+    ],
+    "timestamp": "04.08.2025, 16:47:35",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  }
+]
