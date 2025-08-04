@@ -1,5 +1,47 @@
 [
   {
+    "name": "Столовая кумз",
+    "length": null,
+    "width": null,
+    "area": "1164.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "116400.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "29100.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "29100.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 0.5,
+        "cost": "14550.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.9,
+        "cost": "26190.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 0.6,
+        "cost": "17460.00"
+      }
+    ],
+    "timestamp": "04.08.2025, 14:14:52",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "слава фонарь 2",
     "length": null,
     "width": null,
