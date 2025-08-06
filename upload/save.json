@@ -1,5 +1,39 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1000.00",
+    "workers": [
+      "Саша"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "06.08.2025, 18:39:02",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-899.14",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "06.08.2025, 18:38:41",
+    "isExpense": true,
+    "distance": "220.00",
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Саша парка",
     "length": null,
     "width": null,
