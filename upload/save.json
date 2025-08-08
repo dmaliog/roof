@@ -1,5 +1,27 @@
 [
   {
+    "name": "Саша парка",
+    "length": null,
+    "width": null,
+    "area": "198.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "11880.00",
+    "workers": [
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "11880.00"
+      }
+    ],
+    "timestamp": "08.08.2025, 07:29:58",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-1000.00",
