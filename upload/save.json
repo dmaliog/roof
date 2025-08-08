@@ -1,5 +1,22 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-2000.00",
+    "workers": [
+      "Слава",
+      "Саша"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "08.08.2025, 07:31:02",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Саша парка",
     "length": null,
     "width": null,
