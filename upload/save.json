@@ -1,5 +1,43 @@
 [
   {
+    "name": "Слава примыкания",
+    "service": "Расход",
+    "cost": "-3000.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Илья",
+      "Саша"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "10.08.2025, 17:20:45",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Саша примыкания",
+    "service": "Расход",
+    "cost": "-4000.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Слава",
+      "Илья"
+    ],
+    "receivers": [
+      "Саша"
+    ],
+    "timestamp": "10.08.2025, 17:19:30",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-899.14",
