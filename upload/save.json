@@ -1,5 +1,49 @@
 [
   {
+    "name": "большая поляна 2 колян",
+    "length": null,
+    "width": null,
+    "area": "552.40 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "55240.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "55240.00"
+      }
+    ],
+    "timestamp": "8/11/2025, 12:40:11 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "большая поляна 2 артем",
+    "length": null,
+    "width": null,
+    "area": "752.50 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "75250.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "75250.00"
+      }
+    ],
+    "timestamp": "8/11/2025, 12:39:34 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Обучение 2",
     "service": "Расход",
     "cost": "-5184.50",
