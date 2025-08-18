@@ -1,1 +1,294 @@
-[]
+[
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1500.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "8/18/2025, 8:32:35 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-2000.00",
+    "workers": [
+      "Саша"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "8/18/2025, 8:32:21 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Штраф",
+    "service": "Расход",
+    "cost": "-10000.00",
+    "workers": [
+      "Саша"
+    ],
+    "receivers": [
+      "Слава"
+    ],
+    "timestamp": "8/18/2025, 8:23:51 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка",
+    "length": null,
+    "width": null,
+    "area": "403.73 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "24223.80",
+    "workers": [
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "24223.80"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:22:40 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка",
+    "length": null,
+    "width": null,
+    "area": "606.16 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "36369.60",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "36369.60"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:22:06 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка",
+    "length": null,
+    "width": null,
+    "area": "223.89 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "13433.40",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "13433.40"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:21:31 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка",
+    "length": null,
+    "width": null,
+    "area": "243.28 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "14596.80",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "14596.80"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:20:26 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка",
+    "length": null,
+    "width": null,
+    "area": "533.38 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "32002.80",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "32002.80"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:19:33 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Штраф",
+    "service": "Расход",
+    "cost": "-10000.00",
+    "workers": [
+      "Саша"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "8/18/2025, 8:18:17 PM",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": [
+      {
+        "timestamp": "8/18/2025, 8:23:12 PM",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -20000.00 → -10000, Участники (начисление): \"Артём, Слава\" → \"Артём\""
+      }
+    ],
+    "editedTimestamp": "8/18/2025, 8:23:12 PM"
+  },
+  {
+    "name": "Галерея",
+    "length": null,
+    "width": null,
+    "area": "243.50 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "24350.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 0.2,
+        "cost": "4870.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 0.2,
+        "cost": "4870.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 0.6,
+        "cost": "14610.00"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:14:29 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": [
+      {
+        "timestamp": "8/18/2025, 8:14:51 PM",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Цена за м²: 243.50 → 100.00, Участники: \"Артём (КТУ 0.4), Коля (КТУ 0.4), Саша (КТУ 0.6)\" → \"Артём (КТУ 0.4), Коля (КТУ 0.4), Саша (КТУ 0.6)\", Стоимость: 59292.25 → 24350.00"
+      },
+      {
+        "timestamp": "8/18/2025, 8:16:57 PM",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Участники: \"Артём (КТУ 0.4), Коля (КТУ 0.4), Саша (КТУ 0.6)\" → \"Артём (КТУ 0.2), Коля (КТУ 0.2), Саша (КТУ 0.6)\""
+      },
+      {
+        "timestamp": "8/18/2025, 8:17:28 PM",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Участники: \"Артём (КТУ 0.2), Коля (КТУ 0.2), Саша (КТУ 0.6)\" → \"Артём (КТУ 0.2), Коля (КТУ 0.2), Саша (КТУ 0.6)\""
+      }
+    ],
+    "editedTimestamp": "8/18/2025, 8:17:28 PM"
+  },
+  {
+    "name": "Галерея",
+    "length": null,
+    "width": null,
+    "area": "82.36 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "6783.17",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "6783.17"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:13:21 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Галерея",
+    "length": null,
+    "width": null,
+    "area": "398.42 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "39842.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "39842.00"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:12:33 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Галерея",
+    "length": null,
+    "width": null,
+    "area": "311.79 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "31179.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "31179.00"
+      }
+    ],
+    "timestamp": "8/18/2025, 8:12:02 PM",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  }
+]
