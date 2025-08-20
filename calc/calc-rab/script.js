@@ -1980,9 +1980,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                                 if (!expenseBreakdownByReceiver[receiver]) expenseBreakdownByReceiver[receiver] = [];
                                                 const isLoan = obj.name.toLowerCase() === 'займ';
                                                 const safeReceiversCount = Array.isArray(obj.receivers) && obj.receivers.length > 0 ? obj.receivers.length : 1;
-                                                const debtValue = isLoan
-                                                ? (-Math.abs(writeOffPerWorker) / safeReceiversCount).toFixed(2)
-                                                : writeOffPerWorker.toFixed(2);
+                                                const debtValue = (isLoan
+                                                ? (-Math.abs(writeOffPerWorker) / safeReceiversCount)
+                                                : (writeOffPerWorker / safeReceiversCount)).toFixed(2);
 
                                                 expenseBreakdownByReceiver[receiver].push({
                                                     value: debtValue,
@@ -2011,10 +2011,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                                 if (!debtsOwedToWorker[debtorName]) debtsOwedToWorker[debtorName] = [];
                                                 const isLoan = obj.name.toLowerCase() === 'займ';
                                                 const safeReceiversCount = Array.isArray(obj.receivers) && obj.receivers.length > 0 ? obj.receivers.length : 1;
-                                                const creditValue = isLoan
-                                                ? (Math.abs(writeOffPerWorker) / safeReceiversCount).toFixed(2)
-                                                : Math.abs(writeOffPerWorker).toFixed(2);
-                                                                                                debtsOwedToWorker[debtorName].push({
+                                                const creditValue = (isLoan
+                                                ? (Math.abs(writeOffPerWorker) / safeReceiversCount)
+                                                : (Math.abs(writeOffPerWorker) / safeReceiversCount)).toFixed(2);
+                                                debtsOwedToWorker[debtorName].push({
                                                     value: creditValue,
                                                     timestamp: obj.timestamp,
                                                     className: 'receiver-earning'
