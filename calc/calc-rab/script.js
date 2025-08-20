@@ -112,6 +112,32 @@ document.addEventListener('DOMContentLoaded', () => {
     manualPriceForm.querySelector('button[type="submit"]').textContent = 'Добавить объект';
     customServiceForm.querySelector('button[type="submit"]').textContent = 'Добавить услугу';
 
+    // Функции для objectForm (выносим наружу, чтобы ссылки не менялись)
+    function toggleServiceOptions() {
+        optionsList.classList.toggle('show');
+    }
+
+    function selectServiceOption(e) {
+        const selectedValueText = e.target.getAttribute('data-value');
+        selectDisplay.innerHTML = `${e.target.textContent} <span class="dropdown-icon">▾</span>`;
+        selectedValue.value = selectedValueText;
+        optionsList.classList.remove('show');
+    }
+
+    // Функции для manualPriceForm (выносим наружу, чтобы ссылки не менялись)
+    function toggleManualServiceOptions() {
+        manualOptionsList.classList.toggle('show');
+    }
+
+    function selectManualServiceOption(e) {
+        const selectedValueText = e.target.getAttribute('data-value');
+        const [name, unit] = selectedValueText.split('|');
+        manualSelectDisplay.innerHTML = `${name} (${unit}) <span class="dropdown-icon">▾</span>`;
+        manualSelectedValue.value = selectedValueText;
+        manualPriceLabel.textContent = `Цена за ${unit} (₽):`;
+        manualOptionsList.classList.remove('show');
+    }
+
     // Функция переключения форм
     function showForm(formToShow) {
         [objectForm, expenseForm, manualPriceForm, customServiceForm].forEach(f => {
@@ -156,44 +182,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     selectDisplay.removeEventListener('click', toggleServiceOptions);
                     selectDisplay.addEventListener('click', toggleServiceOptions);
 
-                    function toggleServiceOptions() {
-                        optionsList.classList.toggle('show');
-                    }
-
                     optionsList.querySelectorAll('li').forEach(li => {
                         li.removeEventListener('click', selectServiceOption);
                         li.addEventListener('click', selectServiceOption);
                     });
-
-                    function selectServiceOption(e) {
-                        const selectedValueText = e.target.getAttribute('data-value');
-                        selectDisplay.innerHTML = `${e.target.textContent} <span class="dropdown-icon">▾</span>`;
-                        selectedValue.value = selectedValueText;
-                        optionsList.classList.remove('show');
-                    }
                 }
 
                 if (f === manualPriceForm) {
+                    populateManualServiceSelect(prices, manualSelectDisplay, manualSelectedValue, manualOptionsList, manualPriceLabel); // Добавлено: перезаполнение списка на всякий случай
                     manualSelectDisplay.removeEventListener('click', toggleManualServiceOptions);
                     manualSelectDisplay.addEventListener('click', toggleManualServiceOptions);
-
-                    function toggleManualServiceOptions() {
-                        manualOptionsList.classList.toggle('show');
-                    }
 
                     manualOptionsList.querySelectorAll('li').forEach(li => {
                         li.removeEventListener('click', selectManualServiceOption);
                         li.addEventListener('click', selectManualServiceOption);
                     });
-
-                    function selectManualServiceOption(e) {
-                        const selectedValueText = e.target.getAttribute('data-value');
-                        const [name, unit] = selectedValueText.split('|');
-                        manualSelectDisplay.innerHTML = `${name} (${unit}) <span class="dropdown-icon">▾</span>`;
-                        manualSelectedValue.value = selectedValueText;
-                        manualPriceLabel.textContent = `Цена за ${unit} (₽):`;
-                        manualOptionsList.classList.remove('show');
-                    }
                 }
             } else {
                 f.style.display = 'none';
