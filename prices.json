@@ -8,7 +8,7 @@
     {"name": "Монтаж из шифера в 1 слой", "unit": "кв.м.", "cost": 220, "image": "/calc/img/shifer.png"},
     {"name": "Монтаж пароизоляции", "unit": "кв.м.", "cost": 60, "image": "/calc/img/gorelka.png"},
     {"name": "Монтаж наплавляемой кровли в 1 слой", "unit": "кв.м.", "cost": 100, "image": "/calc/img/gorelka.png"},
-    {"name": "Монтаж примыканий", "unit": "м.п.", "cost": 100, "image": "/calc/calc-rab/img/gorelka.png"},
+    {"name": "Монтаж примыканий", "unit": "м.п.", "cost": 100, "image": "/calc/img/gorelka.png"},
     {"name": "Парапетные крышки без костылей", "unit": "м.п.", "cost": 350, "image": null},
     {"name": "Монтаж водоприемной воронки", "unit": "шт.", "cost": 2500, "image": "/calc/img/voronka.png"},
     {"name": "Монтаж отливов из оцинкованной стали", "unit": "м.п.", "cost": 250, "image": "/calc/img/ocinkovka.png"},
