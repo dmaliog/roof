@@ -2,7 +2,23 @@
   {
     "name": "Бензин",
     "service": "Расход",
-    "cost": "-1000.00",
+    "cost": "-250.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "22.08.2025, 13:24:06",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-2000.00",
     "workers": [
       "Саша"
     ],
@@ -13,7 +29,13 @@
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "22.08.2025, 13:23:50",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -1000.00 → -2000"
+      }
+    ],
+    "editedTimestamp": "22.08.2025, 13:23:50"
   },
   {
     "name": "Гендос",
