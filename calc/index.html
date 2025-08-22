@@ -3,90 +3,1236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Меню</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Современные стили для кнопок с glassmorphism и неоновым эффектом */
-        .btn-neon {
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-neon::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: 0.5s;
-        }
-        .btn-neon:hover::before {
-            left: 100%;
-        }
-        .btn-neon:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 255, 255, 0.3);
-        }
-        /* Плавная прокрутка */
-        html {
-            scroll-behavior: smooth;
-        }
-        /* Динамический фон */
-        body {
-            background: linear-gradient(135deg, #e0e7ff, #dbeafe, #e0e7ff);
-            animation: gradientShift 15s ease infinite;
-            background-size: 200% 200%;
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
+    <title>Калькуляторы для мягкой наплавляемой кровли - TechnoNICOL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+<style>
+:root {
+    --gradient-blue-start: #2563eb; /* Tailwind blue-600 */
+    --gradient-blue-end: #4f46e5; /* Tailwind indigo-600 */
+    --gradient-blue-hover-start: #1d4ed8; /* Tailwind blue-700 */
+    --gradient-blue-hover-end: #4338ca; /* Tailwind indigo-700 */
+    --gray-button: #e5e7eb; /* Tailwind gray-200 */
+    --gray-button-hover: #d1d5db; /* Tailwind gray-300 */
+    --secondary-gray: #2D2D2D;
+    --light-gray: #F5F5F5;
+    --white: #FFFFFF;
+    --black: #1A1A1A;
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --border-radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#floating-menu-btn {
+    display:none;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    color: var(--black);
+    line-height: 1.6;
+    overflow-x: hidden;
+    padding: 40px;
+}
+
+header {
+    text-align: center;
+}
+
+.tabs {
+    max-width: 1280px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.tab-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    list-style: none;
+}
+
+.tab-links li {
+    text-align: center;
+}
+
+.tab-links a {
+    display: block;
+    padding: 1rem;
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.tab-links a:hover,
+.tab-links a.active {
+    background: linear-gradient(135deg, var(--gradient-blue-start), var(--gradient-blue-end));
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+.tab-content {
+    display: none;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.3s ease-in-out;
+    margin-top: 1rem;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+form {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+label {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--black);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+input[type="text"],input[type="number"], select {
+    width: 100%;
+    padding: 12px 30px 12px 12px;
+    font-size: 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background: var(--white);
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231A1A1A' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+input[type="text"]:focus,input[type="number"]:focus, select:focus {
+    border-color: transparent;
+    background: linear-gradient(to right, var(--white), var(--white)), linear-gradient(to right, var(--gradient-blue-start), var(--gradient-blue-end));
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    outline: none;
+}
+
+button.ekbroof {
+    background: linear-gradient(to right, var(--gradient-blue-start), var(--gradient-blue-end));
+    color: var(--white);
+    border: none;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button.ekbroof:hover {
+    background: linear-gradient(to right, var(--gradient-blue-hover-start), var(--gradient-blue-hover-end));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+button.pdf-button, .pdf-controls button {
+    background: var(--gray-button);
+    color: var(--black);
+    border: none;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button.pdf-button:hover, .pdf-controls button:hover {
+    background: var(--gray-button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.result {
+    display: none;
+    margin-top: 1.5rem;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--white);
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--gradient-blue-start), var(--gradient-blue-end));
+    border-radius: 8px;
+}
+
+.result.active {
+    display: block;
+}
+
+canvas {
+    border: 0;
+    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    margin: 10px auto!important;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+canvas.active {
+    display: block;
+}
+
+.pdf-controls {
+    display: none;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pdf-controls.active {
+    display: flex;
+}
+
+.pdf-controls span {
+    font-size: 1rem;
+    color: var(--black);
+}
+
+h2 {
+    color: var(--black);
+    margin-bottom: 25px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(to right, var(--gradient-blue-start), var(--gradient-blue-end));
+    border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+    .tabs {
+        margin: 1rem;
+        padding: 0 1rem;
+    }
+
+    .tab-links {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+
+    .tab-links a {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .tab-content {
+        padding: 1.5rem;
+    }
+
+    form {
+        gap: 1rem;
+    }
+
+    label, input[type="text"],input[type="number"], select, button {
+        font-size: 0.95rem;
+    }
+
+    .result {
+        font-size: 1rem;
+    }
+
+    canvas {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding:0!important;
+    }
+    .tab-links {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
+
+    .tab-links a {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+    }
+
+    .pdf-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+</style>
 </head>
-<body class="min-h-screen flex flex-col font-sans antialiased">
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex items-center justify-center">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full max-w-6xl">
-            <!-- Button 1 -->
-            <button onclick="window.location.href='calc-rab'"
-                    class="bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-2xl btn-neon text-sm sm:text-base">
-                Расчеты работников
-            </button>
-            <!-- Button 2 -->
-            <button onclick="window.location.href='calc-roof'"
-                    class="bg-gradient-to-r from-green-600 to-green-800 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-2xl btn-neon text-sm sm:text-base">
-                Расчеты рулонов
-            </button>
-            <!-- Button 3 -->
-            <button onclick="window.location.href='calc-mat'"
-                    class="bg-gradient-to-r from-yellow-600 to-yellow-800 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-2xl btn-neon text-sm sm:text-base">
-                Расчеты стройматериалов
-            </button>
-            <!-- Button 4 -->
-            <button onclick="window.location.href='#other'"
-                    class="bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-2xl btn-neon text-sm sm:text-base">
-                Другая информация
-            </button>
+<body>
+    <header><img src="logo.png" height="152px" width="152px"></header>
+
+    <div class="tabs">
+        <ul class="tab-links">
+            <li><a href="#calc2" class="active">Расход крепежа</a></li>
+            <li><a href="#calc4">Уклон кровли</a></li>
+            <li><a href="#calc7">Время выполнения работ</a></li>
+            <li><a href="#calc8">Логистика материалов</a></li>
+            <li><a href="#calc11">Расход праймера</a></li>
+            <li><a href="#calc12">Расход газовых баллонов</a></li>
+            <li><a href="#calc13">Расход мастики</a></li>
+            <li><a href="#calc15">Аэраторы</a></li>
+            <li><a href="#calc16">Минвата</a></li>
+            <li><a href="#calc17">PIR-плиты</a></li>
+            <li><a href="#calc18">Кровельные рулоны</a></li>
+            <li><a href="#calc19">Расчеты работников</a></li>
+        </ul>
+
+        <div id="calc2" class="tab-content active">
+            <h2>Калькулятор расхода крепежа</h2>
+            <form id="form2">
+                <label>Площадь кровли (м²): <input type="number" id="area2" placeholder="Введите площадь" step="0.01" min="0"></label>
+                <button class="ekbroof" type="button" onclick="calculate2()">Рассчитать</button>
+            </form>
+            <div class="result" id="result2"></div>
         </div>
-    </main>
+
+        <div id="calc4" class="tab-content">
+            <h2>Калькулятор уклона кровли</h2>
+            <form id="form4">
+                <label>Длина ската (м): <input type="number" id="length4" placeholder="Введите длину" step="0.01" min="0"></label>
+                <label>Высота подъема (м): <input type="number" id="height4" placeholder="Введите высоту" step="0.01" min="0"></label>
+                <button class="ekbroof" type="button" onclick="calculate4()">Рассчитать</button>
+            </form>
+            <div class="result" id="result4"></div>
+        </div>
+
+        <div id="calc7" class="tab-content">
+            <h2>Калькулятор времени выполнения работ</h2>
+            <form id="form7">
+                <label>Площадь кровли (м²): <input type="number" id="area7" placeholder="Введите площадь" step="0.01" min="0"></label>
+                <label>Численность бригады: <input type="number" id="team7" placeholder="Введите количество" min="1"></label>
+                <button class="ekbroof" type="button" onclick="calculate7()">Рассчитать</button>
+            </form>
+            <div class="result" id="result7"></div>
+        </div>
+
+        <div id="calc8" class="tab-content">
+            <h2>Калькулятор логистики материалов</h2>
+            <form id="form8">
+                <label>Расстояние (км): <input type="number" id="distance8" placeholder="Введите расстояние" step="0.01" min="0"></label>
+                <label>Объем материалов (м³): <input type="number" id="volume8" placeholder="Введите объем" step="0.01" min="0"></label>
+                <button class="ekbroof" type="button" onclick="calculate8()">Рассчитать</button>
+            </form>
+            <div class="result" id="result8"></div>
+        </div>
+
+        <div id="calc11" class="tab-content">
+            <h2>Калькулятор расхода праймера</h2>
+            <form id="form11">
+                <label>Тип праймера:
+                    <select id="primerType11">
+                        <option value="primer01">Праймер битумный №01</option>
+                        <option value="primer03">Праймер водоэмульсионный №03</option>
+                        <option value="primer04">Праймер быстросохнущий №04</option>
+                        <option value="primer08">Праймер-концентрат №08</option>
+                    </select>
+                </label>
+                <label>Тип основания:
+                    <select id="baseType11">
+                        <option value="concrete">Бетон</option>
+                        <option value="metal">Металл</option>
+                    </select>
+                </label>
+                <label>Введите площадь (м²) или количество (кг):
+                    <input type="number" id="area11" placeholder="Введите значение" step="0.01" min="0">
+                </label>
+                <label>Тип расчета:
+                    <select id="calcType11">
+                        <option value="areaToMaterial">Площадь → Материал</option>
+                        <option value="materialToArea">Материал → Площадь</option>
+                    </select>
+                </label>
+                <button class="ekbroof" type="button" onclick="calculate11()">Рассчитать</button>
+            </form>
+            <div class="result" id="result11"></div>
+        </div>
+
+        <div id="calc12" class="tab-content">
+            <h2>Калькулятор расхода газовых баллонов</h2>
+            <form id="form12">
+                <label>Площадь кровли (м²): <input type="number" id="area12" placeholder="Введите площадь" step="0.01" min="0"></label>
+                <label>Количество слоев: <input type="number" id="layers12" min="1" placeholder="1-2"></label>
+                <button class="ekbroof" type="button" onclick="calculate12()">Рассчитать</button>
+            </form>
+            <div class="result" id="result12"></div>
+        </div>
+
+        <div id="calc13" class="tab-content">
+            <h2>Калькулятор расхода мастики</h2>
+            <form id="form13">
+                <label>Тип мастики:
+                    <select id="masticType13">
+                        <option value="bitum">Битумная (ведро 20 кг)</option>
+                        <option value="polymer">Полимерная (ведро 18 кг)</option>
+                    </select>
+                </label>
+                <label>Введите площадь (м²) или количество (кг):
+                    <input type="number" id="area13" placeholder="Введите значение" step="0.01" min="0">
+                </label>
+                <label>Тип расчета:
+                    <select id="calcType13">
+                        <option value="areaToMaterial">Площадь → Материал</option>
+                        <option value="materialToArea">Материал → Площадь</option>
+                    </select>
+                </label>
+                <button class="ekbroof" type="button" onclick="calculate13()">Рассчитать</button>
+            </form>
+            <div class="result" id="result13"></div>
+        </div>
+
+        <div id="calc15" class="tab-content">
+            <h2>Калькулятор аэраторов</h2>
+            <form id="form15">
+                <label>Введите площадь (м²) или количество (шт):
+                    <input type="number" id="inputValue15" placeholder="Введите значение" step="0.01" min="0">
+                </label>
+                <label>Тип расчета:
+                    <select id="calcType15">
+                        <option value="areaToMaterial">Площадь → Аэраторы</option>
+                        <option value="materialToArea">Аэраторы → Площадь</option>
+                    </select>
+                </label>
+                <button class="ekbroof" type="button" onclick="calculate15()">Рассчитать</button>
+            </form>
+            <div class="result" id="result15"></div>
+        </div>
+
+        <div id="calc16" class="tab-content">
+            <h2>Калькулятор минваты</h2>
+            <form id="form16">
+                <label>Тип минваты:
+                    <select id="material16">
+                        <option value="minwool_technoacoustic">Минвата Техноакустик, 50 мм (упаковки)</option>
+                        <option value="minwool_technoroof">Минвата Техноруф В60, 50 мм (упаковки)</option>
+                        <option value="minwool_ozm">Минвата Техно ОЗМ, 30 мм (упаковки)</option>
+                    </select>
+                </label>
+                <label>Введите площадь (м²) или количество (упаковки):
+                    <input type="number" id="inputValue16" placeholder="Введите значение" step="0.01" min="0">
+                </label>
+                <label>Тип расчета:
+                    <select id="calcType16">
+                        <option value="areaToMaterial">Площадь → Минвата</option>
+                        <option value="materialToArea">Минвата → Площадь</option>
+                    </select>
+                </label>
+                <button class="ekbroof" type="button" onclick="calculate16()">Рассчитать</button>
+            </form>
+            <div class="result" id="result16"></div>
+        </div>
+
+            <div id="calc19" class="tab-content">
+        <h2>Расчеты работников</h2>
+
+        <form id="custom-service-form" class="calc-form custom-service-form" style="display: none;">
+            <div class="form-group">
+                <label>Название услуги:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" name="serviceName" placeholder="Например, Электросварка перил" autocomplete="off">
+                    <ul id="service-name-suggestions" class="suggestions-list"></ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Выбрать готовую услугу:</label>
+                <div class="custom-select">
+                    <div id="service-select-custom" class="select-display">Выберите услугу <span class="dropdown-icon">▾</span></div>
+                    <input type="hidden" id="selected-value-custom" name="service">
+                    <ul id="service-options-custom" class="options-list"></ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Цена (₽):</label>
+                <input type="number" name="servicePrice" step="0.01" min="0" placeholder="5000" required>
+            </div>
+            <div class="form-group">
+                <label>Участники и КТУ:</label>
+                <div id="service-workers-checkbox-group" class="checkbox-group"></div>
+            </div>
+            <div class="form-group issued-money-group">
+                <label>Выданные деньги:</label>
+                <div class="checkbox-group"></div>
+            </div>
+            <div class="form-group">
+                <label>Настройки:</label>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="isPaid" id="service-is-paid">
+                        Выплачено
+                    </label>
+                    <label>
+                        <input type="checkbox" name="useRostikMethod">
+                        Рассчитать по Ростиковской методике
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn">Добавить услугу</button>
+            <button type="button" class="btn cancel-btn">Отменить</button>
+        </form>
+
+        <form id="object-form" class="calc-form object-form" style="display: none;">
+            <div class="form-group">
+                <label>Название объекта:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" name="objectName" placeholder="Например, Кровля здания 1" autocomplete="off">
+                    <ul id="object-name-suggestions" class="suggestions-list"></ul>
+                </div>
+            </div>
+            <div class="calc-inputs">
+                <div class="form-group">
+                    <label>Длина (м):</label>
+                    <input type="number" id="object-length" name="length" step="0.01" min="0" placeholder="10">
+                </div>
+                <div class="form-group">
+                    <label>Ширина (м):</label>
+                    <input type="number" id="object-width" name="width" step="0.01" min="0" placeholder="5">
+                </div>
+                <div class="form-group">
+                    <label>Площадь (м²):</label>
+                    <input type="number" id="object-area" name="area" step="0.01" min="0" placeholder="50">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Услуга:</label>
+                <div class="custom-select">
+                    <div id="service-select" class="select-display">Выберите услугу <span class="dropdown-icon">▾</span></div>
+                    <input type="hidden" id="selected-value" name="service">
+                    <ul id="service-options" class="options-list"></ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Участники и КТУ:</label>
+                <div id="workers-checkbox-group" class="checkbox-group"></div>
+            </div>
+            <div class="form-group issued-money-group">
+                <label>Выданные деньги:</label>
+                <div class="checkbox-group"></div>
+            </div>
+            <div class="form-group">
+                <label>Настройки:</label>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="isPaid" id="object-is-paid">
+                        Выплачено
+                    </label>
+                    <label>
+                        <input type="checkbox" name="useRostikMethod">
+                        Рассчитать по Ростиковской методике
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn">Добавить объект</button>
+            <button type="button" class="btn cancel-btn">Отменить</button>
+        </form>
+
+        <form id="expense-form" class="calc-form expense-form" style="display: none;">
+            <div class="form-group">
+                <label>Название расхода:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" name="expenseName" placeholder="Например, Бензин" autocomplete="off">
+                    <ul id="expense-name-suggestions" class="suggestions-list"></ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Выбрать тип расхода:</label>
+                <div class="custom-select">
+                    <div id="expense-type-select" class="select-display">Выберите тип расхода <span class="dropdown-icon">▾</span></div>
+                    <input type="hidden" id="expense-type-value" name="expenseType">
+                    <ul id="expense-type-options" class="options-list"></ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Сумма (₽):</label>
+                <input type="number" name="expenseAmount" step="0.01" min="-999999" placeholder="-500">
+            </div>
+            <div class="form-group fuel-calc-mode" style="display: none;">
+                    <label>Режим расчета бензина:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="fuelMode" value="amount" checked> Сумма</label>
+                        <label><input type="radio" name="fuelMode" value="distance"> Расстояние</label>
+                        <label><input type="radio" name="fuelMode" value="mileage"> Километраж</label>
+                    </div>
+                    <div class="distance-input" style="display: none;">
+                        <label>Расстояние (км):</label>
+                        <input type="number" name="distance" step="0.01" min="0" placeholder="212">
+                    </div>
+                    <div class="mileage-input" style="display: none;">
+                        <label>Начальный километраж (км):</label>
+                        <input type="number" name="startMileage" step="0.01" min="0" placeholder="1000">
+                        <label>Конечный километраж (км):</label>
+                        <input type="number" name="endMileage" step="0.01" min="0" placeholder="1212">
+                    </div>
+            </div>
+            <div class="form-group">
+                <label>Участники (списание):</label>
+                <div id="expense-workers-checkbox-group" class="checkbox-group"></div>
+            </div>
+            <div class="form-group">
+                <label>Участники (начисление):</label>
+                <div id="expense-receivers-checkbox-group" class="checkbox-group"></div>
+            </div>
+            <div class="form-group">
+                <label>Настройки:</label>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="isPaid" id="expense-is-paid">
+                        Выплачено
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn">Добавить расход</button>
+            <button type="button" class="btn cancel-btn">Отменить</button>
+        </form>
+
+        <form id="manual-price-form" class="calc-form manual-price-form" style="display: none;">
+            <div class="form-group">
+                <label>Название объекта:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" name="objectName" placeholder="Например, Галерея УЗТМ" required autocomplete="off">
+                    <ul id="manual-object-name-suggestions" class="suggestions-list"></ul>
+                </div>
+            </div>
+            <div class="calc-inputs">
+                <div class="form-group">
+                    <label>Длина (м):</label>
+                    <input type="number" id="manual-length" name="length" step="0.001" min="0" placeholder="10">
+                </div>
+                <div class="form-group">
+                    <label>Ширина (м):</label>
+                    <input type="number" id="manual-width" name="width" step="0.001" min="0" placeholder="5">
+                </div>
+                <div class="form-group">
+                    <label>Площадь (м²):</label>
+                    <input type="number" id="manual-area" name="area" step="0.001" min="0" placeholder="50">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Услуга (выберите название):</label>
+                <div class="custom-select">
+                    <div id="manual-service-select" class="select-display">Выберите услугу <span class="dropdown-icon">▾</span></div>
+                    <input type="hidden" id="manual-selected-value" name="service">
+                    <ul id="manual-service-options" class="options-list"></ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <label id="manual-price-label" data-unit="м²">Цена за м² (₽):</label>
+                <input type="number" name="pricePerSquare" step="0.01" min="0" placeholder="10" required>
+            </div>
+            <div class="form-group">
+                <label>Участники и КТУ:</label>
+                <div id="manual-workers-checkbox-group" class="checkbox-group"></div>
+            </div>
+            <div class="form-group issued-money-group">
+                <label>Выданные деньги:</label>
+                <div class="checkbox-group"></div>
+            </div>
+            <div class="form-group">
+                <label>Настройки:</label>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="isPaid" id="manual-is-paid">
+                        Выплачено
+                    </label>
+                    <label>
+                        <input type="checkbox" name="useRostikMethod">
+                        Рассчитать по Ростиковской методике
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn">Добавить объект</button>
+            <button type="button" class="btn cancel-btn">Отменить</button>
+        </form>
+
+        <div id="worker-results">
+            <div class="filter-group">
+                <input type="text" id="object-filter" placeholder="Фильтр по объектам...">
+            </div>
+            <div class="results-layout">
+                <div id="results" class="results"></div>
+                    <h2>Участие работников</h3>
+                    <div id="worker-stats" class="worker-stats-grid"></div>
+            </div>
+            <div id="history-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span id="close-history" class="close">×</span>
+                    <h2>История изменений</h2>
+                    <div id="history-list"></div>
+                </div>
+            </div>
+        </div>
+        </div>
+    <script src="script.js"></script>
+
+
+        <div id="calc17" class="tab-content">
+            <h2>Калькулятор PIR-плит</h2>
+            <form id="form17">
+                <label>Тип PIR-плит:
+                    <select id="material17">
+                        <option value="pir_logicpir">PIR-плиты LOGICPIR, 50 мм (плиты)</option>
+                        <option value="pir_logicpir_prof">PIR-плиты LOGICPIR PROF, 90 мм (плиты)</option>
+                    </select>
+                </label>
+                <label>Введите площадь (м²) или количество (плиты):
+                    <input type="number" id="inputValue17" placeholder="Введите значение" step="0.01" min="0">
+                </label>
+                <label>Тип расчета:
+                    <select id="calcType17">
+                        <option value="areaToMaterial">Площадь → Плиты</option>
+                        <option value="materialToArea">Плиты → Площадь</option>
+                    </select>
+                </label>
+                <button class="ekbroof" type="button" onclick="calculate17()">Рассчитать</button>
+            </form>
+            <div class="result" id="result17"></div>
+        </div>
+
+        <div id="calc18" class="tab-content">
+            <h2>Калькулятор кровельных рулонов</h2>
+            <form id="form18">
+                <label>Площадь кровли (м²):
+                    <input type="number" id="area18" placeholder="Введите площадь" step="0.01" min="0">
+                </label>
+                <label>Тип материала:
+                    <select id="material18">
+                        <option value="technoelast-k-tkp.pdf">Техноэласт К ТКП, 10x1 м</option>
+                        <option value="technoelast-p-tpp.pdf">Техноэласт П ТПП, 10x1 м</option>
+                        <option value="technoelast-p-epp.pdf">Техноэласт П ЭПП, 10x1 м</option>
+                        <option value="technoelast-k-ekp.pdf">Техноэласт К ЭКП, 10x1 м</option>
+                        <option value="technoelast-p-hpp.pdf">Техноэласт П ХПП, 10x1 м</option>
+                        <option value="technoelast-termo-p-epp.pdf">Техноэласт ТЕРМО П ЭПП, 10x1 м</option>
+                        <option value="technoelast-termo-k-ekp.pdf">Техноэласт ТЕРМО К ЭКП, 10x1 м</option>
+                        <option value="technoelast-green-p-epp.pdf">Техноэласт ГРИН П ЭПП, 10x1 м</option>
+                        <option value="technoelast-green-k-ekp.pdf">Техноэласт ГРИН К ЭКП, 10x1 м</option>
+                        <option value="technoelast-barer-lite.pdf">Техноэласт БАРЬЕР ЛАЙТ, 20x1 м</option>
+                        <option value="technoelast-dekor-ekp.pdf">Техноэласт Декор К ЭКП, 10x1 м</option>
+                        <option value="technoelast-vent-k-ekv.pdf">Техноэласт ВЕНТ К ЭКВ, 8x1 м</option>
+                        <option value="technoelast-vent-p-epv.pdf">Техноэласт ВЕНТ П ЭПВ, 8x1 м</option>
+                        <option value="technoelast-solo-rp1-ekp.pdf">Техноэласт СОЛО РП1 ЭКП, 8x1 м</option>
+                        <option value="technoelast-plamya-stop-ekp.pdf">Техноэласт ПЛАМЯ СТОП ЭКП, 10x1 м</option>
+                        <option value="technoelast-emp.pdf">Техноэласт ЭМП, 10x1 м</option>
+                        <option value="uniflex-k-ekp.pdf">Унифлекс К ЭКП, 10x1 м</option>
+                        <option value="uniflex-p-epp.pdf">Унифлекс П ЭПП, 10x1 м</option>
+                        <option value="uniflex-k-tkp.pdf">Унифлекс К ТКП, 10x1 м</option>
+                        <option value="uniflex-express-emp.pdf">Унифлекс ЭКСПРЕСС ЭМП, 10x1 м</option>
+                        <option value="uniflex-k-hkp.pdf">Унифлекс К ХКП, 10x1 м</option>
+                        <option value="uniflex-p-hpp.pdf">Унифлекс П ХПП, 10x1 м</option>
+                        <option value="stekloizon-k-tkp.pdf">Стеклоизол К ТКП, 10x1 м</option>
+                        <option value="stekloizon-r-tkp.pdf">Стеклоизол Р ТПП/ХПП/ХМП/ТКП/ХКП, 9x1 м</option>
+                        <option value="bikrost-k-hkp.pdf">Бикрост К ХКП, 10x1 м</option>
+                        <option value="bikrost-k-tkp.pdf">Бикрост К ТКП, 10x1 м</option>
+                        <option value="bikrost-p-epp.pdf">Бикрост П ЭПП, 15x1 м</option>
+                        <option value="linkrom-rem-tkp.pdf">Линокром РЕМ ТКП, 8x1 м</option>
+                        <option value="linkrom-p-epp.pdf">Линокром П ЭПП, 15x1 м</option>
+                        <option value="linkrom-p-tpp.pdf">Линокром П ТПП, 15x1 м</option>
+                        <option value="linkrom-k-hkp.pdf">Линокром К ХКП, 10x1 м</option>
+                        <option value="bikroelast-k-ekp.pdf">Бикроэласт К ЭКП, 10x1 м</option>
+                        <option value="bikroelast-p-epp.pdf">Бикроэласт П ЭПП, 15x1 м</option>
+                        <option value="bikroelast-k-tkp.pdf">Бикроэласт К ТКП, 10x1 м</option>
+                        <option value="bikroelast-p-tpp.pdf">Бикроэласт П ТПП, 15x1 м</option>
+                        <option value="bikroelast-k-hkp.pdf">Бикроэласт К ХКП, 10x1 м</option>
+                        <option value="bikroelast-p-hpp.pdf">Бикроэласт П ХПП, 15x1 м</option>
+                        <option value="ekoflex-ekp.pdf">Экофлекс ЭПП/ЭКП/ХКП, 10x1 м</option>
+                        <option value="bipol-ekp.pdf">Биполь К ЭКП, 10x1 м</option>
+                        <option value="bipol-epp.pdf">Биполь П ЭПП, 15x1 м</option>
+                        <option value="bipol-tkp.pdf">Биполь К ТКП, 10x1 м</option>
+                        <option value="bipol-tpp.pdf">Биполь П ТПП, 15x1 м</option>
+                        <option value="bipol-hpp.pdf">Биполь П ХПП, 15x1 м</option>
+                        <option value="technobarer.pdf">ТЕХНОБАРЬЕР, 10x1 м</option>
+                        <option value="uniflex-s-sms.pdf">Унифлекс С ЭМС, 15x1 м</option>
+                        <option value="parob-sa500.pdf">Паробарьер СА 500, 50x1.08 м</option>
+                        <option value="parob-sf1000.pdf">Паробарьер СФ 1000, 30x1.08 м</option>
+                    </select>
+                </label>
+                <div class="button-group" style="display: flex; gap: 1rem;">
+                    <button class="ekbroof" type="button" onclick="calculate18()">Рассчитать</button>
+                    <button class="ekbroof" type="button" onclick="renderPDF18()">Показать PDF</button>
+                </div>
+            </form>
+            <div class="result" id="result18"></div>
+            <canvas id="pdf-canvas18"></canvas>
+            <div id="pdf-controls18" class="pdf-controls">
+                <button type="button" onclick="prevPage18()">Назад</button>
+                <span>Страница <span id="page-num18">1</span> из <span id="page-count18">1</span></span>
+                <button type="button" onclick="nextPage18()">Вперед</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
-        // Интерактивность для мобильных устройств
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('touchstart', () => {
-                button.classList.add('scale-95');
-            });
-            button.addEventListener('touchend', () => {
-                button.classList.remove('scale-95');
-            });
-        });
+    // Инициализация вкладок
+    const tabs = document.querySelectorAll('.tab-links a');
+    tabs.forEach(tab => {
+    tab.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+
+        // Удаляем класс active у всех вкладок и ссылок
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.tab-links a').forEach(link => link.classList.remove('active'));
+
+        // Добавляем класс active к выбранной вкладке и ссылке
+        document.getElementById(targetId).classList.add('active');
+        this.classList.add('active');
+
+        // Управляем видимостью floating-menu-btn
+        const floatingBtn = document.querySelector('#floating-menu-btn');
+        if (floatingBtn) {
+        floatingBtn.style.display = targetId === 'calc19' ? 'block' : 'none';
+        }
+    });
+    });
+
+        // Расход крепежа (прижимная планка)
+        function calculate2() {
+            const area = parseFloat(document.getElementById('area2').value) || 0;
+            const resultDiv = document.getElementById('result2');
+            if (area <= 0) {
+                resultDiv.innerText = 'Введите корректное положительное число для площади.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+            const railsPerSqM = 0.5; // м рейки на м²
+            const railsLength = Math.ceil(area * railsPerSqM);
+            const railsCount = Math.ceil(railsLength / 2); // 2 м/рейка
+            const mastic = railsLength * 0.5; // 0.5 кг герметика на м
+            const masticCartridges = Math.ceil(mastic / 0.31); // картридж 0.31 кг
+            const dowels = railsLength * 4; // 4 дюбеля на м
+            const tools = 'Инструмент: ножницы по металлу (1 шт), перфоратор (1 шт), молоток (1 шт), пистолет для герметика (1 шт).';
+            resultDiv.innerText = `Для ${area} м² потребуется ${railsLength} м прижимной планки (алюминиевая рейка TechnoNICOL, 2 м, ${railsCount} шт). Мастичный герметик: ${mastic.toFixed(2)} кг (${masticCartridges} картриджей, 0.31 кг). Быстрый монтаж: ${dowels} дюбелей (8 мм). ${tools}`;
+            resultDiv.classList.add('active');
+        }
+
+        // Уклон кровли
+        function calculate4() {
+            const length = parseFloat(document.getElementById('length4').value) || 0;
+            const height = parseFloat(document.getElementById('height4').value) || 0;
+            const resultDiv = document.getElementById('result4');
+            if (length <= 0 || height < 0) {
+                resultDiv.innerText = 'Введите корректные положительные числа.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+            const slope = (height / length) * 100;
+            const recommendation = slope >= 1.5 ? 'Подходит для наплавляемой кровли' : 'Уклон слишком мал (мин. 1.5%)';
+            resultDiv.innerText = `Уклон кровли: ${slope.toFixed(2)} %. ${recommendation}.`;
+            resultDiv.classList.add('active');
+        }
+
+        // Время выполнения работ
+        function calculate7() {
+            const area = parseFloat(document.getElementById('area7').value) || 0;
+            const team = parseFloat(document.getElementById('team7').value) || 1;
+            const resultDiv = document.getElementById('result7');
+            if (area <= 0 || team <= 0) {
+                resultDiv.innerText = 'Введите корректные положительные числа.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+            const time = area / (50 * team);
+            resultDiv.innerText = `Время: ${time.toFixed(2)} дней.`;
+            resultDiv.classList.add('active');
+        }
+
+        // Логистика материалов
+        function calculate8() {
+            const distance = parseFloat(document.getElementById('distance8').value) || 0;
+            const volume = parseFloat(document.getElementById('volume8').value) || 0;
+            const resultDiv = document.getElementById('result8');
+            if (distance < 0 || volume < 0) {
+                resultDiv.innerText = 'Введите корректные положительные числа.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+            const cost = distance * 30 + volume * 150;
+            resultDiv.innerText = `Стоимость логистики: ${cost.toFixed(2)} руб.`;
+            resultDiv.classList.add('active');
+        }
+
+        // Расход праймера
+        function calculate11() {
+            const primerType = document.getElementById('primerType11').value;
+            const baseType = document.getElementById('baseType11').value;
+            const calcType = document.getElementById('calcType11').value;
+            const inputValue = parseFloat(document.getElementById('area11').value) || 0;
+            const resultDiv = document.getElementById('result11');
+
+            if (inputValue <= 0) {
+                resultDiv.innerText = 'Введите корректное положительное число.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+
+            let rate, bucketSize;
+            switch (primerType) {
+                case 'primer01':
+                    rate = baseType === 'concrete' ? 0.25 : 0.3;
+                    bucketSize = 16; // кг/ведро (20 л)
+                    break;
+                case 'primer03':
+                    rate = baseType === 'concrete' ? 0.3 : 0.35;
+                    bucketSize = 18; // кг/ведро (20 л)
+                    break;
+                case 'primer04':
+                    rate = baseType === 'concrete' ? 0.3 : 0.35;
+                    bucketSize = 16; // кг/ведро (20 л)
+                    break;
+                case 'primer08':
+                    rate = baseType === 'concrete' ? 0.35 : 0.4;
+                    bucketSize = 8; // кг/ведро (10 л)
+                    break;
+            }
+
+            let result = '';
+            const rollers = Math.ceil(inputValue / 100); // 1 валик на 100 м²
+            const tools = `Инструмент: валик (180–250 мм, ${rollers} шт), чехлы для валика (${rollers} шт), телескопическая ручка (1 шт). Альтернатива: кисть (1–2 шт) или распылитель (1 шт).`;
+            if (calcType === 'areaToMaterial') {
+                const requiredKg = inputValue * rate;
+                const buckets = Math.ceil(requiredKg / bucketSize);
+                result = `Для ${inputValue} м² потребуется около ${requiredKg.toFixed(2)} кг праймера, или ${buckets} ведро(а) (${bucketSize} кг). ${tools}`;
+            } else {
+                const area = inputValue / rate;
+                const buckets = Math.floor(inputValue / bucketSize);
+                const rollers = Math.ceil(area / 100);
+                result = `${inputValue} кг праймера покрывает около ${area.toFixed(2)} м². Это ${buckets} ведро(а) (${bucketSize} кг) с остатком ${inputValue % bucketSize} кг. ${tools}`;
+            }
+            resultDiv.innerText = result;
+            resultDiv.classList.add('active');
+        }
+
+        // Расход газовых баллонов
+        function calculate12() {
+            const area = parseFloat(document.getElementById('area12').value) || 0;
+            const layers = parseFloat(document.getElementById('layers12').value) || 1;
+            const resultDiv = document.getElementById('result12');
+            if (area <= 0 || layers <= 0) {
+                resultDiv.innerText = 'Введите корректные положительные числа.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+            const cylinders = Math.ceil((area * layers) / 120);
+            const tools = 'Инструмент: газовая горелка (1 шт на бригаду), зажигалка (1 комплект).';
+            resultDiv.innerText = `Количество газовых баллонов (12 л): ${cylinders} шт. ${tools}`;
+            resultDiv.classList.add('active');
+        }
+
+        // Расход мастики
+        function calculate13() {
+            const masticType = document.getElementById('masticType13').value;
+            const calcType = document.getElementById('calcType13').value;
+            const inputValue = parseFloat(document.getElementById('area13').value) || 0;
+            const resultDiv = document.getElementById('result13');
+
+            if (inputValue <= 0) {
+                resultDiv.innerText = 'Введите корректное положительное число.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+
+            const rate = masticType === 'bitum' ? 1.5 : 2.0;
+            const bucketSize = masticType === 'bitum' ? 20 : 18;
+            const tools = 'Инструмент: пистолет для герметика (1 шт), шпатель (100 мм, 1–2 шт).';
+            let result = '';
+            if (calcType === 'areaToMaterial') {
+                const requiredKg = inputValue * rate;
+                const buckets = Math.ceil(requiredKg / bucketSize);
+                result = `Для ${inputValue} м² потребуется около ${requiredKg.toFixed(2)} кг мастики, или ${buckets} ведро(а) (${bucketSize} кг). ${tools}`;
+            } else {
+                const area = inputValue / rate;
+                const buckets = Math.floor(inputValue / bucketSize);
+                result = `${inputValue} кг мастики покрывает около ${area.toFixed(2)} м². Это ${buckets} ведро(а) (${bucketSize} кг) с остатком ${inputValue % bucketSize} кг. ${tools}`;
+            }
+            resultDiv.innerText = result;
+            resultDiv.classList.add('active');
+        }
+
+        // Аэраторы
+        function calculate15() {
+            const calcType = document.getElementById('calcType15').value;
+            const inputValue = parseFloat(document.getElementById('inputValue15').value) || 0;
+            const resultDiv = document.getElementById('result15');
+
+            if (inputValue <= 0) {
+                resultDiv.innerText = 'Введите корректное положительное число.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+
+            const aeratorsPerArea = 100;
+            const minAerators = 2;
+            const maxDistance = 15;
+            const sealantRate = 0.1; // 0.1 кг герметика на аэратор
+            const sealantCartridge = 0.31; // картридж 0.31 кг
+            const tools = 'Инструмент: нож для кровли (100 мм, 1 шт), пистолет для герметика (1 шт).';
+            let result = '';
+            if (calcType === 'areaToMaterial') {
+                const aerators = Math.max(minAerators, Math.ceil(inputValue / aeratorsPerArea));
+                const sideLength = Math.sqrt(inputValue);
+                const interval = Math.min(maxDistance, sideLength / Math.ceil(Math.sqrt(aerators)));
+                const sealant = aerators * sealantRate;
+                const cartridges = Math.ceil(sealant / sealantCartridge);
+                result = `Для ${inputValue} м² потребуется около ${aerators} аэраторов ТАТПОЛИМЕР ТП-01.100/6. Интервал: до ${interval.toFixed(2)} м. Герметик: ${sealant.toFixed(2)} кг (${cartridges} картриджей, 0.31 кг). ${tools}`;
+            } else {
+                const area = inputValue * aeratorsPerArea;
+                const sealant = inputValue * sealantRate;
+                const cartridges = Math.ceil(sealant / sealantCartridge);
+                result = `${inputValue} аэраторов ТАТПОЛИМЕР ТП-01.100/6 покрывает около ${area.toFixed(2)} м². Герметик: ${sealant.toFixed(2)} кг (${cartridges} картриджей, 0.31 кг). ${tools}`;
+            }
+            resultDiv.innerText = result;
+            resultDiv.classList.add('active');
+        }
+
+        // Минвата
+        function calculate16() {
+            const material = document.getElementById('material16').value;
+            const calcType = document.getElementById('calcType16').value;
+            const inputValue = parseFloat(document.getElementById('inputValue16').value) || 0;
+            const resultDiv = document.getElementById('result16');
+
+            if (inputValue <= 0) {
+                resultDiv.innerText = 'Введите корректное положительное число.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+
+            let areaPerPack, materialName;
+            switch (material) {
+                case 'minwool_technoacoustic':
+                    areaPerPack = 5.76;
+                    materialName = 'Минвата Техноакустик, 50 мм';
+                    break;
+                case 'minwool_technoroof':
+                    areaPerPack = 2.88;
+                    materialName = 'Минвата Техноруф В60, 50 мм';
+                    break;
+                case 'minwool_ozm':
+                    areaPerPack = 4.32;
+                    materialName = 'Минвата Техно ОЗМ, 30 мм';
+                    break;
+            }
+
+            const glueRate = 0.5; // 0.5 кг клея на м²
+            const glueBucket = 25; // ведро 25 кг
+            const tools = 'Инструмент: нож для резки минваты (200 мм, 1 шт), зубчатый шпатель (6–8 мм, 1 шт).';
+            let result = '';
+            if (calcType === 'areaToMaterial') {
+                const packs = Math.ceil(inputValue / areaPerPack);
+                const glue = inputValue * glueRate;
+                const buckets = Math.ceil(glue / glueBucket);
+                result = `Для ${inputValue} м² потребуется около ${packs} упаковок (${materialName}, ${areaPerPack} м²/уп.). Клей: ${glue.toFixed(2)} кг (${buckets} ведер, 25 кг). ${tools}`;
+            } else {
+                const area = inputValue * areaPerPack;
+                const glue = area * glueRate;
+                const buckets = Math.ceil(glue / glueBucket);
+                result = `${inputValue} упаковок (${materialName}, ${areaPerPack} м²/уп.) покрывает около ${area.toFixed(2)} м². Клей: ${glue.toFixed(2)} кг (${buckets} ведер, 25 кг). ${tools}`;
+            }
+            resultDiv.innerText = result;
+            resultDiv.classList.add('active');
+        }
+
+        // PIR-плиты
+        function calculate17() {
+            const material = document.getElementById('material17').value;
+            const calcType = document.getElementById('calcType17').value;
+            const inputValue = parseFloat(document.getElementById('inputValue17').value) || 0;
+            const resultDiv = document.getElementById('result17');
+
+            if (inputValue <= 0) {
+                resultDiv.innerText = 'Введите корректное положительное число.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+
+            let areaPerPlate, materialName;
+            switch (material) {
+                case 'pir_logicpir':
+                    areaPerPlate = 0.72;
+                    materialName = 'PIR-плиты LOGICPIR, 50 мм';
+                    break;
+                case 'pir_logicpir_prof':
+                    areaPerPlate = 2.83;
+                    materialName = 'PIR-плиты LOGICPIR PROF, 90 мм';
+                    break;
+            }
+
+            const foamRate = 0.75; // 0.75 кг пены на м²
+            const canSize = 0.75; // банка 0.75 кг
+            const tools = 'Инструмент: пистолет для пены (1 шт), нож для резки PIR (200 мм, 1 шт).';
+            let result = '';
+            if (calcType === 'areaToMaterial') {
+                const plates = Math.ceil(inputValue / areaPerPlate);
+                const foamKg = inputValue * foamRate;
+                const cans = Math.ceil(foamKg / canSize);
+                result = `Для ${inputValue} м² потребуется около ${plates} плит (${materialName}, ${areaPerPlate} м²/плита). Пена: ${foamKg.toFixed(2)} кг (${cans} банок, 0.75 кг/банка). ${tools}`;
+            } else {
+                const area = inputValue * areaPerPlate;
+                const foamKg = area * foamRate;
+                const cans = Math.ceil(foamKg / canSize);
+                result = `${inputValue} плит (${materialName}, ${areaPerPlate} м²/плита) покрывает около ${area.toFixed(2)} м². Пена: ${foamKg.toFixed(2)} кг (${cans} банок, 0.75 кг/банка). ${tools}`;
+            }
+            resultDiv.innerText = result;
+            resultDiv.classList.add('active');
+        }
+
+        // PDF-рендеринг и расчет рулонов
+        let pdfDoc18 = null;
+        let currentPage18 = 1;
+        let totalPages18 = 0;
+
+        async function fetchPDFText(url) {
+            const pdf = await pdfjsLib.getDocument(url).promise;
+            let fullText = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                content.items.forEach(item => fullText += item.str + ' ');
+            }
+            return fullText;
+        }
+
+        function extractRollArea(text) {
+            const simplified = text.replace(/\s+/g, ' ').toLowerCase();
+            const lengthMatch = simplified.match(/длина[^0-9]*?±?\d*%{0,1}\s*(\d+[,.]?\s*\d*)/i);
+            const widthMatch = simplified.match(/ширина[^0-9]*?±?\d*%{0,1}\s*(\d+[,.]?\s*\d*)/i);
+
+            if (lengthMatch && widthMatch) {
+                const normalize = str => str.replace(/\s+/g, '').replace(',', '.');
+                const length = parseFloat(normalize(lengthMatch[1]));
+                const width = parseFloat(normalize(widthMatch[1]));
+
+                if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
+                    throw new Error("Некорректные размеры рулона.");
+                }
+
+                return +(length * width).toFixed(2);
+            }
+
+            throw new Error("Не удалось определить размеры рулона из PDF.");
+        }
+
+        async function calculate18() {
+            const area = parseFloat(document.getElementById('area18').value) || 0;
+            const pdfUrl = document.getElementById('material18').value;
+            const resultDiv = document.getElementById('result18');
+
+            if (area <= 0) {
+                resultDiv.innerText = 'Введите корректное положительное число для площади.';
+                resultDiv.classList.remove('active');
+                return;
+            }
+
+            try {
+                const text = await fetchPDFText(pdfUrl);
+                const rollArea = await extractRollArea(text);
+                const requiredArea = area * 1.15; // Запас 15%
+                const rollsNeeded = Math.ceil(requiredArea / rollArea);
+                const tools = 'Инструмент: газовая горелка (1 шт на бригаду), зажигалка (1 комплект), нож для кровли (100 мм, 1 шт).';
+                resultDiv.innerText = `Для ${area} м² потребуется ${rollsNeeded} рулон(ов) (площадь с запасом 15%: ${requiredArea.toFixed(2)} м², площадь одного рулона: ${rollArea} м²). ${tools}`;
+                resultDiv.classList.add('active');
+            } catch (err) {
+                resultDiv.innerText = `Ошибка: ${err.message}`;
+                resultDiv.classList.add('active');
+            }
+        }
+
+        async function renderPDF18() {
+            const url = document.getElementById('material18').value;
+            const canvas = document.getElementById('pdf-canvas18');
+            const context = canvas.getContext('2d');
+
+            try {
+                pdfDoc18 = await pdfjsLib.getDocument(url).promise;
+                totalPages18 = pdfDoc18.numPages;
+                currentPage18 = 1;
+                document.getElementById('page-count18').textContent = totalPages18;
+                document.getElementById('pdf-controls18').classList.add('active');
+                canvas.classList.add('active');
+                await renderPage18(currentPage18);
+            } catch (err) {
+                alert("Ошибка загрузки PDF: " + err.message);
+            }
+        }
+
+        async function renderPage18(pageNum) {
+            const canvas = document.getElementById('pdf-canvas18');
+            const context = canvas.getContext('2d');
+
+            const page = await pdfDoc18.getPage(pageNum);
+            const viewport = page.getViewport({ scale: 1.3 });
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            await page.render({
+                canvasContext: context,
+                viewport
+            }).promise;
+
+            document.getElementById('page-num18').textContent = pageNum;
+        }
+
+        function prevPage18() {
+            if (currentPage18 <= 1) return;
+            currentPage18--;
+            renderPage18(currentPage18);
+        }
+
+        function nextPage18() {
+            if (currentPage18 >= totalPages18) return;
+            currentPage18++;
+            renderPage18(currentPage18);
+        }
     </script>
 </body>
 </html>
