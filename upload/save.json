@@ -2,6 +2,22 @@
   {
     "name": "Большая и Парка без славы",
     "service": "Расход",
+    "cost": "-58403.50",
+    "workers": [
+      "Денис"
+    ],
+    "receivers": [
+      "Илья"
+    ],
+    "timestamp": "23.08.2025, 00:36:03",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Большая и Парка без славы",
+    "service": "Расход",
     "cost": "-83388.00",
     "workers": [
       "Денис"
