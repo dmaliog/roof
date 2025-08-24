@@ -516,7 +516,326 @@ document.addEventListener('DOMContentLoaded', () => {
             loadAllData();
         }
 
-        loadData();
+        let isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+
+        const passwordModal = document.getElementById('password-modal');
+        const passwordForm = document.getElementById('password-form');
+        const closePasswordBtn = document.getElementById('close-password-modal');
+        const passwordInput = document.getElementById('password');
+
+        if (passwordModal) passwordModal.style.display = 'none';
+        function checkPassword(callback) {
+            if (isAuthenticated) {
+                console.log('Already authenticated, executing callback');
+                callback();
+                return;
+            }
+            if (!passwordModal) {
+                console.warn('Password modal not found');
+                return;
+            }
+            passwordModal.style.display = 'flex';
+            passwordForm.onsubmit = function(e) {
+                e.preventDefault();
+                const enteredPassword = passwordInput.value;
+                const correctPassword = 'саняуебище';
+                if (enteredPassword === correctPassword) {
+                    console.log('Password correct, authenticating');
+                    isAuthenticated = true;
+                    sessionStorage.setItem('isAuthenticated', 'true');
+                    passwordModal.style.display = 'none';
+                    document.getElementById('results').style.display = 'block';
+                    document.getElementById('worker-stats').style.display = 'block';
+                    callback();
+                } else {
+                    console.log('Incorrect password');
+                    alert('Неверный пароль. Попробуйте снова.');
+                    passwordInput.value = '';
+                }
+            };
+            closePasswordBtn.onclick = function() {
+                console.log('Password modal closed without authentication');
+                passwordModal.style.display = 'none';
+            };
+        }
+
+        function tryLoadData() {
+            checkPassword(() => {
+                console.log('Loading data after password check');
+                loadData();
+            });
+        }
+
+        // Модифицируем showForm для проверки пароля
+        function showForm(formToShow) {
+            if (!formToShow) {
+                console.log('Hiding all forms');
+                [objectForm, expenseForm, manualPriceForm, customServiceForm].forEach(f => {
+                    f.style.display = 'none';
+                });
+                return;
+            }
+            checkPassword(() => {
+                console.log(`Showing form: ${formToShow.id}`);
+                [objectForm, expenseForm, manualPriceForm, customServiceForm].forEach(f => {
+                    const cancelBtn = f.querySelector('.cancel-btn');
+                    const submitBtn = f.querySelector('button[type="submit"]');
+                    if (f === formToShow) {
+                        f.style.display = 'block';
+                        resetFormFields(f);
+                        if (f === expenseForm) toggleFuelCalcMode();
+                        cancelBtn.onclick = () => {
+                            f.reset();
+                            resetFormFields(f);
+                            f.dataset.isEditing = 'false';
+                            f.dataset.editIndex = '';
+                            submitBtn.textContent = f === expenseForm ? 'Добавить расход' :
+                            (f === customServiceForm ? 'Добавить услугу' : 'Добавить объект');
+                            if (f === expenseForm) {
+                                expenseTypeSelect.innerHTML = 'Выберите тип расхода <span class="dropdown-icon">▾</span>';
+                                expenseTypeValue.value = '';
+                                toggleInputState(f, 'expenseName', expenseTypeValue);
+                                f.querySelector('.fuel-calc-mode').style.display = 'none';
+                            } else if (f === customServiceForm) {
+                                serviceSelect.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                                serviceSelect.value = '';
+                                toggleInputState(f, 'serviceName', serviceSelect);
+                            } else if (f === manualPriceForm) {
+                                manualSelectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                                manualSelectedValue.value = '';
+                            } else {
+                                selectDisplay.innerHTML = 'Выберите услугу <span class="dropdown-icon">▾</span>';
+                                selectedValue.value = '';
+                            }
+                            f.onsubmit = f === expenseForm ?
+                            (e) => addObject(e, true) :
+                            (f === customServiceForm ?
+                            customServiceForm.onsubmit :
+                            (f === manualPriceForm ? (e) => addObject(e, false, true) : (e) => addObject(e)));
+                            showForm(null);
+                        };
+
+                        if (f === objectForm) {
+                            selectDisplay.removeEventListener('click', toggleServiceOptions);
+                            selectDisplay.addEventListener('click', toggleServiceOptions);
+                            optionsList.querySelectorAll('li').forEach(li => {
+                                li.removeEventListener('click', selectServiceOption);
+                                li.addEventListener('click', selectServiceOption);
+                            });
+                        }
+
+                        if (f === manualPriceForm) {
+                            populateManualServiceSelect(prices, manualSelectDisplay, manualSelectedValue, manualOptionsList, manualPriceLabel);
+                            manualSelectDisplay.removeEventListener('click', toggleManualServiceOptions);
+                            manualSelectDisplay.addEventListener('click', toggleManualServiceOptions);
+                            manualOptionsList.querySelectorAll('li').forEach(li => {
+                                li.removeEventListener('click', selectManualServiceOption);
+                                li.addEventListener('click', selectManualServiceOption);
+                            });
+                        }
+                    } else {
+                        f.style.display = 'none';
+                    }
+                });
+                if (formToShow) populateSuggestions(formToShow);
+            });
+        }
+
+        // Модифицируем createFloatingButtons
+        const originalCreateFloatingButtons = createFloatingButtons;
+        createFloatingButtons = function() {
+            const { buttonContainer, floatingMenuBtn, floatingAddBtn, floatingExportBtn, floatingEditBtn, floatingStatsBtn, floatingRefreshBtn } = originalCreateFloatingButtons();
+
+            floatingAddBtn.onclick = () => {
+                checkPassword(() => {
+                    console.log('Showing sub-buttons');
+                    subButtons.forEach(btn => {
+                        document.getElementById(btn.id).classList.toggle('show');
+                    });
+                });
+            };
+
+            floatingEditBtn.onclick = () => {
+                checkPassword(() => {
+                    console.log('Toggling edit mode');
+                    editMode = !editMode;
+                    floatingEditBtn.classList.toggle('active', editMode);
+                    renderObjects();
+                    floatingAddBtn.classList.remove('show');
+                    floatingExportBtn.classList.remove('show');
+                    floatingEditBtn.classList.remove('show');
+                    floatingStatsBtn.classList.remove('show');
+                    floatingRefreshBtn.classList.remove('show');
+                    subButtons.forEach(sub => {
+                        document.getElementById(sub.id).classList.remove('show');
+                    });
+                });
+            };
+
+            floatingStatsBtn.onclick = () => {
+                checkPassword(() => {
+                    console.log('Scrolling to worker-stats');
+                    const statsSection = document.getElementById('worker-stats');
+                    if (statsSection) {
+                        const y = statsSection.getBoundingClientRect().top + window.scrollY;
+                        window.scrollTo({ top: y - 15, behavior: 'smooth' });
+                    } else {
+                        console.warn('Element with id "worker-stats" not found');
+                    }
+                    floatingAddBtn.classList.remove('show');
+                    floatingExportBtn.classList.remove('show');
+                    floatingEditBtn.classList.remove('show');
+                    floatingStatsBtn.classList.remove('show');
+                    floatingRefreshBtn.classList.remove('show');
+                    subButtons.forEach(sub => {
+                        document.getElementById(sub.id).classList.remove('show');
+                    });
+                });
+            };
+
+            floatingExportBtn.onclick = () => {
+                checkPassword(() => {
+                    console.log('Exporting to JSON');
+                    const json = JSON.stringify(window.objects, null, 2);
+                    const blob = new Blob([json], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'save.json';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    floatingAddBtn.classList.remove('show');
+                    floatingExportBtn.classList.remove('show');
+                    floatingEditBtn.classList.remove('show');
+                    floatingStatsBtn.classList.remove('show');
+                    floatingRefreshBtn.classList.remove('show');
+                    subButtons.forEach(sub => {
+                        document.getElementById(sub.id).classList.remove('show');
+                    });
+                });
+            };
+
+            floatingRefreshBtn.onclick = () => {
+                checkPassword(() => {
+                    console.log('Refreshing page');
+                    try {
+                        caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+                        loadData();
+                    } catch (e) {
+                        console.warn('Error in loadData:', e);
+                    }
+                    location.reload();
+                    floatingAddBtn.classList.remove('show');
+                    floatingExportBtn.classList.remove('show');
+                    floatingEditBtn.classList.remove('show');
+                    floatingStatsBtn.classList.remove('show');
+                    floatingRefreshBtn.classList.remove('show');
+                    subButtons.forEach(sub => {
+                        document.getElementById(sub.id).classList.remove('show');
+                    });
+                });
+            };
+
+            // Модифицируем подкнопки
+            subButtons.forEach(btn => {
+                const subBtn = document.getElementById(btn.id);
+                if (subBtn) {
+                    subBtn.addEventListener('click', () => {
+                        checkPassword(() => {
+                            console.log(`Sub-button clicked: ${btn.id}`);
+                            let targetForm = null;
+                            if (btn.formId === 'add-point-form') {
+                                targetForm = objectForm;
+                                showForm(objectForm);
+                            } else if (btn.formId === 'add-line-form') {
+                                targetForm = expenseForm;
+                                showForm(expenseForm);
+                            } else if (btn.formId === 'add-polygon-form') {
+                                targetForm = manualPriceForm;
+                                showForm(manualPriceForm);
+                            } else if (btn.formId === 'add-collection-form') {
+                                targetForm = customServiceForm;
+                                showForm(customServiceForm);
+                            }
+                            if (targetForm) {
+                                const y = targetForm.getBoundingClientRect().top + window.scrollY;
+                                window.scrollTo({ top: y - 15, behavior: 'smooth' });
+                            } else {
+                                console.warn(`Form for ${btn.formId} not found`);
+                            }
+                            floatingAddBtn.classList.remove('show');
+                            floatingExportBtn.classList.remove('show');
+                            floatingEditBtn.classList.remove('show');
+                            floatingStatsBtn.classList.remove('show');
+                            floatingRefreshBtn.classList.remove('show');
+                            subButtons.forEach(sub => {
+                                document.getElementById(sub.id).classList.remove('show');
+                            });
+                        });
+                    });
+                }
+            });
+
+            return { buttonContainer, floatingMenuBtn, floatingAddBtn, floatingExportBtn, floatingEditBtn, floatingStatsBtn, floatingRefreshBtn };
+        };
+
+        // Проверяем скролл к #results или #worker-stats
+        function checkScrollToCalculations() {
+            const resultsSection = document.getElementById('results');
+            const workerStatsSection = document.getElementById('worker-stats');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !isAuthenticated) {
+                        console.log('Scrolled to calculations section, checking password');
+                        checkPassword(() => {
+                            resultsSection.style.display = 'block';
+                            workerStatsSection.style.display = 'block';
+                            tryLoadData();
+                        });
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            if (resultsSection) observer.observe(resultsSection);
+            if (workerStatsSection) observer.observe(workerStatsSection);
+        }
+
+        // Обработчик якорных ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault(); // Предотвращаем стандартный скролл
+                const targetId = this.getAttribute('href').substring(1);
+                console.log(`Anchor clicked: ${targetId}`);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    const y = targetSection.getBoundingClientRect().top + window.scrollY - 15;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+                // Проверяем пароль только для разделов "Расчеты работ"
+                if (targetId === 'results' || targetId === 'worker-stats') {
+                    checkPassword(() => {
+                        console.log('Authenticated for calculations section');
+                        document.getElementById('results').style.display = 'block';
+                        document.getElementById('worker-stats').style.display = 'block';
+                        tryLoadData();
+                    });
+                } else {
+                    console.log(`No password check needed for ${targetId}`);
+                }
+            });
+        });
+
+        // Загружаем данные только если уже авторизован
+        if (isAuthenticated) {
+            console.log('Initial load: already authenticated');
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('worker-stats').style.display = 'block';
+            tryLoadData();
+        }
+
+        // Запускаем наблюдение за скроллом
+        checkScrollToCalculations();
 
         // Обработчик отправки формы кастомной услуги
         customServiceForm.addEventListener('submit', (e) => {

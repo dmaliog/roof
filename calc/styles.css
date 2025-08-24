@@ -689,7 +689,7 @@ input[type="checkbox"]:disabled:checked {
 }
 
 .worker-stats-grid {
-    display: grid;
+    display: grid!important;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
     padding: 10px 0;
@@ -1193,7 +1193,6 @@ background-color: #ff9800;
     padding: 25px;
     border-radius: 12px;
     width: 90%;
-    height: 90%;
     max-width: 600px;
     overflow-y: auto;
     position: relative;
