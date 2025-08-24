@@ -253,31 +253,6 @@ h2::after {
     border-radius: 2px;
 }
 
-/* Скрываем разделы с данными по умолчанию */
-#results, #worker-stats {
-    display: none;
-}
-
-/* Стили для модалки пароля */
-#password-modal .modal-content {
-    max-width: 400px;
-    text-align: center;
-}
-
-#password-modal input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 16px;
-    margin-bottom: 15px;
-    box-sizing: border-box;
-}
-
-#password-modal button[type="submit"] {
-    width: 100%;
-}
-
 @media (max-width: 768px) {
     .tabs {
         margin: 1rem;
@@ -1259,19 +1234,5 @@ h2::after {
             renderPage18(currentPage18);
         }
     </script>
-
-    <div id="password-modal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="close-password-modal">&times;</span>
-        <h2>Доступ к разделу "Расчеты работ"</h2>
-        <form id="password-form">
-            <div class="form-group">
-                <label for="password">Пароль:</label>
-                <input type="password" name="password" id="password" required placeholder="Введите пароль">
-            </div>
-            <button type="submit" class="btn">Подтвердить</button>
-        </form>
-    </div>
-</div>
 </body>
 </html>
