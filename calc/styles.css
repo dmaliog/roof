@@ -1,11 +1,329 @@
-body {
-    font-family: 'Open Sans', sans-serif;
-    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+:root {
+    --gradient-blue-start: #2563eb; /* Tailwind blue-600 */
+    --gradient-blue-end: #4f46e5; /* Tailwind indigo-600 */
+    --gradient-blue-hover-start: #1d4ed8; /* Tailwind blue-700 */
+    --gradient-blue-hover-end: #4338ca; /* Tailwind indigo-700 */
+    --gray-button: #e5e7eb; /* Tailwind gray-200 */
+    --gray-button-hover: #d1d5db; /* Tailwind gray-300 */
+    --secondary-gray: #2D2D2D;
+    --light-gray: #F5F5F5;
+    --white: #FFFFFF;
+    --black: #1A1A1A;
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --border-radius: 12px;
+}
+
+* {
     margin: 0;
-    padding: 40px;
-    color: #2c3e50;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#floating-menu-btn {
+display:none;
+}
+
+header {
+    text-align: center;
+}
+
+.tabs {
+    max-width: 1280px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.tab-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    list-style: none;
+}
+
+.tab-links li {
+    text-align: center;
+}
+
+.tab-links a {
+    display: block;
+    padding: 1rem;
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.tab-links a:hover,
+.tab-links a.active {
+    background: linear-gradient(135deg, var(--gradient-blue-start), var(--gradient-blue-end));
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+.tab-content {
+    display: none;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.3s ease-in-out;
+    margin-top: 1rem;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+form {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+label {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--black);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+input[type="text"],input[type="number"], select {
+    width: 100%;
+    padding: 12px 30px 12px 12px;
+    font-size: 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background: var(--white);
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231A1A1A' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+input[type="text"]:focus,input[type="number"]:focus, select:focus {
+    border-color: transparent;
+    background: linear-gradient(to right, var(--white), var(--white)), linear-gradient(to right, var(--gradient-blue-start), var(--gradient-blue-end));
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    outline: none;
+}
+
+button.ekbroof {
+    background: linear-gradient(to right, var(--gradient-blue-start), var(--gradient-blue-end));
+    color: var(--white);
+    border: none;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button.ekbroof:hover {
+    background: linear-gradient(to right, var(--gradient-blue-hover-start), var(--gradient-blue-hover-end));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+button.pdf-button, .pdf-controls button {
+    background: var(--gray-button);
+    color: var(--black);
+    border: none;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button.pdf-button:hover, .pdf-controls button:hover {
+    background: var(--gray-button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.result {
+    display: none;
+    margin-top: 1.5rem;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--white);
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--gradient-blue-start), var(--gradient-blue-end));
+    border-radius: 8px;
+}
+
+.result.active {
+    display: block;
+}
+
+canvas {
+    border: 0;
+    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    margin: 10px auto!important;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+canvas.active {
+    display: block;
+}
+
+.pdf-controls {
+    display: none;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pdf-controls.active {
+    display: flex;
+}
+
+.pdf-controls span {
+    font-size: 1rem;
+    color: var(--black);
+}
+
+h2 {
+    color: var(--black);
+    margin-bottom: 25px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(to right, var(--gradient-blue-start), var(--gradient-blue-end));
+    border-radius: 2px;
+}
+
+#password-modal .modal-content {
+max-width: 400px;
+text-align: center;
+}
+
+#password-modal input[type="password"] {
+width: 100%;
+padding: 12px;
+margin: 10px 0;
+border: 2px solid #e0e0e0;
+border-radius: 8px;
+font-size: 16px;
+box-sizing: border-box;
+}
+
+#password-modal button {
+background: linear-gradient(135deg, #3498db, #2980b9);
+color: #fff;
+padding: 12px 20px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+transition: background 0.3s ease;
+}
+
+#password-modal button:hover {
+background: linear-gradient(135deg, #2980b9, #217dbb);
+}
+
+@media (max-width: 768px) {
+    .tabs {
+        margin: 1rem;
+        padding: 0 1rem;
+    }
+
+    .tab-links {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+
+    .tab-links a {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .tab-content {
+        padding: 1.5rem;
+    }
+
+    form {
+        gap: 1rem;
+    }
+
+    label, input[type="text"],input[type="number"], select, button {
+        font-size: 0.95rem;
+    }
+
+    .result {
+        font-size: 1rem;
+    }
+
+    canvas {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding:0!important;
+    }
+    .tab-links {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
+
+    .tab-links a {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+    }
+
+    .pdf-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    color: var(--black);
     line-height: 1.6;
     overflow-x: hidden;
+    padding: 40px;
 }
 
 .calculation .info-line.name span.value {
@@ -1181,7 +1499,7 @@ background-color: #ff9800;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -1193,7 +1511,6 @@ background-color: #ff9800;
     padding: 25px;
     border-radius: 12px;
     width: 90%;
-    height: 90%;
     max-width: 600px;
     overflow-y: auto;
     position: relative;

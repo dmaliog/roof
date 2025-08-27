@@ -1,6 +1,472 @@
 // calc/script.js
 document.addEventListener('DOMContentLoaded', () => {
 
+    const tabLinks = document.querySelectorAll('.tab-links a');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const passwordModal = document.getElementById('password-modal');
+    const closePassword = document.getElementById('close-password');
+    const submitPassword = document.getElementById('submit-password');
+    const passwordInput = document.getElementById('password-input');
+    const calc19Link = document.querySelector('a[href="#calc19"]');
+    let passwordValidated = false;
+    const correctPasswordHash = 'aedfcc5b92c3bb3f2a633eda717651e31d863c01683b9d93226f92b034ad5508';
+
+    // Функция для хеширования пароля
+    async function hashPassword(password) {
+        const msgBuffer = new TextEncoder().encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+    }
+
+    // Скрываем все вкладки
+    function hideAllTabs() {
+        tabContents.forEach(content => {
+            content.classList.remove('active');
+            content.style.display = 'none';
+        });
+        tabLinks.forEach(link => link.classList.remove('active'));
+    }
+
+    // Показываем выбранную вкладку
+    function showTab(targetId) {
+        hideAllTabs();
+        const targetContent = document.getElementById(targetId);
+        const targetLink = document.querySelector(`a[href="#${targetId}"]`);
+        if (targetContent && targetLink) {
+            targetContent.classList.add('active');
+            targetContent.style.display = 'block';
+            targetLink.classList.add('active');
+            targetContent.scrollIntoView({ behavior: 'smooth' });
+        }
+        // Логика для floating-menu-btn
+        const floatingBtn = document.getElementById('floating-menu-btn');
+        if (floatingBtn) {
+            floatingBtn.style.display = targetId === 'calc19' ? 'block' : 'none';
+        }
+    }
+
+    // Показываем первую вкладку по умолчанию
+    showTab('calc2');
+
+    // Обработка кликов по вкладкам
+    tabLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            if (targetId === 'calc19' && !passwordValidated) {
+                passwordModal.style.display = 'flex';
+            } else {
+                showTab(targetId);
+            }
+        });
+    });
+
+    // Логика для пароля
+    if (passwordModal && closePassword && submitPassword && calc19Link) {
+        closePassword.addEventListener('click', () => {
+            passwordModal.style.display = 'none';
+            if (document.getElementById('calc19').classList.contains('active')) {
+                showTab('calc2');
+            }
+        });
+
+        submitPassword.addEventListener('click', async () => {
+            const inputPassword = passwordInput.value;
+            const inputHash = await hashPassword(inputPassword);
+            if (inputHash === correctPasswordHash) {
+                passwordValidated = true;
+                passwordModal.style.display = 'none';
+                showTab('calc19');
+            } else {
+                alert('Неверный пароль!');
+                passwordInput.value = '';
+            }
+        });
+
+        passwordInput.addEventListener('keyup', async (e) => {
+            if (e.key === 'Enter') {
+                submitPassword.click();
+            }
+        });
+    }
+
+    // Расход крепежа (прижимная планка)
+    window.calculate2 = function() {
+        const area = parseFloat(document.getElementById('area2').value) || 0;
+        const resultDiv = document.getElementById('result2');
+        if (area <= 0) {
+            resultDiv.innerText = 'Введите корректное положительное число для площади.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        const railsPerSqM = 0.5; // м рейки на м²
+        const railsLength = Math.ceil(area * railsPerSqM);
+        const railsCount = Math.ceil(railsLength / 2); // 2 м/рейка
+        const mastic = railsLength * 0.5; // 0.5 кг герметика на м
+        const masticCartridges = Math.ceil(mastic / 0.31); // картридж 0.31 кг
+        const dowels = railsLength * 4; // 4 дюбеля на м
+        const tools = 'Инструмент: ножницы по металлу (1 шт), перфоратор (1 шт), молоток (1 шт), пистолет для герметика (1 шт).';
+        resultDiv.innerText = `Для ${area} м² потребуется ${railsLength} м прижимной планки (алюминиевая рейка TechnoNICOL, 2 м, ${railsCount} шт). Мастичный герметик: ${mastic.toFixed(2)} кг (${masticCartridges} картриджей, 0.31 кг). Быстрый монтаж: ${dowels} дюбелей (8 мм). ${tools}`;
+        resultDiv.classList.add('active');
+    };
+
+    // Уклон кровли
+    window.calculate4 = function() {
+        const length = parseFloat(document.getElementById('length4').value) || 0;
+        const height = parseFloat(document.getElementById('height4').value) || 0;
+        const resultDiv = document.getElementById('result4');
+        if (length <= 0 || height < 0) {
+            resultDiv.innerText = 'Введите корректные положительные числа.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        const slope = (height / length) * 100;
+        const recommendation = slope >= 1.5 ? 'Подходит для наплавляемой кровли' : 'Уклон слишком мал (мин. 1.5%)';
+        resultDiv.innerText = `Уклон кровли: ${slope.toFixed(2)} %. ${recommendation}.`;
+        resultDiv.classList.add('active');
+    };
+
+    // Время выполнения работ
+    window.calculate7 = function() {
+        const area = parseFloat(document.getElementById('area7').value) || 0;
+        const team = parseFloat(document.getElementById('team7').value) || 1;
+        const resultDiv = document.getElementById('result7');
+        if (area <= 0 || team <= 0) {
+            resultDiv.innerText = 'Введите корректные положительные числа.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        const time = area / (50 * team);
+        resultDiv.innerText = `Время: ${time.toFixed(2)} дней.`;
+        resultDiv.classList.add('active');
+    };
+
+    // Логистика материалов
+    window.calculate8 = function() {
+        const distance = parseFloat(document.getElementById('distance8').value) || 0;
+        const volume = parseFloat(document.getElementById('volume8').value) || 0;
+        const resultDiv = document.getElementById('result8');
+        if (distance < 0 || volume < 0) {
+            resultDiv.innerText = 'Введите корректные положительные числа.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        const cost = distance * 30 + volume * 150;
+        resultDiv.innerText = `Стоимость логистики: ${cost.toFixed(2)} руб.`;
+        resultDiv.classList.add('active');
+    };
+
+    // Расход праймера
+    window.calculate11 = function() {
+        const primerType = document.getElementById('primerType11').value;
+        const baseType = document.getElementById('baseType11').value;
+        const calcType = document.getElementById('calcType11').value;
+        const inputValue = parseFloat(document.getElementById('area11').value) || 0;
+        const resultDiv = document.getElementById('result11');
+        if (inputValue <= 0) {
+            resultDiv.innerText = 'Введите корректное положительное число.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        let rate, bucketSize;
+        switch (primerType) {
+            case 'primer01':
+                rate = baseType === 'concrete' ? 0.25 : 0.3;
+                bucketSize = 16; // кг/ведро (20 л)
+break;
+            case 'primer03':
+                rate = baseType === 'concrete' ? 0.3 : 0.35;
+                bucketSize = 18; // кг/ведро (20 л)
+break;
+            case 'primer04':
+                rate = baseType === 'concrete' ? 0.3 : 0.35;
+                bucketSize = 16; // кг/ведро (20 л)
+break;
+            case 'primer08':
+                rate = baseType === 'concrete' ? 0.35 : 0.4;
+                bucketSize = 8; // кг/ведро (10 л)
+break;
+        }
+        let result = '';
+        const rollers = Math.ceil(inputValue / 100); // 1 валик на 100 м²
+        const tools = `Инструмент: валик (180–250 мм, ${rollers} шт), чехлы для валика (${rollers} шт), телескопическая ручка (1 шт). Альтернатива: кисть (1–2 шт) или распылитель (1 шт).`;
+        if (calcType === 'areaToMaterial') {
+            const requiredKg = inputValue * rate;
+            const buckets = Math.ceil(requiredKg / bucketSize);
+            result = `Для ${inputValue} м² потребуется около ${requiredKg.toFixed(2)} кг праймера, или ${buckets} ведро(а) (${bucketSize} кг). ${tools}`;
+        } else {
+            const area = inputValue / rate;
+            const buckets = Math.floor(inputValue / bucketSize);
+            result = `${inputValue} кг праймера покрывает около ${area.toFixed(2)} м². Это ${buckets} ведро(а) (${bucketSize} кг) с остатком ${inputValue % bucketSize} кг. ${tools}`;
+        }
+        resultDiv.innerText = result;
+        resultDiv.classList.add('active');
+    };
+
+    // Расход газовых баллонов
+    window.calculate12 = function() {
+        const area = parseFloat(document.getElementById('area12').value) || 0;
+        const layers = parseFloat(document.getElementById('layers12').value) || 1;
+        const resultDiv = document.getElementById('result12');
+        if (area <= 0 || layers <= 0) {
+            resultDiv.innerText = 'Введите корректные положительные числа.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        const cylinders = Math.ceil((area * layers) / 120);
+        const tools = 'Инструмент: газовая горелка (1 шт на бригаду), зажигалка (1 комплект).';
+        resultDiv.innerText = `Количество газовых баллонов (12 л): ${cylinders} шт. ${tools}`;
+        resultDiv.classList.add('active');
+    };
+
+    // Расход мастики
+    window.calculate13 = function() {
+        const masticType = document.getElementById('masticType13').value;
+        const calcType = document.getElementById('calcType13').value;
+        const inputValue = parseFloat(document.getElementById('area13').value) || 0;
+        const resultDiv = document.getElementById('result13');
+        if (inputValue <= 0) {
+            resultDiv.innerText = 'Введите корректное положительное число.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        const rate = masticType === 'bitum' ? 1.5 : 2.0;
+        const bucketSize = masticType === 'bitum' ? 20 : 18;
+        const tools = 'Инструмент: пистолет для герметика (1 шт), шпатель (100 мм, 1–2 шт).';
+        let result = '';
+        if (calcType === 'areaToMaterial') {
+            const requiredKg = inputValue * rate;
+            const buckets = Math.ceil(requiredKg / bucketSize);
+            result = `Для ${inputValue} м² потребуется около ${requiredKg.toFixed(2)} кг мастики, или ${buckets} ведро(а) (${bucketSize} кг). ${tools}`;
+        } else {
+            const area = inputValue / rate;
+            const buckets = Math.floor(inputValue / bucketSize);
+            result = `${inputValue} кг мастики покрывает около ${area.toFixed(2)} м². Это ${buckets} ведро(а) (${bucketSize} кг) с остатком ${inputValue % bucketSize} кг. ${tools}`;
+        }
+        resultDiv.innerText = result;
+        resultDiv.classList.add('active');
+    };
+
+    // Аэраторы
+    window.calculate15 = function() {
+        const calcType = document.getElementById('calcType15').value;
+        const inputValue = parseFloat(document.getElementById('inputValue15').value) || 0;
+        const resultDiv = document.getElementById('result15');
+        if (inputValue <= 0) {
+            resultDiv.innerText = 'Введите корректное положительное число.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        const aeratorsPerArea = 100;
+        const minAerators = 2;
+        const maxDistance = 15;
+        const sealantRate = 0.1; // 0.1 кг герметика на аэратор
+        const sealantCartridge = 0.31; // картридж 0.31 кг
+        const tools = 'Инструмент: нож для кровли (100 мм, 1 шт), пистолет для герметика (1 шт).';
+        let result = '';
+        if (calcType === 'areaToMaterial') {
+            const aerators = Math.max(minAerators, Math.ceil(inputValue / aeratorsPerArea));
+            const sideLength = Math.sqrt(inputValue);
+            const interval = Math.min(maxDistance, sideLength / Math.ceil(Math.sqrt(aerators)));
+            const sealant = aerators * sealantRate;
+            const cartridges = Math.ceil(sealant / sealantCartridge);
+            result = `Для ${inputValue} м² потребуется около ${aerators} аэраторов ТАТПОЛИМЕР ТП-01.100/6. Интервал: до ${interval.toFixed(2)} м. Герметик: ${sealant.toFixed(2)} кг (${cartridges} картриджей, 0.31 кг). ${tools}`;
+        } else {
+            const area = inputValue * aeratorsPerArea;
+            const sealant = inputValue * sealantRate;
+            const cartridges = Math.ceil(sealant / sealantCartridge);
+            result = `${inputValue} аэраторов ТАТПОЛИМЕР ТП-01.100/6 покрывает около ${area.toFixed(2)} м². Герметик: ${sealant.toFixed(2)} кг (${cartridges} картриджей, 0.31 кг). ${tools}`;
+        }
+        resultDiv.innerText = result;
+        resultDiv.classList.add('active');
+    };
+
+    // Минвата
+    window.calculate16 = function() {
+        const material = document.getElementById('material16').value;
+        const calcType = document.getElementById('calcType16').value;
+        const inputValue = parseFloat(document.getElementById('inputValue16').value) || 0;
+        const resultDiv = document.getElementById('result16');
+        if (inputValue <= 0) {
+            resultDiv.innerText = 'Введите корректное положительное число.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        let areaPerPack, materialName;
+        switch (material) {
+            case 'minwool_technoacoustic':
+                areaPerPack = 5.76;
+                materialName = 'Минвата Техноакустик, 50 мм';
+                break;
+            case 'minwool_technoroof':
+                areaPerPack = 2.88;
+                materialName = 'Минвата Техноруф В60, 50 мм';
+                break;
+            case 'minwool_ozm':
+                areaPerPack = 4.32;
+                materialName = 'Минвата Техно ОЗМ, 30 мм';
+                break;
+        }
+        const glueRate = 0.5; // 0.5 кг клея на м²
+        const glueBucket = 25; // ведро 25 кг
+        const tools = 'Инструмент: нож для резки минваты (200 мм, 1 шт), зубчатый шпатель (6–8 мм, 1 шт).';
+        let result = '';
+        if (calcType === 'areaToMaterial') {
+            const packs = Math.ceil(inputValue / areaPerPack);
+            const glue = inputValue * glueRate;
+            const buckets = Math.ceil(glue / glueBucket);
+            result = `Для ${inputValue} м² потребуется около ${packs} упаковок (${materialName}, ${areaPerPack} м²/уп.). Клей: ${glue.toFixed(2)} кг (${buckets} ведер, 25 кг). ${tools}`;
+        } else {
+            const area = inputValue * areaPerPack;
+            const glue = area * glueRate;
+            const buckets = Math.ceil(glue / glueBucket);
+            result = `${inputValue} упаковок (${materialName}, ${areaPerPack} м²/уп.) покрывает около ${area.toFixed(2)} м². Клей: ${glue.toFixed(2)} кг (${buckets} ведер, 25 кг). ${tools}`;
+        }
+        resultDiv.innerText = result;
+        resultDiv.classList.add('active');
+    };
+
+    // PIR-плиты
+    window.calculate17 = function() {
+        const material = document.getElementById('material17').value;
+        const calcType = document.getElementById('calcType17').value;
+        const inputValue = parseFloat(document.getElementById('inputValue17').value) || 0;
+        const resultDiv = document.getElementById('result17');
+        if (inputValue <= 0) {
+            resultDiv.innerText = 'Введите корректное положительное число.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        let areaPerPlate, materialName;
+        switch (material) {
+            case 'pir_logicpir':
+                areaPerPlate = 0.72;
+                materialName = 'PIR-плиты LOGICPIR, 50 мм';
+                break;
+            case 'pir_logicpir_prof':
+                areaPerPlate = 2.83;
+                materialName = 'PIR-плиты LOGICPIR PROF, 90 мм';
+                break;
+        }
+        const foamRate = 0.75; // 0.75 кг пены на м²
+        const canSize = 0.75; // банка 0.75 кг
+        const tools = 'Инструмент: пистолет для пены (1 шт), нож для резки PIR (200 мм, 1 шт).';
+        let result = '';
+        if (calcType === 'areaToMaterial') {
+            const plates = Math.ceil(inputValue / areaPerPlate);
+            const foamKg = inputValue * foamRate;
+            const cans = Math.ceil(foamKg / canSize);
+            result = `Для ${inputValue} м² потребуется около ${plates} плит (${materialName}, ${areaPerPlate} м²/плита). Пена: ${foamKg.toFixed(2)} кг (${cans} банок, 0.75 кг/банка). ${tools}`;
+        } else {
+            const area = inputValue * areaPerPlate;
+            const foamKg = area * foamRate;
+            const cans = Math.ceil(foamKg / canSize);
+            result = `${inputValue} плит (${materialName}, ${areaPerPlate} м²/плита) покрывает около ${area.toFixed(2)} м². Пена: ${foamKg.toFixed(2)} кг (${cans} банок, 0.75 кг/банка). ${tools}`;
+        }
+        resultDiv.innerText = result;
+        resultDiv.classList.add('active');
+    };
+
+    // PDF-рендеринг и расчет рулонов
+    let pdfDoc18 = null;
+    let currentPage18 = 1;
+    let totalPages18 = 0;
+
+    window.fetchPDFText = async function(url) {
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        let fullText = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            content.items.forEach(item => fullText += item.str + ' ');
+        }
+        return fullText;
+    };
+
+    window.extractRollArea = function(text) {
+        const simplified = text.replace(/\s+/g, ' ').toLowerCase();
+        const lengthMatch = simplified.match(/длина[^0-9]*?±?\d*%{0,1}\s*(\d+[,.]?\s*\d*)/i);
+        const widthMatch = simplified.match(/ширина[^0-9]*?±?\d*%{0,1}\s*(\d+[,.]?\s*\d*)/i);
+        if (lengthMatch && widthMatch) {
+            const normalize = str => str.replace(/\s+/g, '').replace(',', '.');
+            const length = parseFloat(normalize(lengthMatch[1]));
+            const width = parseFloat(normalize(widthMatch[1]));
+            if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
+                throw new Error("Некорректные размеры рулона.");
+            }
+            return +(length * width).toFixed(2);
+        }
+        throw new Error("Не удалось определить размеры рулона из PDF.");
+    };
+
+    window.calculate18 = async function() {
+        const area = parseFloat(document.getElementById('area18').value) || 0;
+        const pdfUrl = document.getElementById('material18').value;
+        const resultDiv = document.getElementById('result18');
+        if (area <= 0) {
+            resultDiv.innerText = 'Введите корректное положительное число для площади.';
+            resultDiv.classList.remove('active');
+            return;
+        }
+        try {
+            const text = await fetchPDFText(pdfUrl);
+            const rollArea = await extractRollArea(text);
+            const requiredArea = area * 1.15; // Запас 15%
+            const rollsNeeded = Math.ceil(requiredArea / rollArea);
+            const tools = 'Инструмент: газовая горелка (1 шт на бригаду), зажигалка (1 комплект), нож для кровли (100 мм, 1 шт).';
+            resultDiv.innerText = `Для ${area} м² потребуется ${rollsNeeded} рулон(ов) (площадь с запасом 15%: ${requiredArea.toFixed(2)} м², площадь одного рулона: ${rollArea} м²). ${tools}`;
+            resultDiv.classList.add('active');
+        } catch (err) {
+            resultDiv.innerText = `Ошибка: ${err.message}`;
+            resultDiv.classList.add('active');
+        }
+    };
+
+    window.renderPDF18 = async function() {
+        const url = document.getElementById('material18').value;
+        const canvas = document.getElementById('pdf-canvas18');
+        const context = canvas.getContext('2d');
+        try {
+            pdfDoc18 = await pdfjsLib.getDocument(url).promise;
+            totalPages18 = pdfDoc18.numPages;
+            currentPage18 = 1;
+            document.getElementById('page-count18').textContent = totalPages18;
+            document.getElementById('pdf-controls18').classList.add('active');
+            canvas.classList.add('active');
+            await renderPage18(currentPage18);
+        } catch (err) {
+            alert("Ошибка загрузки PDF: " + err.message);
+        }
+    };
+
+    window.renderPage18 = async function(pageNum) {
+        const canvas = document.getElementById('pdf-canvas18');
+        const context = canvas.getContext('2d');
+        const page = await pdfDoc18.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.3 });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        await page.render({
+            canvasContext: context,
+            viewport
+        }).promise;
+        document.getElementById('page-num18').textContent = pageNum;
+    };
+
+    window.prevPage18 = function() {
+        if (currentPage18 <= 1) return;
+        currentPage18--;
+        renderPage18(currentPage18);
+    };
+
+    window.nextPage18 = function() {
+        if (currentPage18 >= totalPages18) return;
+        currentPage18++;
+        renderPage18(currentPage18);
+    };
+
     // DOM элементы
     const customServiceForm = document.getElementById('custom-service-form');
     const serviceWorkersCheckboxGroup = document.getElementById('service-workers-checkbox-group');
