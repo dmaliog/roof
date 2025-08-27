@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 passwordModal.style.display = 'none';
                 showTab('calc19');
             } else {
-                window.location.href = 'https://natribu.org/'; // Перенаправление при неверном пароле
+                window.location.href = 'https://nahnah.ru/'; // Перенаправление при неверном пароле
                 passwordInput.value = '';
             }
         });
