@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 passwordModal.style.display = 'none';
                 showTab('calc19');
             } else {
-                alert('Неверный пароль!');
+                window.location.href = 'https://natribu.org/'; // Перенаправление при неверном пароле
                 passwordInput.value = '';
             }
         });
@@ -175,19 +175,19 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'primer01':
                 rate = baseType === 'concrete' ? 0.25 : 0.3;
                 bucketSize = 16; // кг/ведро (20 л)
-break;
+                break;
             case 'primer03':
                 rate = baseType === 'concrete' ? 0.3 : 0.35;
                 bucketSize = 18; // кг/ведро (20 л)
-break;
+                break;
             case 'primer04':
                 rate = baseType === 'concrete' ? 0.3 : 0.35;
                 bucketSize = 16; // кг/ведро (20 л)
-break;
+                break;
             case 'primer08':
                 rate = baseType === 'concrete' ? 0.35 : 0.4;
                 bucketSize = 8; // кг/ведро (10 л)
-break;
+                break;
         }
         let result = '';
         const rollers = Math.ceil(inputValue / 100); // 1 валик на 100 м²
