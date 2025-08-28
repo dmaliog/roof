@@ -1,5 +1,24 @@
 [
   {
+    "name": "Коляновская парка на курганской поляне",
+    "service": "Коляновская парка на курганской поляне",
+    "cost": "51740.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "51740.00"
+      }
+    ],
+    "timestamp": "28.08.2025, 12:38:10",
+    "isExpense": false,
+    "isCustomService": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Парка галерея отдельная коляна",
     "length": null,
     "width": null,
