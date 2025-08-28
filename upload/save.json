@@ -1,5 +1,89 @@
 [
   {
+    "name": "Большая перед курганскими",
+    "length": null,
+    "width": null,
+    "area": "517.40 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "51740.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "51740.00"
+      }
+    ],
+    "timestamp": "28.08.2025, 22:12:05",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Большая",
+    "length": null,
+    "width": null,
+    "area": "94.64 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "9464.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "9464.00"
+      }
+    ],
+    "timestamp": "28.08.2025, 22:10:41",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Большая",
+    "length": null,
+    "width": null,
+    "area": "36.26 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "3626.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "3626.00"
+      }
+    ],
+    "timestamp": "28.08.2025, 22:10:02",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка между фонарями",
+    "length": null,
+    "width": null,
+    "area": "239.37 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "14362.20",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "14362.20"
+      }
+    ],
+    "timestamp": "28.08.2025, 22:05:50",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Галерея",
     "length": null,
     "width": null,
