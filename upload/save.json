@@ -1,5 +1,26 @@
 [
   {
+    "name": "Большая",
+    "length": null,
+    "width": null,
+    "area": "193.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "19300.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "19300.00"
+      }
+    ],
+    "timestamp": "28.08.2025, 22:13:33",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Большая перед курганскими",
     "length": null,
     "width": null,
