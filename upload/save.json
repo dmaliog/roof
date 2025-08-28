@@ -1,5 +1,26 @@
 [
   {
+    "name": "Галерея",
+    "length": null,
+    "width": null,
+    "area": "57.60 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "3456.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "3456.00"
+      }
+    ],
+    "timestamp": "28.08.2025, 22:04:10",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Большая",
     "length": null,
     "width": null,
