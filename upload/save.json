@@ -8,6 +8,27 @@
     "cost": "40960.00",
     "workers": [
       {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "40960.00"
+      }
+    ],
+    "timestamp": "31.08.2025, 15:12:58",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Кумз",
+    "length": null,
+    "width": null,
+    "area": "409.60 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "40960.00",
+    "workers": [
+      {
         "name": "Артём",
         "ktu": 1,
         "cost": "40960.00"
