@@ -1,5 +1,88 @@
 [
   {
+    "name": "Парка между фонарями",
+    "length": null,
+    "width": null,
+    "area": "316.03 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "18961.80",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "3792.36"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "3792.36"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "3792.36"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "3792.36"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "3792.36"
+      }
+    ],
+    "timestamp": "31.08.2025, 15:08:36",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка между фонарями",
+    "length": null,
+    "width": null,
+    "area": "91.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "5460.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "5460.00"
+      }
+    ],
+    "timestamp": "31.08.2025, 15:07:25",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка между фонарями",
+    "length": null,
+    "width": null,
+    "area": "300.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "18000.00",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "18000.00"
+      }
+    ],
+    "timestamp": "31.08.2025, 15:06:46",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Галерея",
     "length": null,
     "width": null,
