@@ -1,5 +1,26 @@
 [
   {
+    "name": "Большая курганская",
+    "length": null,
+    "width": null,
+    "area": "1287.08 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "128708.00",
+    "workers": [
+      {
+        "name": "Ростик",
+        "ktu": 1,
+        "cost": "128708.00"
+      }
+    ],
+    "timestamp": "01.09.2025, 12:19:54",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Большая",
     "length": null,
     "width": null,
