@@ -1,5 +1,57 @@
 [
   {
+    "name": "Большая",
+    "length": null,
+    "width": null,
+    "area": "75.24 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "7524.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "7524.00"
+      }
+    ],
+    "timestamp": "01.09.2025, 14:12:56",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Большая",
+    "length": null,
+    "width": null,
+    "area": "178.20 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "17820.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "5940.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "5940.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "5940.00"
+      }
+    ],
+    "timestamp": "01.09.2025, 14:12:14",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Большая курганская",
     "length": null,
     "width": null,
