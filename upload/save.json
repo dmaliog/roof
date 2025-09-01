@@ -3,6 +3,27 @@
     "name": "Большая",
     "length": null,
     "width": null,
+    "area": "22.40 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "2240.00",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "2240.00"
+      }
+    ],
+    "timestamp": "01.09.2025, 12:15:29",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Большая",
+    "length": null,
+    "width": null,
     "area": "51.48 м²",
     "service": "Монтаж наплавляемой кровли в 1 слой",
     "cost": "5148.00",
