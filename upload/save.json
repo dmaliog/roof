@@ -37,21 +37,27 @@
   {
     "name": "Остатки илюхины",
     "service": "Остатки илюхины",
-    "cost": "7955.00",
+    "cost": "11411.00",
     "workers": [
       {
         "name": "Илья",
         "ktu": 1,
-        "cost": "7955.00"
+        "cost": "11411.00"
       }
     ],
-    "timestamp": "02.09.2025, 16:01:31",
+    "timestamp": "02.09.2025, 16:11:49",
     "isExpense": false,
     "isCustomService": true,
     "isPaid": false,
     "useRostikMethod": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "02.09.2025, 16:11:49",
+        "changes": "Стоимость: 7955.00 → 11411, Участники: \"Илья (КТУ 1)\" → \"Илья (КТУ 1)\", Выданные деньги: \"\" → \"Нет\""
+      }
+    ],
+    "editedTimestamp": "02.09.2025, 16:11:49"
   },
   {
     "name": "Большая",
