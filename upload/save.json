@@ -1,5 +1,24 @@
 [
   {
+    "name": "Перекатка",
+    "service": "Перекатка",
+    "cost": "2300.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "2300.00"
+      }
+    ],
+    "timestamp": "02.09.2025, 16:02:08",
+    "isExpense": false,
+    "isCustomService": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Остатки илюхины",
     "service": "Остатки илюхины",
     "cost": "7955.00",
