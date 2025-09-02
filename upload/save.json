@@ -1,5 +1,45 @@
 [
   {
+    "name": "Остатки илюхины",
+    "service": "Остатки илюхины",
+    "cost": "7955.00",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "7955.00"
+      }
+    ],
+    "timestamp": "02.09.2025, 16:01:31",
+    "isExpense": false,
+    "isCustomService": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Большая",
+    "length": null,
+    "width": null,
+    "area": "278.60 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "27860.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "27860.00"
+      }
+    ],
+    "timestamp": "02.09.2025, 15:50:43",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Между фонарями",
     "length": null,
     "width": null,
@@ -15,7 +55,7 @@
     ],
     "timestamp": "02.09.2025, 15:13:14",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -32,7 +72,7 @@
     ],
     "timestamp": "9/1/2025, 4:27:06 PM",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": []
   },
@@ -48,7 +88,7 @@
     ],
     "timestamp": "9/1/2025, 4:23:52 PM",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": []
   },
@@ -64,7 +104,7 @@
     ],
     "timestamp": "01.09.2025, 14:14:35",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": [
       {
@@ -252,7 +292,7 @@
     ],
     "timestamp": "31.08.2025, 15:12:58",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": true,
     "issuedMoney": [],
     "editHistory": [
@@ -299,7 +339,7 @@
     ],
     "timestamp": "31.08.2025, 15:12:30",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -340,7 +380,7 @@
     ],
     "timestamp": "31.08.2025, 15:08:36",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": [
@@ -367,7 +407,7 @@
     ],
     "timestamp": "31.08.2025, 15:07:25",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -393,7 +433,7 @@
     ],
     "timestamp": "31.08.2025, 15:06:46",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": [
@@ -435,7 +475,7 @@
     ],
     "timestamp": "29.08.2025, 10:35:14",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -476,7 +516,7 @@
     ],
     "timestamp": "29.08.2025, 10:34:12",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -493,7 +533,7 @@
     ],
     "timestamp": "28.08.2025, 23:24:09",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": []
   },
@@ -607,7 +647,7 @@
     ],
     "timestamp": "28.08.2025, 22:05:50",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -682,7 +722,7 @@
     ],
     "timestamp": "28.08.2025, 12:31:54",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": []
   },
@@ -698,7 +738,7 @@
     ],
     "timestamp": "28.08.2025, 12:29:59",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": []
   },
@@ -714,7 +754,7 @@
     ],
     "timestamp": "28.08.2025, 12:29:27",
     "isExpense": true,
-    "isPaid": false,
+    "isPaid": true,
     "issuedMoney": [],
     "editHistory": [
       {
