@@ -1,5 +1,21 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-500.00",
+    "workers": [
+      "Саша"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "02.09.2025, 16:04:11",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Перекатка",
     "service": "Перекатка",
     "cost": "2300.00",
