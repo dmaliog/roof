@@ -1,5 +1,83 @@
 [
   {
+    "name": "Цегтр парка",
+    "length": null,
+    "width": null,
+    "area": "309.40 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "18564.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "4641.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "4641.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "4641.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "4641.00"
+      }
+    ],
+    "timestamp": "05.09.2025, 09:54:34",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Центр парка",
+    "length": null,
+    "width": null,
+    "area": "242.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "14520.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "14520.00"
+      }
+    ],
+    "timestamp": "05.09.2025, 09:53:50",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Центр парка",
+    "length": null,
+    "width": null,
+    "area": "252.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "15120.00",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "15120.00"
+      }
+    ],
+    "timestamp": "05.09.2025, 09:53:11",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-500.00",
