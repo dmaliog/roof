@@ -1,5 +1,82 @@
 [
   {
+    "name": "Галерея Парка",
+    "length": null,
+    "width": null,
+    "area": "573.82 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "34429.20",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "7650.93"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "7650.93"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "7650.93"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.5,
+        "cost": "3825.47"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "7650.93"
+      }
+    ],
+    "timestamp": "9/5/2025, 9:40:41 PM",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Центр последняя",
+    "length": null,
+    "width": null,
+    "area": "221.30 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "13278.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "3319.50"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "3319.50"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "3319.50"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "3319.50"
+      }
+    ],
+    "timestamp": "9/5/2025, 9:39:23 PM",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Цегтр парка",
     "length": null,
     "width": null,
