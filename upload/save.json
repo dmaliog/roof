@@ -1,5 +1,23 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1500.00",
+    "workers": [
+      "Артём",
+      "Коля",
+      "Илья"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "09.09.2025, 11:55:27",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Галерея Парка",
     "length": null,
     "width": null,
