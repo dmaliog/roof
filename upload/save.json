@@ -1,5 +1,46 @@
 [
   {
+    "name": "Доделки",
+    "length": null,
+    "width": null,
+    "area": "334.40 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "33440.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "7114.89"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "7114.89"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "7114.89"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "7114.89"
+      },
+      {
+        "name": "Жека",
+        "ktu": 0.7,
+        "cost": "4980.43"
+      }
+    ],
+    "timestamp": "10.09.2025, 19:45:00",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Пристрой Кумз",
     "length": null,
     "width": null,
