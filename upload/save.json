@@ -1,5 +1,24 @@
 [
   {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-4000.00",
+    "workers": [
+      "Артём",
+      "Илья",
+      "Саша",
+      "Жека"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "11.09.2025, 19:31:41",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Пузыри",
     "length": null,
     "width": null,
