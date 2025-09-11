@@ -2,7 +2,7 @@
   {
     "name": "Съёмная квартира",
     "service": "Расход",
-    "cost": "-5000.00",
+    "cost": "-3700.00",
     "workers": [
       "Денис"
     ],
@@ -13,7 +13,13 @@
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "11.09.2025, 19:27:51",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -5000.00 → -3700"
+      }
+    ],
+    "editedTimestamp": "11.09.2025, 19:27:51"
   },
   {
     "name": "Доделки",
