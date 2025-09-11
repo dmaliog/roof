@@ -1,5 +1,32 @@
 [
   {
+    "name": "Пузыри",
+    "length": null,
+    "width": null,
+    "area": "1114.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "11140.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "5570.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "5570.00"
+      }
+    ],
+    "timestamp": "11.09.2025, 19:29:26",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Съёмная квартира",
     "service": "Расход",
     "cost": "-3700.00",
