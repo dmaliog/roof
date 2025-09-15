@@ -3,6 +3,27 @@
     "name": "Центр первая",
     "length": null,
     "width": null,
+    "area": "230.36 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "23036.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "23036.00"
+      }
+    ],
+    "timestamp": "15.09.2025, 21:55:25",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Центр первая",
+    "length": null,
+    "width": null,
     "area": "329.42 м²",
     "service": "Монтаж наплавляемой кровли в 1 слой",
     "cost": "32942.00",
