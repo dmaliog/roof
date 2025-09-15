@@ -1,5 +1,89 @@
 [
   {
+    "name": "Центр первая",
+    "length": null,
+    "width": null,
+    "area": "329.42 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "32942.00",
+    "workers": [
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "32942.00"
+      }
+    ],
+    "timestamp": "15.09.2025, 21:54:30",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Центр первая",
+    "length": null,
+    "width": null,
+    "area": "482.54 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "48254.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "48254.00"
+      }
+    ],
+    "timestamp": "15.09.2025, 21:53:41",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Центр первая",
+    "length": null,
+    "width": null,
+    "area": "147.32 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "14732.00",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "14732.00"
+      }
+    ],
+    "timestamp": "15.09.2025, 21:52:39",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Центр первая",
+    "length": null,
+    "width": null,
+    "area": "386.08 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "38608.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "38608.00"
+      }
+    ],
+    "timestamp": "15.09.2025, 21:51:34",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Галерея центральная",
     "length": null,
     "width": null,
