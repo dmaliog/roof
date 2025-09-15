@@ -1,5 +1,46 @@
 [
   {
+    "name": "Галерея центральная",
+    "length": null,
+    "width": null,
+    "area": "555.84 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "33350.40",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "6670.08"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "6670.08"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "6670.08"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "6670.08"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "6670.08"
+      }
+    ],
+    "timestamp": "15.09.2025, 21:50:00",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-750.00",
