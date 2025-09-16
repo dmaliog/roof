@@ -1,5 +1,190 @@
 [
   {
+    "name": "Фонарь центральный",
+    "length": null,
+    "width": null,
+    "area": "867.10 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "52026.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "8671.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "8671.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "8671.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "8671.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "8671.00"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "8671.00"
+      }
+    ],
+    "timestamp": "9/16/2025, 8:09:55 PM",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Фонарь без славы",
+    "length": null,
+    "width": null,
+    "area": "679.90 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "40794.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "9271.36"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "9271.36"
+      },
+      {
+        "name": "Илья",
+        "ktu": 0.7,
+        "cost": "6489.95"
+      },
+      {
+        "name": "Саша",
+        "ktu": 0.7,
+        "cost": "6489.95"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "9271.36"
+      }
+    ],
+    "timestamp": "9/16/2025, 8:07:19 PM",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Последняя Галерея",
+    "length": null,
+    "width": null,
+    "area": "640.27 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "38416.20",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "6402.70"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "6402.70"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "6402.70"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "6402.70"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "6402.70"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "6402.70"
+      }
+    ],
+    "timestamp": "9/16/2025, 8:03:09 PM",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Галерея Без нас",
+    "length": null,
+    "width": null,
+    "area": "211.58 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "12694.80",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "12694.80"
+      }
+    ],
+    "timestamp": "9/16/2025, 8:00:22 PM",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Галерея Без нас",
+    "length": null,
+    "width": null,
+    "area": "264.77 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "15886.20",
+    "workers": [
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "5295.40"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "5295.40"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "5295.40"
+      }
+    ],
+    "timestamp": "9/16/2025, 7:59:42 PM",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-1500.00",
