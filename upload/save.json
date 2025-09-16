@@ -1,5 +1,21 @@
 [
   {
+    "name": "Займ",
+    "service": "Расход",
+    "cost": "-2000.00",
+    "workers": [
+      "Коля"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "16.09.2025, 16:44:06",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Фонарь первый с коляном",
     "length": null,
     "width": null,
