@@ -1,1 +1,43 @@
-[]
+[
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1000.00",
+    "workers": [
+      "Саша",
+      "Жека"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "18.09.2025, 20:42:18",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": [
+      {
+        "timestamp": "18.09.2025, 20:42:30",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Участники (начисление): \"\" → \"Артём\""
+      }
+    ],
+    "editedTimestamp": "18.09.2025, 20:42:30"
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-1500.00",
+    "workers": [
+      "Артём",
+      "Саша",
+      "Жека"
+    ],
+    "receivers": [
+      "Коля"
+    ],
+    "timestamp": "18.09.2025, 20:41:51",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  }
+]
