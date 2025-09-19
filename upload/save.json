@@ -1,5 +1,57 @@
 [
   {
+    "name": "Полоски",
+    "length": null,
+    "width": null,
+    "area": "139.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "13900.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "6950.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "6950.00"
+      }
+    ],
+    "timestamp": "19.09.2025, 21:31:48",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Пристрой славы",
+    "length": null,
+    "width": null,
+    "area": "165.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "16500.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "8250.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "8250.00"
+      }
+    ],
+    "timestamp": "19.09.2025, 21:29:44",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Пристрой",
     "length": null,
     "width": null,
