@@ -1,5 +1,62 @@
 [
   {
+    "name": "Парка",
+    "length": null,
+    "width": null,
+    "area": "253.00 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "15180.00",
+    "workers": [
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "15180.00"
+      }
+    ],
+    "timestamp": "22.09.2025, 06:19:45",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка",
+    "length": null,
+    "width": null,
+    "area": "760.34 м²",
+    "service": "Монтаж пароизоляции",
+    "cost": "45620.40",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "11405.10"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "11405.10"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "11405.10"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "11405.10"
+      }
+    ],
+    "timestamp": "22.09.2025, 06:18:56",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-1000.00",
