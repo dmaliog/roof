@@ -420,7 +420,7 @@
     ],
     "timestamp": "19.09.2025, 21:31:48",
     "isExpense": false,
-    "isPaid": true,
+    "isPaid": false,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
@@ -446,7 +446,7 @@
     ],
     "timestamp": "19.09.2025, 21:29:44",
     "isExpense": false,
-    "isPaid": true,
+    "isPaid": false,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
