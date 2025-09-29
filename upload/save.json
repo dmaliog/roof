@@ -1,5 +1,97 @@
 [
   {
+    "name": "Галерея первая",
+    "length": null,
+    "width": null,
+    "area": "1.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "100.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "16.67"
+      }
+    ],
+    "timestamp": "29.09.2025, 21:58:53",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Парка боковая",
+    "length": null,
+    "width": null,
+    "area": "1.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "100.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "16.67"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "16.67"
+      }
+    ],
+    "timestamp": "29.09.2025, 21:58:24",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Теплушка",
     "length": null,
     "width": null,
