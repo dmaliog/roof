@@ -1,5 +1,51 @@
 [
   {
+    "name": "Теплушка",
+    "length": null,
+    "width": null,
+    "area": "136.50 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "13650.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "2275.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "2275.00"
+      },
+      {
+        "name": "Слава",
+        "ktu": 1,
+        "cost": "2275.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "cost": "2275.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "cost": "2275.00"
+      },
+      {
+        "name": "Жека",
+        "ktu": 1,
+        "cost": "2275.00"
+      }
+    ],
+    "timestamp": "29.09.2025, 21:57:30",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Займ",
     "service": "Расход",
     "cost": "-700.00",
