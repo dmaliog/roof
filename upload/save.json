@@ -9,6 +9,22 @@
     "receivers": [
       "Артём"
     ],
+    "timestamp": "01.10.2025, 20:36:37",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-250.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
     "timestamp": "30.09.2025, 21:18:03",
     "isExpense": true,
     "isPaid": false,
