@@ -1,5 +1,21 @@
 [
   {
+    "name": "Примыкания жекины",
+    "service": "Расход",
+    "cost": "-10000.00",
+    "workers": [
+      "Жека"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "02.10.2025, 14:44:29",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-1000.00",
