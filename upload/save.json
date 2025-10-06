@@ -1,5 +1,26 @@
 [
   {
+    "name": "Артем галерея 3",
+    "length": null,
+    "width": null,
+    "area": "440.64 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "44064.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "cost": "44064.00"
+      }
+    ],
+    "timestamp": "06.10.2025, 22:25:18",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Общая галерея 1 захватка",
     "length": null,
     "width": null,
