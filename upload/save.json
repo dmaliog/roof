@@ -1,5 +1,26 @@
 [
   {
+    "name": "Колян галерея 3",
+    "length": null,
+    "width": null,
+    "area": "333.36 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "33336.00",
+    "workers": [
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "cost": "33336.00"
+      }
+    ],
+    "timestamp": "06.10.2025, 22:26:24",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Артем галерея 3",
     "length": null,
     "width": null,
