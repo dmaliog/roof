@@ -298,7 +298,7 @@
     ],
     "timestamp": "29.09.2025, 21:57:30",
     "isExpense": false,
-    "isPaid": false,
+    "isPaid": true,
     "useRostikMethod": false,
     "issuedMoney": [],
     "editHistory": []
