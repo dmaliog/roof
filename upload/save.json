@@ -2,6 +2,38 @@
   {
     "name": "Бензин",
     "service": "Расход",
+    "cost": "-250.00",
+    "workers": [
+      "Слава"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "14.10.2025, 07:41:17",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
+    "cost": "-500.00",
+    "workers": [
+      "Жека"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "14.10.2025, 07:40:49",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Бензин",
+    "service": "Расход",
     "cost": "-500.00",
     "workers": [
       "Жека"
