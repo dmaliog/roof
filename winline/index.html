@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кого уволим сегодня?</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            color: #d32f2f;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            font-size: 1em;
+            width: 80%;
+            max-width: 320px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus {
+            border-color: #d32f2f;
+            box-shadow: 0 0 8px rgba(211, 47, 47, 0.3);
+            outline: none;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 40px auto;
+        }
+
+        .wheel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #4caf50 0deg 90deg, /* ДА */
+                #f44336 90deg 180deg, /* НЕТ */
+                #4caf50 180deg 270deg, /* ДА */
+                #f44336 270deg 360deg /* НЕТ */
+            );
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.2);
+            border: 10px solid #ffd700;
+            transform: rotate(0deg);
+            z-index: 1;
+        }
+
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background: #ffd700;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 5;
+        }
+
+        .sector-label {
+            position: absolute;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            transform: translate(-50%, -50%);
+        }
+
+        .label-1 { top: 25%; left: 75%; transform: translate(-50%, -50%) rotate(45deg); } /* ДА, центр 45° */
+        .label-2 { top: 75%; left: 75%; transform: translate(-50%, -50%) rotate(135deg); } /* НЕТ, центр 135° */
+        .label-3 { top: 75%; left: 25%; transform: translate(-50%, -50%) rotate(225deg); } /* ДА, центр 225° */
+        .label-4 { top: 25%; left: 25%; transform: translate(-50%, -50%) rotate(315deg); } /* НЕТ, центр 315° */
+
+        .arrow {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 40px solid #d32f2f;
+            z-index: 10;
+        }
+
+        .result {
+            font-size: 1.5em;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #d32f2f;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .result.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+
+            input[type="text"] {
+                padding: 10px;
+                font-size: 0.9em;
+                width: 85%;
+                max-width: 280px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+
+            .wheel-container {
+                width: 250px;
+                height: 250px;
+                margin: 20px auto;
+            }
+
+            .wheel::before {
+                width: 30px;
+                height: 30px;
+            }
+
+            .sector-label {
+                font-size: 1.4em;
+            }
+
+            .arrow {
+                border-left: 15px solid transparent;
+                border-right: 15px solid transparent;
+                border-bottom: 30px solid #d32f2f;
+                top: -15px;
+            }
+
+            .result {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Кого уволим сегодня?</h1>
+        <input type="text" id="nameInput" placeholder="Введите имя">
+        <button id="spinButton" onclick="spinWheel()">Крутить!</button>
+        <div class="wheel-container">
+            <div class="wheel" id="wheel">
+                <div class="sector-label label-1">ДА</div>
+                <div class="sector-label label-2">НЕТ</div>
+                <div class="sector-label label-3">ДА</div>
+                <div class="sector-label label-4">НЕТ</div>
+            </div>
+            <div class="arrow"></div>
+        </div>
+        <div class="result" id="resultText"></div>
+    </div>
+
+    <script>
+        function spinWheel() {
+            const name = document.getElementById('nameInput').value.toLowerCase().trim();
+            const wheel = document.getElementById('wheel');
+            const resultText = document.getElementById('resultText');
+            const spinButton = document.getElementById('spinButton');
+
+            // Disable button
+            spinButton.disabled = true;
+
+            // Reset state
+            resultText.classList.remove('show');
+            resultText.textContent = 'Крутим...';
+            resultText.classList.add('show');
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+            void wheel.offsetWidth; // Force reflow
+
+            // Check for "са", "ал", or "ва"
+            const isSpecial = /са|ал|ва/i.test(name);
+
+            // Animation settings
+            const spins = 10; // Number of full spins
+            const baseAngle = spins * 360; // 10 spins
+            const duration = 4800; // Total duration
+
+            // Randomly select target sector angle within ДА or НЕТ ranges
+            const sectorOffset = Math.floor(Math.random() * 90); // Random offset within 90deg sector
+            const sectorChoice = Math.floor(Math.random() * 2); // Choose one of two sectors
+            const finalAngle = isSpecial
+                ? -(baseAngle + sectorChoice * 180 + sectorOffset) // Random angle in ДА (0-90 or 180-270)
+                : -(baseAngle + (sectorChoice * 180 + 90) + sectorOffset); // Random angle in НЕТ (90-180 or 270-360)
+
+            const keyframes = [
+                { transform: 'rotate(0deg)', offset: 0 },
+                { transform: `rotate(${finalAngle}deg)`, offset: 1 } // Slide to random sector
+            ];
+
+            // Start animation
+            requestAnimationFrame(() => {
+                wheel.animate(keyframes, {
+                    duration: duration,
+                    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+                    fill: 'forwards'
+                });
+            });
+
+            // Show result
+            setTimeout(() => {
+                resultText.textContent = isSpecial ? 'ДА!' : 'НЕТ!';
+                resultText.classList.add('show');
+                spinButton.disabled = false;
+            }, duration);
+        }
+    </script>
+</body>
+</html>
