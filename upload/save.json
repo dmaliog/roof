@@ -2,22 +2,6 @@
   {
     "name": "Бензин",
     "service": "Расход",
-    "cost": "-250.00",
-    "workers": [
-      "Слава"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "19.10.2025, 20:04:48",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
     "cost": "-500.00",
     "workers": [
       "Жека"
@@ -25,23 +9,7 @@
     "receivers": [
       "Артём"
     ],
-    "timestamp": "19.10.2025, 20:04:33",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Еда",
-    "service": "Расход",
-    "cost": "-240.00",
-    "workers": [
-      "Коля"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "18.10.2025, 08:26:23",
+    "timestamp": "24.10.2025, 13:43:21",
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
@@ -50,15 +18,14 @@
   {
     "name": "Бензин",
     "service": "Расход",
-    "cost": "-2000.00",
+    "cost": "-250.00",
     "workers": [
-      "Слава",
       "Саша"
     ],
     "receivers": [
       "Артём"
     ],
-    "timestamp": "18.10.2025, 08:25:54",
+    "timestamp": "24.10.2025, 13:43:08",
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
@@ -67,31 +34,14 @@
   {
     "name": "Бензин",
     "service": "Расход",
-    "cost": "-1000.00",
-    "workers": [
-      "Слава",
-      "Жека"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "18.10.2025, 08:25:08",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-250.00",
+    "cost": "-2250.00",
     "workers": [
       "Слава"
     ],
     "receivers": [
       "Артём"
     ],
-    "timestamp": "14.10.2025, 07:41:17",
+    "timestamp": "24.10.2025, 13:42:40",
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
@@ -100,184 +50,17 @@
   {
     "name": "Бензин",
     "service": "Расход",
-    "cost": "-500.00",
+    "cost": "-2250.00",
     "workers": [
       "Жека"
     ],
     "receivers": [
       "Артём"
     ],
-    "timestamp": "14.10.2025, 07:40:49",
+    "timestamp": "24.10.2025, 13:42:20",
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
     "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-500.00",
-    "workers": [
-      "Жека"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "12.10.2025, 17:16:32",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "пристрой",
-    "length": null,
-    "width": null,
-    "area": "121.52 м²",
-    "service": "Монтаж наплавляемой кровли в 1 слой",
-    "cost": "12152.00",
-    "workers": [
-      {
-        "name": "Артём",
-        "ktu": 1,
-        "cost": "2025.33"
-      },
-      {
-        "name": "Коля",
-        "ktu": 1,
-        "cost": "2025.33"
-      },
-      {
-        "name": "Слава",
-        "ktu": 1,
-        "cost": "2025.33"
-      },
-      {
-        "name": "Илья",
-        "ktu": 1,
-        "cost": "2025.33"
-      },
-      {
-        "name": "Саша",
-        "ktu": 1,
-        "cost": "2025.33"
-      },
-      {
-        "name": "Жека",
-        "ktu": 1,
-        "cost": "2025.33"
-      }
-    ],
-    "timestamp": "10.10.2025, 22:22:39",
-    "isExpense": false,
-    "isPaid": false,
-    "useRostikMethod": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Бензин",
-    "service": "Расход",
-    "cost": "-2000.00",
-    "workers": [
-      "Саша",
-      "Жека"
-    ],
-    "receivers": [
-      "Артём"
-    ],
-    "timestamp": "10.10.2025, 22:16:10",
-    "isExpense": true,
-    "isPaid": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "кумз",
-    "length": null,
-    "width": null,
-    "area": "915.07 м²",
-    "service": "Монтаж наплавляемой кровли в 1 слой",
-    "cost": "91507.00",
-    "workers": [
-      {
-        "name": "Артём",
-        "ktu": 1,
-        "cost": "22876.75"
-      },
-      {
-        "name": "Коля",
-        "ktu": 1,
-        "cost": "22876.75"
-      },
-      {
-        "name": "Саша",
-        "ktu": 1,
-        "cost": "22876.75"
-      },
-      {
-        "name": "Жека",
-        "ktu": 1,
-        "cost": "22876.75"
-      }
-    ],
-    "timestamp": "10.10.2025, 22:15:36",
-    "isExpense": false,
-    "isPaid": false,
-    "useRostikMethod": false,
-    "issuedMoney": [],
-    "editHistory": []
-  },
-  {
-    "name": "Теплушка",
-    "length": null,
-    "width": null,
-    "area": "110.50 м²",
-    "service": "Монтаж наплавляемой кровли в 1 слой",
-    "cost": "11050.00",
-    "workers": [
-      {
-        "name": "Артём",
-        "ktu": 1,
-        "cost": "1841.67"
-      },
-      {
-        "name": "Коля",
-        "ktu": 1,
-        "cost": "1841.67"
-      },
-      {
-        "name": "Слава",
-        "ktu": 1,
-        "cost": "1841.67"
-      },
-      {
-        "name": "Илья",
-        "ktu": 1,
-        "cost": "1841.67"
-      },
-      {
-        "name": "Саша",
-        "ktu": 1,
-        "cost": "1841.67"
-      },
-      {
-        "name": "Жека",
-        "ktu": 1,
-        "cost": "1841.67"
-      }
-    ],
-    "timestamp": "29.09.2025, 21:57:30",
-    "isExpense": false,
-    "isPaid": false,
-    "useRostikMethod": false,
-    "issuedMoney": [],
-    "editHistory": [
-      {
-        "timestamp": "10.10.2025, 22:21:49",
-        "changes": "Выданные деньги: \"\" → \"Нет\", Площадь: \"136.50 м²\" → \"110.50 м²\", Услуга: \"Монтаж наплавляемой кровли в 1 слой\" → \"Монтаж наплавляемой кровли в 1 слой\", Участники: \"Артём (КТУ 1), Коля (КТУ 1), Слава (КТУ 1), Илья (КТУ 1), Саша (КТУ 1), Жека (КТУ 1)\" → \"Артём (КТУ 1), Коля (КТУ 1), Слава (КТУ 1), Илья (КТУ 1), Саша (КТУ 1), Жека (КТУ 1)\", Стоимость: 13650.00 → 11050.00"
-      }
-    ],
-    "editedTimestamp": "10.10.2025, 22:21:49"
   }
 ]
