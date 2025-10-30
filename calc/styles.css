@@ -548,7 +548,7 @@ background: linear-gradient(135deg, #2980b9, #217dbb);
 
 body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    background: linear-gradient(90deg, #414850, #131720);
     color: var(--black);
     line-height: 1.6;
     overflow-x: hidden;
@@ -1296,8 +1296,8 @@ input[type="checkbox"]:disabled:checked {
 
 .delete-cross {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 0px;
+    right: 0px;
     font-size: 18px;
     cursor: pointer;
     width: 20px;
@@ -1318,6 +1318,7 @@ input[type="checkbox"]:disabled:checked {
 
 .calculation.expense .delete-cross {
     color: #c0392b;
+    padding: 20px;
 }
 
 .calculation.expense .delete-cross:hover {
@@ -1989,18 +1990,22 @@ input[type="checkbox"]:disabled:checked {
 /* Stabilize charts layout */
 .charts-container {
 	display: grid;
-	grid-template-columns: 2fr 1fr !important;
+	grid-template-columns: 2fr 1fr;
 	gap: 20px;
 	align-items: start;
 }
+.charts-container .chart-box { min-width: 0; width: 100%; }
+.charts-container .chart-box canvas { width: 100% !important; height: auto !important; max-height: 320px; }
+
+@media (max-width: 1024px) {
+	.charts-container { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+	.charts-container { grid-template-columns: 1fr; gap: 12px; }
+	.charts-container .chart-box canvas { max-height: 260px; }
+}
 /* Allow JS to collapse the charts panel */
 .charts-container.collapsed { display: none !important; }
-.charts-container .chart-box { min-width: 0; }
-@media (max-width: 1024px) {
-	.charts-container {
-		grid-template-columns: 1fr !important;
-	}
-}
 
 .chart-box {
     background: var(--bg-primary);
@@ -4579,3 +4584,13 @@ background-color: #ff9800;
 /* Pin boxes to columns on desktop */
 .charts-container > .chart-box:nth-child(1) { grid-column: 1; }
 .charts-container > .chart-box:nth-child(2) { grid-column: 2; }
+
+/* Pin boxes only on desktop */
+@media (min-width: 1025px) {
+	.charts-container > .chart-box:nth-child(1) { grid-column: 1; }
+	.charts-container > .chart-box:nth-child(2) { grid-column: 2; }
+}
+/* On small screens allow natural flow */
+@media (max-width: 1024px) {
+	.charts-container > .chart-box { grid-column: auto !important; }
+}

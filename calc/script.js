@@ -40,8 +40,33 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Определяем, работаем ли мы на локальной машине (HTTP) или в установленном приложении (PWA)
     const isLocalEnvironment = window.location.protocol === 'http:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const isStandaloneApp = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || (typeof window.navigator !== 'undefined' && window.navigator.standalone === true);
-    let passwordValidated = isLocalEnvironment || isStandaloneApp; // На локальной машине и в PWA пароль не требуется
+    function detectStandaloneApp() {
+        try {
+            const mm = (q) => window.matchMedia && window.matchMedia(q).matches;
+            // Android/Chrome WebAPK часто отдает fullscreen, иногда minimal-ui
+            const byDisplayMode = mm('(display-mode: standalone)') || mm('(display-mode: fullscreen)') || mm('(display-mode: minimal-ui)');
+            // iOS Safari standalone
+            const byIOS = typeof window.navigator !== 'undefined' && window.navigator.standalone === true;
+            // Установленные TWA/WA могут приходить с android-app://
+            const byReferrer = document.referrer && document.referrer.startsWith('android-app://');
+            return !!(byDisplayMode || byIOS || byReferrer);
+        } catch (_) {
+            return false;
+        }
+    }
+    let passwordValidated = isLocalEnvironment || detectStandaloneApp(); // На локальной машине и в PWA пароль не требуется
+
+    // Перехватываем смену display-mode во время жизни страницы (актуально для Android)
+    try {
+        const dm = window.matchMedia && window.matchMedia('(display-mode: standalone)');
+        if (dm && typeof dm.addEventListener === 'function') {
+            dm.addEventListener('change', (e) => { if (e.matches) passwordValidated = true; });
+        }
+        const dmFs = window.matchMedia && window.matchMedia('(display-mode: fullscreen)');
+        if (dmFs && typeof dmFs.addEventListener === 'function') {
+            dmFs.addEventListener('change', (e) => { if (e.matches) passwordValidated = true; });
+        }
+    } catch (_e) { /* no-op */ }
     const correctPasswordHash = 'aedfcc5b92c3bb3f2a633eda717651e31d863c01683b9d93226f92b034ad5508';
 
     // Функция для хеширования пароля
@@ -147,6 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetId = link.getAttribute('href').substring(1);
+            // На всякий случай обновляем флаг перед проверкой (для Android WebAPK может измениться в рантайме)
+            if (!passwordValidated && detectStandaloneApp()) passwordValidated = true;
             if (targetId === 'calc19' && !passwordValidated) {
                 passwordModal.style.display = 'flex';
             } else {
