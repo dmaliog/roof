@@ -1,1 +1,47 @@
-["Артём", "Коля", "Слава", "Илья", "Ростик", "СлаваКаменский", "Андрюха", "Саша", "Жека", "Денис"]
+[
+  {
+    "name": "Артём",
+    "role": "foreman",
+    "percentage": 5
+  },
+  {
+    "name": "Коля",
+    "role": "foreman",
+    "percentage": 5
+  },
+  {
+    "name": "Слава",
+    "role": "worker",
+    "percentage": 0
+  },
+  {
+    "name": "Илья",
+    "role": "worker",
+    "percentage": 0
+  },
+  {
+    "name": "Ростик",
+    "role": "worker",
+    "percentage": 0
+  },
+  {
+    "name": "СлаваКаменский",
+    "role": "worker",
+    "percentage": 0
+  },
+  {
+    "name": "Андрюха",
+    "role": "worker",
+    "percentage": 0
+  },
+  {
+    "name": "Саша",
+    "role": "worker",
+    "percentage": 0
+  },
+  {
+    "name": "Денис",
+    "role": "worker",
+    "percentage": 0
+  }
+]
