@@ -555,7 +555,7 @@ body {
 }
 
 [data-theme="dark"] body {
-    background: linear-gradient(90deg, #414850, #131720);
+    background: linear-gradient(90deg, #414850, #131720)!important;
 }
 
 
