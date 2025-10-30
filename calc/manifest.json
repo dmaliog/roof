@@ -4,8 +4,8 @@
   "description": "Калькуляторы для мягкой наплавляемой кровли и расчетов работников",
   "start_url": "/calc/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#0f1419",
+  "theme_color": "#0f1419",
   "orientation": "portrait-primary",
   "icons": [
     {

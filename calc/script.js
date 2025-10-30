@@ -49,22 +49,50 @@ document.addEventListener('DOMContentLoaded', () => {
             const byIOS = typeof window.navigator !== 'undefined' && window.navigator.standalone === true;
             // Установленные TWA/WA могут приходить с android-app://
             const byReferrer = document.referrer && document.referrer.startsWith('android-app://');
-            return !!(byDisplayMode || byIOS || byReferrer);
+            // Android приложения часто имеют в userAgent 'wv' (WebView) или специальные маркеры
+            const byUserAgent = typeof navigator !== 'undefined' && navigator.userAgent && (
+                navigator.userAgent.includes('wv') || 
+                navigator.userAgent.includes('AndroidApp') ||
+                (navigator.standalone !== undefined && navigator.standalone === true)
+            );
+            return !!(byDisplayMode || byIOS || byReferrer || byUserAgent);
         } catch (_) {
             return false;
         }
     }
     let passwordValidated = isLocalEnvironment || detectStandaloneApp(); // На локальной машине и в PWA пароль не требуется
 
+    // Принудительно скрываем модалку пароля если мы в standalone режиме (исправляет задержку на Android)
+    if (passwordModal && passwordValidated) {
+        passwordModal.style.display = 'none';
+        passwordModal.style.visibility = 'hidden';
+    }
+
     // Перехватываем смену display-mode во время жизни страницы (актуально для Android)
     try {
         const dm = window.matchMedia && window.matchMedia('(display-mode: standalone)');
         if (dm && typeof dm.addEventListener === 'function') {
-            dm.addEventListener('change', (e) => { if (e.matches) passwordValidated = true; });
+            dm.addEventListener('change', (e) => { 
+                if (e.matches) {
+                    passwordValidated = true;
+                    if (passwordModal) {
+                        passwordModal.style.display = 'none';
+                        passwordModal.style.visibility = 'hidden';
+                    }
+                }
+            });
         }
         const dmFs = window.matchMedia && window.matchMedia('(display-mode: fullscreen)');
         if (dmFs && typeof dmFs.addEventListener === 'function') {
-            dmFs.addEventListener('change', (e) => { if (e.matches) passwordValidated = true; });
+            dmFs.addEventListener('change', (e) => { 
+                if (e.matches) {
+                    passwordValidated = true;
+                    if (passwordModal) {
+                        passwordModal.style.display = 'none';
+                        passwordModal.style.visibility = 'hidden';
+                    }
+                }
+            });
         }
     } catch (_e) { /* no-op */ }
     const correctPasswordHash = 'aedfcc5b92c3bb3f2a633eda717651e31d863c01683b9d93226f92b034ad5508';
