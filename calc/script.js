@@ -97,6 +97,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (_e) { /* no-op */ }
     const correctPasswordHash = 'aedfcc5b92c3bb3f2a633eda717651e31d863c01683b9d93226f92b034ad5508';
 
+    // Функция для безопасного парсинга даты (обрабатывает как ISO формат, так и старые локализованные форматы)
+    function parseDateSafe(timestamp) {
+        if (!timestamp) return new Date();
+        // Если это ISO строка, она парсится напрямую
+        const parsed = new Date(timestamp);
+        // Проверяем, что дата валидна
+        if (!isNaN(parsed.getTime())) {
+            return parsed;
+        }
+        // Если парсинг не удался, пытаемся как есть или возвращаем текущую дату
+        return new Date();
+    }
+
     // Функция для хеширования пароля
     async function hashPassword(password) {
         const msgBuffer = new TextEncoder().encode(password);
@@ -141,10 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Не найден элемент для вкладки:', targetId);
         }
         
-        // Логика для floating-menu-btn
+        // Логика для floating-menu-btn - показываем только если пароль валидирован И открыта calc19
         const floatingBtn = document.getElementById('floating-menu-btn');
         if (floatingBtn) {
-            floatingBtn.style.display = targetId === 'calc19' ? 'block' : 'none';
+            floatingBtn.style.display = (passwordValidated && targetId === 'calc19') ? 'block' : 'none';
         }
         
         // Обновляем графики и статистику при переключении на вкладку "Анализ работы"
@@ -229,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (inputHash === correctPasswordHash) {
                 passwordValidated = true;
                 passwordModal.style.display = 'none';
-                showTab('calc19');
+                showTab('calc19'); // showTab автоматически покажет кнопку, так как откроет calc19 и passwordValidated = true
             } else {
                 window.location.href = 'https://nahnah.ru/'; // Перенаправление при неверном пароле
                 passwordInput.value = '';
@@ -811,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateCSV() {
         const headers = ['Дата', 'Название', 'Услуга', 'Площадь', 'Стоимость', 'Работники', 'Статус', 'Тип'];
         const rows = window.objects.map(obj => [
-            new Date(obj.timestamp).toLocaleDateString('ru-RU'),
+            parseDateSafe(obj.timestamp).toLocaleDateString('ru-RU'),
             obj.name || '-',
             obj.service || '-',
             obj.area || '-',
@@ -1581,7 +1594,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }));
                     }
                 })() : workersData.map(w => ({ name: w.name, ktu: w.ktu, cost: (servicePrice * w.ktu / totalKtu).toFixed(2) })),
-                timestamp: new Date().toLocaleString(),
+                timestamp: new Date().toISOString(),
                 isExpense: false,
                 isCustomService: true,
                 isPaid: isPaid,
@@ -1607,7 +1620,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (changes.length > 0) {
-                    object.editedTimestamp = new Date().toLocaleString();
+                    object.editedTimestamp = new Date().toISOString();
                     object.editHistory.push({ timestamp: object.editedTimestamp, changes: changes.join(', ') });
                 }
                 object.isPaid = isPaid;
@@ -1844,7 +1857,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         cost: expenseAmount.toFixed(2),
                           workers,
                           receivers,
-                          timestamp: new Date().toLocaleString(),
+                          timestamp: new Date().toISOString(),
                           isExpense: true,
                           isPaid: isPaid,
                           issuedMoney,
@@ -1864,7 +1877,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         cost: expenseAmount.toFixed(2),
                           workers,
                           receivers,
-                          timestamp: new Date().toLocaleString(),
+                          timestamp: new Date().toISOString(),
                           isExpense: true,
                           distance: distance.toFixed(2),
                           issuedMoney,
@@ -1886,7 +1899,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         cost: expenseAmount.toFixed(2),
                           workers,
                           receivers,
-                          timestamp: new Date().toLocaleString(),
+                          timestamp: new Date().toISOString(),
                           isExpense: true,
                           startMileage: startMileage.toFixed(2),
                           endMileage: endMileage.toFixed(2),
@@ -1907,7 +1920,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     cost: expenseAmount.toFixed(2),
                           workers,
                           receivers,
-                          timestamp: new Date().toLocaleString(),
+                          timestamp: new Date().toISOString(),
                           isExpense: true,
                           isPaid: isPaid,
                           issuedMoney,
@@ -2073,7 +2086,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           service: serviceName,
                           cost: totalCost,
                           workers: workersWithCost,
-                          timestamp: new Date().toLocaleString(),
+                          timestamp: new Date().toISOString(),
                           isExpense: false,
                           manualPrice: true,
                           isPaid: isPaid,
@@ -2200,7 +2213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           service: serviceName,
                           cost: totalCost,
                           workers: workersWithCost,
-                          timestamp: new Date().toLocaleString(),
+                          timestamp: new Date().toISOString(),
                           isExpense: false,
                           isPaid: isPaid,
                           useRostikMethod: useRostikMethod,
@@ -2553,7 +2566,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <div class="productinfo">
                                         <div class="grouptext">
                                             <h3>${obj.area ? 'ПЛОЩАДЬ' : (obj.distance ? 'РАССТОЯНИЕ' : 'ДАТА')}</h3>
-                                            <p>${obj.area ? areaValue.toFixed(2) + ' м²' : (obj.distance ? obj.distance + ' км' : new Date(obj.timestamp).toLocaleDateString())}</p>
+                                            <p>${obj.area ? areaValue.toFixed(2) + ' м²' : (obj.distance ? obj.distance + ' км' : parseDateSafe(obj.timestamp).toLocaleDateString('ru-RU'))}</p>
                                         </div>
                                         <div class="grouptext">
                                             <h3>СТАТУС</h3>
@@ -2864,7 +2877,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             obj.comments.push({
                                 text: text,
-                                timestamp: new Date().toLocaleString('ru-RU')
+                                timestamp: new Date().toISOString()
                             });
                             
                             saveData();
@@ -3563,7 +3576,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
 
                             if (changes.length > 0) {
-                                oldObj.editedTimestamp = new Date().toLocaleString();
+                                oldObj.editedTimestamp = new Date().toISOString();
                                 oldObj.editHistory.push({ timestamp: oldObj.editedTimestamp, changes: changes.join(', ') });
                             }
 
@@ -4171,7 +4184,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.objects
                             .filter(obj => !obj.isExpense)
                             .forEach(obj => {
-                                const date = new Date(obj.timestamp).toLocaleDateString('ru-RU');
+                                const date = parseDateSafe(obj.timestamp).toLocaleDateString('ru-RU');
                                 if (!earningsByDate[date]) {
                                     earningsByDate[date] = 0;
                                 }
@@ -5234,12 +5247,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Добавляем контейнер на страницу
                         document.body.appendChild(buttonContainer);
 
+                        // Кнопка меню показывается только если пароль валидирован И открыта calc19
+                        const activeTab = document.querySelector('.tab-content.active');
+                        const shouldShow = passwordValidated && activeTab && activeTab.id === 'calc19';
+                        floatingMenuBtn.style.display = shouldShow ? 'block' : 'none';
+
                         return { buttonContainer, floatingMenuBtn, floatingAddBtn, floatingExportBtn, floatingExcelBtn, floatingRestoreBtn, floatingEditBtn, floatingStatsBtn, floatingRefreshBtn };
                     }
 
-                    window.addEventListener('DOMContentLoaded', () => {
+                    // Вызываем createFloatingButtons сразу после объявления
+                    // Используем setTimeout чтобы убедиться, что DOM полностью готов
+                    setTimeout(() => {
                         createFloatingButtons();
-                    });
+                        // После создания кнопок обновляем видимость кнопки меню
+                        const floatingBtn = document.getElementById('floating-menu-btn');
+                        if (floatingBtn) {
+                            const activeTab = document.querySelector('.tab-content.active');
+                            const shouldShow = passwordValidated && activeTab && activeTab.id === 'calc19';
+                            floatingBtn.style.display = shouldShow ? 'block' : 'none';
+                        }
+                    }, 100);
 
                     // Глобальный клик вне меню — скрыть все
                     document.addEventListener('click', (ev) => {
