@@ -1298,6 +1298,7 @@ input[type="checkbox"]:disabled:checked {
     position: absolute;
     top: 0px;
     right: 0px;
+    padding: 20px;
     font-size: 18px;
     cursor: pointer;
     width: 20px;
@@ -1318,7 +1319,6 @@ input[type="checkbox"]:disabled:checked {
 
 .calculation.expense .delete-cross {
     color: #c0392b;
-    padding: 20px;
 }
 
 .calculation.expense .delete-cross:hover {
