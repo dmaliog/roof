@@ -1,5 +1,21 @@
 [
   {
+    "name": "Съёмная квартира",
+    "service": "Расход",
+    "cost": "-7000.00",
+    "workers": [
+      "Денис"
+    ],
+    "receivers": [
+      "Артём"
+    ],
+    "timestamp": "2025-11-15T15:24:42.113Z",
+    "isExpense": true,
+    "isPaid": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Бензин",
     "service": "Расход",
     "cost": "-1000.00",
