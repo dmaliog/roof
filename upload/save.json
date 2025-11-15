@@ -1,5 +1,154 @@
 [
   {
+    "name": "5 цех",
+    "length": null,
+    "width": null,
+    "area": "216.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "21600.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "area": null,
+        "cost": "5400.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "area": null,
+        "cost": "5400.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "area": null,
+        "cost": "5400.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "area": null,
+        "cost": "5400.00"
+      }
+    ],
+    "timestamp": "2025-11-15T15:52:02.253Z",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Транспортный",
+    "length": null,
+    "width": null,
+    "area": "243.60 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "29232.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "area": null,
+        "cost": "7308.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "area": null,
+        "cost": "7308.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "area": null,
+        "cost": "7308.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "area": null,
+        "cost": "7308.00"
+      }
+    ],
+    "timestamp": "2025-11-15T15:51:00.340Z",
+    "isExpense": false,
+    "manualPrice": true,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Цех 32",
+    "length": null,
+    "width": null,
+    "area": "895.68 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "89568.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "area": null,
+        "cost": "22392.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "area": null,
+        "cost": "22392.00"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "area": null,
+        "cost": "22392.00"
+      },
+      {
+        "name": "Саша",
+        "ktu": 1,
+        "area": null,
+        "cost": "22392.00"
+      }
+    ],
+    "timestamp": "2025-11-15T15:49:08.552Z",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
+    "name": "Тпу",
+    "length": null,
+    "width": null,
+    "area": "400.00 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "40000.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "area": null,
+        "cost": "20000.00"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "area": null,
+        "cost": "20000.00"
+      }
+    ],
+    "timestamp": "2025-11-15T15:47:18.796Z",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Съёмная квартира",
     "service": "Расход",
     "cost": "-7000.00",
