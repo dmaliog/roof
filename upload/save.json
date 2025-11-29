@@ -65,7 +65,7 @@
   {
     "name": "Займ",
     "service": "Расход",
-    "cost": "-5000.00",
+    "cost": "-3000.00",
     "workers": [
       "Коля"
     ],
@@ -76,7 +76,13 @@
     "isExpense": true,
     "isPaid": false,
     "issuedMoney": [],
-    "editHistory": []
+    "editHistory": [
+      {
+        "timestamp": "2025-11-29T08:37:50.037Z",
+        "changes": "Выданные деньги: \"\" → \"Нет\", Сумма: -5000.00 → -3000"
+      }
+    ],
+    "editedTimestamp": "2025-11-29T08:37:50.037Z"
   },
   {
     "name": "Бензин",
