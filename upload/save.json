@@ -1,5 +1,39 @@
 [
   {
+    "name": "Цех 2.3",
+    "length": null,
+    "width": null,
+    "area": "553.60 м²",
+    "service": "Монтаж наплавляемой кровли в 1 слой",
+    "cost": "55360.00",
+    "workers": [
+      {
+        "name": "Артём",
+        "ktu": 1,
+        "area": null,
+        "cost": "18453.33"
+      },
+      {
+        "name": "Коля",
+        "ktu": 1,
+        "area": null,
+        "cost": "18453.33"
+      },
+      {
+        "name": "Илья",
+        "ktu": 1,
+        "area": null,
+        "cost": "18453.33"
+      }
+    ],
+    "timestamp": "2025-12-03T07:11:02.184Z",
+    "isExpense": false,
+    "isPaid": false,
+    "useRostikMethod": false,
+    "issuedMoney": [],
+    "editHistory": []
+  },
+  {
     "name": "Двойка",
     "length": null,
     "width": null,
