@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Кровельщик PRO: ручной режим с кнопками</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        /* ... (все предыдущие стили остаются без изменений, кроме добавленных правил для кнопок) ... */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            background: #f5f7fa;
+        }
+        #toolbar {
+            padding: 12px 20px;
+            background: #ffffff;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e0e4e8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        #addressInput {
+            flex: 2;
+            min-width: 280px;
+            padding: 10px 16px;
+            border: 1px solid #d0d7de;
+            border-radius: 30px;
+            font-size: 14px;
+            background: #f8fafc;
+            transition: 0.2s;
+        }
+        #addressInput:focus {
+            outline: none;
+            border-color: #2c3e50;
+            background: #ffffff;
+        }
+        button {
+            padding: 8px 16px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background: #1a252f;
+            transform: scale(1.02);
+        }
+        button.primary {
+            background: #27ae60;
+        }
+        button.primary:hover {
+            background: #219a52;
+        }
+        button.warning {
+            background: #e67e22;
+        }
+        button.warning:hover {
+            background: #d35400;
+        }
+        button.danger {
+            background: #e74c3c;
+        }
+        button.danger:hover {
+            background: #c0392b;
+        }
+        #map {
+            flex: 1;
+            width: 100%;
+            background: #cfd8dc;
+        }
+        #rightPanel {
+            width: 580px;
+            background: #ffffff;
+            border-left: 1px solid #e0e4e8;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.05);
+        }
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e4e8;
+        }
+        .tab-btn {
+            flex: 1;
+            background: #f1f5f9;
+            border: none;
+            padding: 12px 0;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: 0.1s;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .tab-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            border-bottom: 2px solid #2c3e50;
+        }
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .panel-section {
+            display: none;
+        }
+        .panel-section.active {
+            display: block;
+        }
+        .badge {
+            background: #e2e8f0;
+            color: #334155;
+            padding: 4px 8px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .object-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .object-card {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 14px;
+            border-left: 6px solid;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+            transition: 0.15s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .object-card:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .card-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .editable-name {
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed #94a3b8;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            padding: 2px 4px;
+            min-width: 120px;
+        }
+        .editable-name:focus {
+            outline: none;
+            border-bottom: 2px solid #2c3e50;
+        }
+        .color-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        .card-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 4px;
+            border-radius: 6px;
+            transition: 0.1s;
+            line-height: 1;
+        }
+        .icon-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        .card-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #475569;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .edit-section {
+            margin-top: 12px;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 10px;
+        }
+        .worker-list {
+            margin: 8px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .worker-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 6px 8px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            border: 1px solid #e2e8f0;
+        }
+        .worker-item input[type="number"] {
+            width: 70px;
+            padding: 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
+        .worker-item span {
+            font-size: 13px;
+        }
+        .worker-earn {
+            font-weight: 600;
+            color: #059669;
+            min-width: 70px;
+            text-align: right;
+        }
+        .add-worker-row {
+            display: flex;
+            gap: 6px;
+            margin: 10px 0;
+        }
+        .add-worker-row select {
+            flex: 1;
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+        }
+        .money-block {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 12px 0;
+        }
+        .money-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 4px 0;
+            font-size: 13px;
+        }
+        .money-row label {
+            color: #334155;
+        }
+        .money-row input {
+            width: 100px;
+            padding: 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            text-align: right;
+        }
+        .total-earn {
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .material-group {
+            margin: 12px 0 8px;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+        .material-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            padding: 4px 0;
+            border-bottom: 1px dotted #e2e8f0;
+        }
+        .material-name {
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .material-value {
+            font-weight: 600;
+            color: #0f172a;
+            margin-right: 8px;
+        }
+        .material-checkbox {
+            transform: scale(1.2);
+            margin-right: 4px;
+        }
+        .layer-input {
+            width: 50px;
+            padding: 2px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .small-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            background: #e4e7eb;
+            color: #1e293b;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .small-btn:hover {
+            background: #cbd5e1;
+        }
+        .param-toggle-btn {
+            margin: 8px 0;
+            background: #e2e8f0;
+            color: #1e293b;
+            border: none;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .param-toggle-btn:hover {
+            background: #cbd5e1;
+        }
+        .params-panel {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 8px 0;
+            display: none;
+        }
+        .params-panel.visible {
+            display: block;
+        }
+        .param-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+            font-size: 12px;
+        }
+        .param-row label {
+            width: 140px;
+            color: #334155;
+        }
+        .param-row input {
+            width: 80px;
+            padding: 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
+        .manual-input {
+            width: 60px;
+            padding: 2px 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            margin-left: 5px;
+            font-size: 11px;
+        }
+        .footer-note {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            padding: 12px;
+            border-top: 1px solid #edf2f7;
+        }
+        .leaflet-div-icon {
+            background: transparent;
+            border: none;
+        }
+        .vertex-marker {
+            background: #ffffff;
+            border: 3px solid #333;
+            border-radius: 50%;
+            width: 14px !important;
+            height: 14px !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            cursor: move;
+        }
+        .worker-marker {
+            background: #fbbf24;
+            border: 3px solid #b45309;
+            border-radius: 50%;
+            width: 20px !important;
+            height: 20px !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            cursor: move;
+        }
+        #manualStatusBar {
+            background: #f1f5f9;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+        .manual-action-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .manual-action-btn:hover {
+            background: #1a252f;
+        }
+        .manual-action-btn.danger {
+            background: #e74c3c;
+        }
+        .manual-action-btn.danger:hover {
+            background: #c0392b;
+        }
+        .undo-redo-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .undo-redo-btn:hover {
+            background: #1a252f;
+        }
+    </style>
+</head>
+<body>
+    <div style="flex: 1; display: flex; flex-direction: column;">
+        <div id="toolbar">
+            <input type="text" id="addressInput" placeholder="Адрес или координаты (широта,долгота)" value="Москва, Кремль">
+            <button id="searchBtn">🔍 Найти</button>
+            <button id="manualNewBtn" class="warning">✏️ Ручной режим</button>
+            <button id="addWorkerMarkerBtn" class="primary" style="background:#fbbf24; color:#000;">👤 Метка работника</button>
+            <div id="manualStatusBar" style="display: none;">
+                <span id="manualStatusText">Точек: 0</span>
+                <button id="finishManualBtn" class="manual-action-btn" style="background:#27ae60;">✅ Завершить</button>
+                <button id="deleteLastPointBtn" class="manual-action-btn danger">🗑 Удалить последнюю</button>
+                <button id="undoPointBtn" class="undo-redo-btn">↩ Отменить</button>
+                <button id="redoPointBtn" class="undo-redo-btn">↪ Повторить</button>
+            </div>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <div id="rightPanel">
+        <div class="panel-tabs">
+            <button class="tab-btn active" data-tab="contours">📐 Контуры</button>
+            <button class="tab-btn" data-tab="workers">👥 Работники</button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-section active" id="tab-contours">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="badge" id="objectCount">0</span>
+                    <span>всего контуров</span>
+                </div>
+                <div class="object-list" id="objectList"></div>
+            </div>
+            <div class="panel-section" id="tab-workers">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span class="badge" id="workerCount">0</span>
+                    <button id="loadWorkersBtn" class="small-btn">🔄 Загрузить из JSON</button>
+                </div>
+                <div id="workerList" class="object-list"></div>
+                <div style="margin-top: 15px;">
+                    <h4>Метки работников на карте</h4>
+                    <div id="workerMarkersList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Панель добавления метки работника -->
+        <div class="manual-panel" id="workerMarkerPanel" style="display: none;">
+            <div class="manual-title">👤 Добавление метки работника</div>
+            <div id="workerMarkerStatus">Выберите работника и кликните на карту</div>
+            <select id="workerSelect" style="width:100%; padding:8px; margin:10px 0; border-radius:8px;"></select>
+            <div class="button-group">
+                <button id="cancelWorkerMarkerBtn" class="small-btn danger">❌ Отмена</button>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            ⚡ В ручном режиме используйте кнопки для управления точками.
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // ---------- Инициализация карты ----------
+        const map = L.map('map', {
+            maxZoom: 22
+        }).setView([55.751244, 37.618423], 17);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 22,
+            maxNativeZoom: 19
+        }).addTo(map);
+
+        // ---------- Глобальные переменные ----------
+        let buildings = [];
+        let nextId = 1;
+        let manualPoints = [];
+        let manualMarkers = [];
+        let manualLines = [];
+        let manualClosingLine = null;
+        let isManualMode = false;
+        let manualHistory = [];
+        let manualHistoryIndex = -1;
+
+        let isWorkerMarkerMode = false;
+        let workers = [];
+        let workerMarkers = [];
+
+        const DEFAULT_RATE_PER_SQM = 500;
+
+        const DEFAULT_MATERIALS = {
+            roll: { areaPerUnit: 10, name: 'Рулон (10 м²)', group: 'Основные', layerable: true },
+            primer: { perSquareMeter: 0.3, name: 'Праймер (л)', group: 'Основные', layerable: true, packSize: 20 },
+            gasBottle: { perSquareMeter: 1.5, name: 'Пропан (л)', group: 'Основные', layerable: true, bottleVolume: 50 },
+            aerator: { perSquareMeter: 1/80, name: 'Аэратор', group: 'Основные', layerable: false },
+            burner: { perSquareMeter: 1/200, name: 'Горелка', group: 'Рабочие инструменты', layerable: false },
+            roller: { perSquareMeter: 1/100, name: 'Валик', group: 'Рабочие инструменты', layerable: false },
+            stick: { perSquareMeter: 1/200, name: 'Палка для валика', group: 'Рабочие инструменты', layerable: false },
+            gloves: { perSquareMeter: 1/150, name: 'Перчатки (пара)', group: 'Рабочие инструменты', layerable: false },
+            knife: { perSquareMeter: 1/300, name: 'Нож', group: 'Рабочие инструменты', layerable: false },
+            fireExtinguisher: { perSquareMeter: 1/200, name: 'Огнетушитель', group: 'Пожарная безопасность', layerable: false },
+            strip: { perMeter: 0.5, name: 'Прижимная планка (2 м)', group: 'Примыкания', layerable: false },
+            stripFastener: { perMeter: 5, name: 'Крепление для планки', group: 'Примыкания', layerable: false },
+            acl: { areaPerUnit: 4.5, name: 'АЦЛ (3x1.5 м)', group: 'Пирог', layerable: true },
+            aclFastener: { perSheet: 6, name: 'Саморезы для АЦЛ', group: 'Пирог', layerable: false },
+            minWool: { areaPerUnit: 0.72, name: 'Минвата (1.2x0.6 м)', group: 'Пирог', layerable: true },
+            vaporBarrier: { areaPerUnit: 70.4, name: 'Паробарьер (1.6x44 м)', group: 'Пирог', layerable: true }
+        };
+
+        const colorPalette = [
+            '#E76F51', '#F4A261', '#E9C46A', '#2A9D8F', '#287271',
+            '#8ECAE6', '#219EBC', '#126782', '#FFB703', '#FB8500',
+            '#9C89B8', '#B8F2E6', '#AE759F', '#F7B2B2', '#6D6875'
+        ];
+
+        // ---------- Вспомогательные функции ----------
+        function distance(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2 - lat1) * Math.PI/180;
+            const Δλ = (lon2 - lon1) * Math.PI/180;
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function polygonArea(points) {
+            if (points.length < 3) return 0;
+            const n = points.length;
+            const avgLat = points.reduce((s, p) => s + p.lat, 0) / n;
+            const latScale = 111319.9;
+            const lonScale = 111319.9 * Math.cos(avgLat * Math.PI/180);
+
+            let sum = 0;
+            for (let i = 0; i < n; i++) {
+                const p1 = points[i];
+                const p2 = points[(i + 1) % n];
+                const x1 = p1.lng * lonScale;
+                const y1 = p1.lat * latScale;
+                const x2 = p2.lng * lonScale;
+                const y2 = p2.lat * latScale;
+                sum += (x1 * y2 - x2 * y1);
+            }
+            return Math.abs(sum) / 2;
+        }
+
+        function getOffsetPoint(p1, p2, center, offsetMeters = 10) {
+            const midLat = (p1.lat + p2.lat) / 2;
+            const midLng = (p1.lng + p2.lng) / 2;
+            const latScale = 111319.9;
+            const lonScale = 111319.9 * Math.cos(midLat * Math.PI/180);
+
+            const dx = (p2.lng - p1.lng) * lonScale;
+            const dy = (p2.lat - p1.lat) * latScale;
+
+            let nx = dy;
+            let ny = -dx;
+            const len = Math.hypot(nx, ny);
+            if (len < 1e-6) return { lat: midLat, lng: midLng };
+            nx /= len;
+            ny /= len;
+
+            const candidateLat = midLat + (ny * offsetMeters / latScale);
+            const candidateLng = midLng + (nx * offsetMeters / lonScale);
+
+            const toMidX = (midLng - center.lng) * lonScale;
+            const toMidY = (midLat - center.lat) * latScale;
+            const toCandX = (candidateLng - center.lng) * lonScale;
+            const toCandY = (candidateLat - center.lat) * latScale;
+
+            const distMid = Math.hypot(toMidX, toMidY);
+            const distCand = Math.hypot(toCandX, toCandY);
+
+            if (distCand > distMid) {
+                return { lat: candidateLat, lng: candidateLng };
+            } else {
+                return {
+                    lat: midLat - (ny * offsetMeters / latScale),
+                    lng: midLng - (nx * offsetMeters / lonScale)
+                };
+            }
+        }
+
+        function calculateMaterials(area, perimeter, matParams, layers, manualMaterials = {}) {
+            const m = { ...DEFAULT_MATERIALS, ...matParams };
+            const areaWithReserve = area * 1.15;
+
+            const getValue = (key, calc) => (manualMaterials[key] !== undefined && manualMaterials[key] !== '') ? manualMaterials[key] : calc;
+
+            const rollsPerLayer = Math.ceil(areaWithReserve / m.roll.areaPerUnit);
+            const calcRolls = rollsPerLayer * (layers.roll || 3);
+
+            const calcPrimerLiters = Math.ceil(area * m.primer.perSquareMeter * 10) / 10;
+            const calcPrimerPacks = Math.ceil(calcPrimerLiters / m.primer.packSize);
+
+            const calcGasLiters = Math.ceil(area * m.gasBottle.perSquareMeter);
+            const calcGasBottles = Math.ceil(calcGasLiters / m.gasBottle.bottleVolume);
+
+            const calcAclSheets = Math.ceil(area * (layers.acl || 1) / m.acl.areaPerUnit);
+            const calcAclFastener = calcAclSheets * m.aclFastener.perSheet;
+
+            const calcMinWoolSheets = Math.ceil(area * (layers.minWool || 1) / m.minWool.areaPerUnit);
+            const calcVaporBarrierRolls = Math.ceil(area * (layers.vaporBarrier || 1) / m.vaporBarrier.areaPerUnit);
+
+            const calcAerator = Math.ceil(area * m.aerator.perSquareMeter);
+            const calcBurner = Math.ceil(area * m.burner.perSquareMeter);
+            const calcRoller = Math.ceil(area * m.roller.perSquareMeter);
+            const calcStick = Math.ceil(area * m.stick.perSquareMeter);
+            const calcGloves = Math.ceil(area * m.gloves.perSquareMeter);
+            const calcKnife = Math.ceil(area * m.knife.perSquareMeter);
+            const calcFireExtinguisher = Math.ceil(area * m.fireExtinguisher.perSquareMeter);
+            const calcStrip = Math.ceil(perimeter * m.strip.perMeter);
+            const calcStripFastener = Math.ceil(perimeter * m.stripFastener.perMeter);
+
+            return {
+                rolls: getValue('roll', calcRolls),
+                primerLiters: getValue('primerLiters', calcPrimerLiters),
+                primerPacks: getValue('primerPacks', calcPrimerPacks),
+                gasLiters: getValue('gasLiters', calcGasLiters),
+                gasBottles: getValue('gasBottles', calcGasBottles),
+                aerator: getValue('aerator', calcAerator),
+                burner: getValue('burner', calcBurner),
+                roller: getValue('roller', calcRoller),
+                stick: getValue('stick', calcStick),
+                gloves: getValue('gloves', calcGloves),
+                knife: getValue('knife', calcKnife),
+                fireExtinguisher: getValue('fireExtinguisher', calcFireExtinguisher),
+                strip: getValue('strip', calcStrip),
+                stripFastener: getValue('stripFastener', calcStripFastener),
+                aclSheets: getValue('aclSheets', calcAclSheets),
+                aclFastener: getValue('aclFastener', calcAclFastener),
+                minWoolSheets: getValue('minWoolSheets', calcMinWoolSheets),
+                vaporBarrierRolls: getValue('vaporBarrierRolls', calcVaporBarrierRolls),
+                purchased: {}
+            };
+        }
+
+        // ---------- Класс Building ----------
+        class Building {
+            constructor(points, color, osmId = null) {
+                this.id = nextId++;
+                this.osmId = osmId;
+                this.color = color;
+                this.name = `Контур #${this.id}`;
+                this.points = points.map(p => ({ lat: p.lat, lng: p.lng }));
+                this.workers = [];
+                this.ratePerSqm = DEFAULT_RATE_PER_SQM;
+                this.markers = [];
+                this.lines = [];
+                this.sideLabels = [];
+                this.areaLabel = null;
+                this.editMode = false;
+                this.showParams = false;
+                this.matParams = {
+                    roll: { areaPerUnit: 10 },
+                    primer: { perSquareMeter: 0.3, packSize: 20 },
+                    gasBottle: { perSquareMeter: 1.5, bottleVolume: 50 },
+                    acl: { areaPerUnit: 4.5 },
+                    aclFastener: { perSheet: 6 },
+                    minWool: { areaPerUnit: 0.72 },
+                    vaporBarrier: { areaPerUnit: 70.4 },
+                    stripFastener: { perMeter: 5 }
+                };
+                this.layers = {
+                    acl: 1,
+                    minWool: 1,
+                    vaporBarrier: 1,
+                    roll: 3
+                };
+                this.purchased = {};
+                this.manualMaterials = {};
+
+                this.createLayers();
+                this.area = polygonArea(this.points);
+                this.perimeter = this.calculatePerimeter();
+                this.materials = calculateMaterials(this.area, this.perimeter, this.matParams, this.layers, this.manualMaterials);
+            }
+
+            calculatePerimeter() {
+                let perim = 0;
+                for (let i = 0; i < this.points.length; i++) {
+                    const from = this.points[i];
+                    const to = this.points[(i + 1) % this.points.length];
+                    perim += distance(from.lat, from.lng, to.lat, to.lng);
+                }
+                return perim;
+            }
+
+            createLayers() {
+                this.removeLayers();
+
+                this.points.forEach((pt, idx) => {
+                    const marker = L.marker([pt.lat, pt.lng], {
+                        draggable: true,
+                        icon: L.divIcon({
+                            className: 'vertex-marker',
+                            iconSize: [14, 14],
+                            iconAnchor: [7, 7]
+                        })
+                    }).addTo(map);
+
+                    marker.on('drag', (e) => {
+                        const newPos = e.target.getLatLng();
+                        this.points[idx] = { lat: newPos.lat, lng: newPos.lng };
+                        this.updateLinesAndLabels();
+                        this.area = polygonArea(this.points);
+                        this.perimeter = this.calculatePerimeter();
+                        this.materials = calculateMaterials(this.area, this.perimeter, this.matParams, this.layers, this.manualMaterials);
+                        updateObjectsPanel();
+                    });
+
+                    this.markers.push(marker);
+                });
+
+                for (let i = 0; i < this.points.length; i++) {
+                    const from = this.points[i];
+                    const to = this.points[(i + 1) % this.points.length];
+                    const line = L.polyline([[from.lat, from.lng], [to.lat, to.lng]], {
+                        color: this.color,
+                        weight: 3
+                    }).addTo(map);
+                    this.lines.push(line);
+                }
+
+                this.updateLabels();
+            }
+
+            updateLinesAndLabels() {
+                for (let i = 0; i < this.points.length; i++) {
+                    const from = this.points[i];
+                    const to = this.points[(i + 1) % this.points.length];
+                    this.lines[i].setLatLngs([[from.lat, from.lng], [to.lat, to.lng]]);
+                }
+                this.updateLabels();
+            }
+
+            updateLabels() {
+                this.sideLabels.forEach(l => map.removeLayer(l));
+                if (this.areaLabel) map.removeLayer(this.areaLabel);
+                this.sideLabels = [];
+
+                if (this.points.length < 3) return;
+
+                const sides = [];
+                for (let i = 0; i < this.points.length; i++) {
+                    const from = this.points[i];
+                    const to = this.points[(i + 1) % this.points.length];
+                    sides.push(distance(from.lat, from.lng, to.lat, to.lng));
+                }
+
+                const center = this.points.reduce((acc, p) => ({ lat: acc.lat + p.lat, lng: acc.lng + p.lng }), { lat: 0, lng: 0 });
+                center.lat /= this.points.length;
+                center.lng /= this.points.length;
+
+                for (let i = 0; i < this.points.length; i++) {
+                    const from = this.points[i];
+                    const to = this.points[(i + 1) % this.points.length];
+                    const sideLength = sides[i];
+                    const pos = getOffsetPoint(from, to, center, 12);
+
+                    const label = L.marker([pos.lat, pos.lng], {
+                        icon: L.divIcon({
+                            html: `<div style="background: white; color: ${this.color}; font-weight: bold; font-size: 10px; padding: 2px 4px; border-radius: 8px; border: 1px solid ${this.color}; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1;">${sideLength.toFixed(1)} м</div>`,
+                            className: '',
+                            iconSize: [50, 18],
+                            iconAnchor: [25, 9]
+                        }),
+                        interactive: false
+                    }).addTo(map);
+                    this.sideLabels.push(label);
+                }
+
+                const area = polygonArea(this.points);
+                const areaPos = {
+                    lat: center.lat + 20 / 111319.9,
+                    lng: center.lng
+                };
+                this.areaLabel = L.marker([areaPos.lat, areaPos.lng], {
+                    icon: L.divIcon({
+                        html: `<div style="background: ${this.color}; color: white; font-weight: bold; font-size: 11px; padding: 4px 8px; border-radius: 20px; border: 1px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">${area.toFixed(0)} м²</div>`,
+                        className: '',
+                        iconSize: [60, 24],
+                        iconAnchor: [30, 12]
+                    }),
+                    interactive: false
+                }).addTo(map);
+
+                this.area = area;
+                this.sides = sides;
+            }
+
+            removeLayers() {
+                this.markers.forEach(m => map.removeLayer(m));
+                this.lines.forEach(l => map.removeLayer(l));
+                this.sideLabels.forEach(l => map.removeLayer(l));
+                if (this.areaLabel) map.removeLayer(this.areaLabel);
+            }
+
+            centerView() {
+                if (this.points.length === 0) return;
+                const center = this.points.reduce((acc, p) => ({ lat: acc.lat + p.lat, lng: acc.lng + p.lng }), { lat: 0, lng: 0 });
+                center.lat /= this.points.length;
+                center.lng /= this.points.length;
+                map.setView([center.lat, center.lng], 18);
+            }
+
+            getStats() {
+                return {
+                    sidesCount: this.points.length,
+                    area: this.area ? this.area.toFixed(1) : '0',
+                    perimeter: this.perimeter ? this.perimeter.toFixed(1) : '0'
+                };
+            }
+
+            addWorker(workerName) {
+                if (!this.workers.find(w => w.name === workerName)) {
+                    this.workers.push({ name: workerName, areaShare: 0 });
+                }
+            }
+
+            removeWorker(index) {
+                this.workers.splice(index, 1);
+            }
+
+            updateWorkerArea(index, newArea) {
+                if (index >= 0 && index < this.workers.length) {
+                    this.workers[index].areaShare = parseFloat(newArea) || 0;
+                }
+            }
+
+            workerEarning(workerName) {
+                const w = this.workers.find(w => w.name === workerName);
+                return w ? (w.areaShare || 0) * this.ratePerSqm : 0;
+            }
+
+            totalEarning() {
+                return this.workers.reduce((sum, w) => sum + (w.areaShare || 0) * this.ratePerSqm, 0);
+            }
+
+            updateMaterialParam(materialKey, param, value) {
+                if (!this.matParams[materialKey]) this.matParams[materialKey] = {};
+                this.matParams[materialKey][param] = parseFloat(value) || 0;
+                this.materials = calculateMaterials(this.area, this.perimeter, this.matParams, this.layers, this.manualMaterials);
+            }
+
+            setManualMaterial(key, value) {
+                if (value === '') delete this.manualMaterials[key];
+                else this.manualMaterials[key] = parseFloat(value) || 0;
+                this.materials = calculateMaterials(this.area, this.perimeter, this.matParams, this.layers, this.manualMaterials);
+            }
+
+            togglePurchased(materialKey) {
+                this.purchased[materialKey] = !this.purchased[materialKey];
+            }
+
+            toggleParams() {
+                this.showParams = !this.showParams;
+            }
+        }
+
+        // ---------- Управление контурами ----------
+        function addBuilding(points, mode = 'auto', osmId = null) {
+            if (points.length < 3) return null;
+            if (mode === 'auto' && osmId !== null) {
+                const existing = buildings.find(b => b.osmId === osmId);
+                if (existing) { existing.centerView(); return existing; }
+            }
+            const color = colorPalette[buildings.length % colorPalette.length];
+            const building = new Building(points, color, osmId);
+            buildings.push(building);
+            updateObjectsPanel();
+            return building;
+        }
+
+        function deleteBuilding(id) {
+            const idx = buildings.findIndex(b => b.id === id);
+            if (idx !== -1) {
+                buildings[idx].removeLayers();
+                buildings.splice(idx, 1);
+                updateObjectsPanel();
+            }
+        }
+
+        function centerOnBuilding(id) {
+            const building = buildings.find(b => b.id === id);
+            if (building) building.centerView();
+        }
+
+        function updateObjectsPanel() {
+            const container = document.getElementById('objectList');
+            const countSpan = document.getElementById('objectCount');
+            countSpan.innerText = buildings.length;
+
+            if (buildings.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:20px;">Нет контуров.<br>Кликните по зданию или создайте ручной.</div>';
+                return;
+            }
+
+            let html = '';
+            buildings.forEach(b => {
+                const stats = b.getStats();
+                const m = b.materials;
+                const workerCount = b.workers.length;
+
+                html += `
+                    <div class="object-card" style="border-left-color: ${b.color};" data-id="${b.id}">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="color-dot" style="background: ${b.color};"></span>
+                                <input type="text" class="editable-name" data-id="${b.id}" value="${b.name}">
+                            </div>
+                            <div class="card-actions">
+                                <button class="icon-btn edit-toggle-btn" title="Редактировать" data-id="${b.id}">✏️</button>
+                                <button class="icon-btn center-btn" title="Центрировать" data-id="${b.id}">📍</button>
+                                <button class="icon-btn delete-btn" title="Удалить" data-id="${b.id}">🗑</button>
+                            </div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stat-item">📏 ${stats.sidesCount} сторон</span>
+                            <span class="stat-item">📐 ${stats.area} м²</span>
+                            <span class="stat-item">🔄 ${stats.perimeter} м</span>
+                            <span class="stat-item">👥 ${workerCount}</span>
+                        </div>
+                        ${b.editMode ? renderEditForm(b) : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            document.querySelectorAll('.center-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    centerOnBuilding(id);
+                });
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    deleteBuilding(id);
+                });
+            });
+            document.querySelectorAll('.edit-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.editMode = !building.editMode;
+                        updateObjectsPanel();
+                    }
+                });
+            });
+            document.querySelectorAll('.editable-name').forEach(inp => {
+                inp.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(inp.dataset.id);
+                    const building = buildings.find(b => b.id === id);
+                    if (building) building.name = inp.value;
+                });
+            });
+            attachFormHandlers();
+        }
+
+        function renderEditForm(building) {
+            const m = building.materials;
+            const matParams = building.matParams;
+            const layers = building.layers;
+            const purchased = building.purchased;
+            const showParams = building.showParams;
+            const manual = building.manualMaterials;
+
+            const groups = [
+                { name: '📦 Основные', items: [
+                    { key: 'roll', name: 'Рулоны', display: `${m.rolls} шт (${layers.roll} сл.)`, layerable: true, layerCount: layers.roll },
+                    { key: 'primer', name: 'Праймер', display: `${m.primerLiters} л / ${m.primerPacks} уп (20л)` },
+                    { key: 'gasBottle', name: 'Пропан', display: `${m.gasLiters} л / ${m.gasBottles} балл (50л)` },
+                    { key: 'aerator', name: 'Аэраторы', display: `${m.aerator} шт` }
+                ]},
+                { name: '🔧 Рабочие инструменты', items: [
+                    { key: 'roller', name: 'Валики', display: `${m.roller} шт` },
+                    { key: 'stick', name: 'Палки для валиков', display: `${m.stick} шт` },
+                    { key: 'gloves', name: 'Перчатки (пары)', display: `${m.gloves} пар` },
+                    { key: 'knife', name: 'Ножи', display: `${m.knife} шт` },
+                    { key: 'burner', name: 'Горелки', display: `${m.burner} шт` }
+                ]},
+                { name: '🧱 Пирог', items: [
+                    { key: 'acl', name: 'АЦЛ', display: `${m.aclSheets} лист (${layers.acl} сл.)`, layerable: true, layerCount: layers.acl },
+                    { key: 'aclFastener', name: 'Саморезы для АЦЛ', display: `${m.aclFastener} шт` },
+                    { key: 'minWool', name: 'Минвата', display: `${m.minWoolSheets} плит (${layers.minWool} сл.)`, layerable: true, layerCount: layers.minWool },
+                    { key: 'vaporBarrier', name: 'Паробарьер', display: `${m.vaporBarrierRolls} рул (${layers.vaporBarrier} сл.)`, layerable: true, layerCount: layers.vaporBarrier }
+                ]},
+                { name: '🔥 Пожарная безопасность', items: [
+                    { key: 'fireExtinguisher', name: 'Огнетушители', display: `${m.fireExtinguisher} шт` }
+                ]},
+                { name: '📏 Примыкания', items: [
+                    { key: 'strip', name: 'Прижимная планка', display: `${m.strip} шт (2 м)` },
+                    { key: 'stripFastener', name: 'Крепление для планки', display: `${m.stripFastener} шт` }
+                ]}
+            ];
+
+            let formHtml = '<div class="edit-section">';
+
+            formHtml += '<div style="font-weight:600; margin-bottom:6px;">👷 Работники на контуре</div>';
+            formHtml += '<div class="worker-list">';
+            building.workers.forEach((w, idx) => {
+                const earn = (w.areaShare * building.ratePerSqm).toFixed(0);
+                formHtml += `
+                    <div class="worker-item">
+                        <span>${w.name}</span>
+                        <input type="number" class="worker-area-input" data-id="${building.id}" data-index="${idx}" value="${w.areaShare}" step="0.1" min="0" style="width:70px;"> м²
+                        <span class="worker-earn">${earn} ₽</span>
+                        <button class="icon-btn remove-worker-btn" data-id="${building.id}" data-index="${idx}" style="font-size:14px;">❌</button>
+                    </div>
+                `;
+            });
+            formHtml += '</div>';
+
+            formHtml += `
+                <div class="add-worker-row">
+                    <select id="worker-select-${building.id}" class="worker-select">
+                        ${workers.map(w => `<option value="${w.name}">${w.name}</option>`).join('')}
+                    </select>
+                    <button class="small-btn add-worker-btn" data-id="${building.id}">➕ Добавить</button>
+                </div>
+            `;
+
+            formHtml += `
+                <div class="money-block">
+                    <div class="money-row">
+                        <label>Ставка за м² (₽)</label>
+                        <input type="number" class="rate-input" data-id="${building.id}" value="${building.ratePerSqm}" step="10" min="0">
+                    </div>
+                    <div class="money-row total-earn">
+                        <span>Общий заработок:</span>
+                        <span id="total-earn-${building.id}">${building.totalEarning().toFixed(0)} ₽</span>
+                    </div>
+                </div>
+            `;
+
+            formHtml += `<button class="param-toggle-btn" data-id="${building.id}">⚙️ Параметры материалов</button>`;
+
+            formHtml += `<div class="params-panel ${showParams ? 'visible' : ''}" id="params-${building.id}">`;
+            formHtml += '<div style="font-weight:600; margin-bottom:6px;">Настройки размеров и расхода</div>';
+            const paramItems = [
+                { label: 'Площадь рулона (м²)', material: 'roll', param: 'areaPerUnit', value: matParams.roll?.areaPerUnit || 10 },
+                { label: 'Расход праймера (л/м²)', material: 'primer', param: 'perSquareMeter', value: matParams.primer?.perSquareMeter || 0.3 },
+                { label: 'Упаковка праймера (л)', material: 'primer', param: 'packSize', value: matParams.primer?.packSize || 20 },
+                { label: 'Расход пропана (л/м²)', material: 'gasBottle', param: 'perSquareMeter', value: matParams.gasBottle?.perSquareMeter || 1.5 },
+                { label: 'Объём баллона (л)', material: 'gasBottle', param: 'bottleVolume', value: matParams.gasBottle?.bottleVolume || 50 },
+                { label: 'Площадь листа АЦЛ (м²)', material: 'acl', param: 'areaPerUnit', value: matParams.acl?.areaPerUnit || 4.5 },
+                { label: 'Саморезов на лист АЦЛ', material: 'aclFastener', param: 'perSheet', value: matParams.aclFastener?.perSheet || 6 },
+                { label: 'Площадь минваты (м²)', material: 'minWool', param: 'areaPerUnit', value: matParams.minWool?.areaPerUnit || 0.72 },
+                { label: 'Площадь паробарьера (м²)', material: 'vaporBarrier', param: 'areaPerUnit', value: matParams.vaporBarrier?.areaPerUnit || 70.4 },
+                { label: 'Крепежа на метр планки', material: 'stripFastener', param: 'perMeter', value: matParams.stripFastener?.perMeter || 5 }
+            ];
+            paramItems.forEach(p => {
+                formHtml += `
+                    <div class="param-row">
+                        <label>${p.label}</label>
+                        <input type="number" class="param-input" data-id="${building.id}" data-material="${p.material}" data-param="${p.param}" value="${p.value}" step="0.1" min="0">
+                    </div>
+                `;
+            });
+
+            formHtml += '<div style="font-weight:600; margin:12px 0 6px;">✏️ Ручной ввод количества</div>';
+            const manualKeys = [
+                { key: 'roll', name: 'Рулоны (шт)' },
+                { key: 'primerLiters', name: 'Праймер (л)' },
+                { key: 'primerPacks', name: 'Упаковки праймера' },
+                { key: 'gasLiters', name: 'Пропан (л)' },
+                { key: 'gasBottles', name: 'Баллоны пропана' },
+                { key: 'aerator', name: 'Аэраторы' },
+                { key: 'burner', name: 'Горелки' },
+                { key: 'roller', name: 'Валики' },
+                { key: 'stick', name: 'Палки' },
+                { key: 'gloves', name: 'Перчатки (пары)' },
+                { key: 'knife', name: 'Ножи' },
+                { key: 'fireExtinguisher', name: 'Огнетушители' },
+                { key: 'strip', name: 'Прижимная планка' },
+                { key: 'stripFastener', name: 'Крепление для планки' },
+                { key: 'aclSheets', name: 'АЦЛ (листы)' },
+                { key: 'aclFastener', name: 'Саморезы для АЦЛ' },
+                { key: 'minWoolSheets', name: 'Минвата (плиты)' },
+                { key: 'vaporBarrierRolls', name: 'Паробарьер (рулоны)' }
+            ];
+            manualKeys.forEach(item => {
+                const val = manual[item.key] !== undefined ? manual[item.key] : '';
+                formHtml += `
+                    <div class="param-row">
+                        <label>${item.name}</label>
+                        <input type="number" class="manual-input" data-id="${building.id}" data-material="${item.key}" value="${val}" step="0.1" min="0" placeholder="авто">
+                    </div>
+                `;
+            });
+
+            formHtml += '</div>';
+
+            groups.forEach(group => {
+                formHtml += `<div class="material-group">${group.name}</div>`;
+                group.items.forEach(item => {
+                    const checked = purchased[item.key] ? 'checked' : '';
+                    let extraHtml = '';
+                    if (item.layerable) {
+                        extraHtml = `<input type="number" class="layer-input" data-id="${building.id}" data-material="${item.key}" value="${item.layerCount}" min="1" step="1" style="width:50px; margin-left:8px;"> сл.`;
+                    }
+                    formHtml += `
+                        <div class="material-row">
+                            <span class="material-name">
+                                <input type="checkbox" class="material-checkbox" data-id="${building.id}" data-material="${item.key}" ${checked}>
+                                ${item.name}
+                            </span>
+                            <span>
+                                <span class="material-value">${item.display}</span>
+                                ${extraHtml}
+                            </span>
+                        </div>
+                    `;
+                });
+            });
+
+            formHtml += '</div>';
+            return formHtml;
+        }
+
+        function attachFormHandlers() {
+            document.querySelectorAll('.add-worker-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        const select = document.getElementById(`worker-select-${id}`);
+                        const workerName = select.value;
+                        building.addWorker(workerName);
+                        updateObjectsPanel();
+                        updateWorkersPanel();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.remove-worker-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    const index = parseInt(btn.dataset.index);
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.removeWorker(index);
+                        updateObjectsPanel();
+                        updateWorkersPanel();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.worker-area-input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const id = parseInt(input.dataset.id);
+                    const index = parseInt(input.dataset.index);
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.updateWorkerArea(index, input.value);
+                        updateObjectsPanel();
+                        updateWorkersPanel();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.rate-input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const id = parseInt(input.dataset.id);
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.ratePerSqm = parseFloat(input.value) || 0;
+                        updateObjectsPanel();
+                        updateWorkersPanel();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.material-checkbox').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    const id = parseInt(cb.dataset.id);
+                    const material = cb.dataset.material;
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.togglePurchased(material);
+                        updateObjectsPanel();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.layer-input').forEach(inp => {
+                inp.addEventListener('change', (e) => {
+                    const id = parseInt(inp.dataset.id);
+                    const material = inp.dataset.material;
+                    const val = parseInt(inp.value) || 1;
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.layers[material] = val;
+                        building.materials = calculateMaterials(building.area, building.perimeter, building.matParams, building.layers, building.manualMaterials);
+                        updateObjectsPanel();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.param-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.toggleParams();
+                        updateObjectsPanel();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.param-input').forEach(inp => {
+                inp.addEventListener('change', (e) => {
+                    const id = parseInt(inp.dataset.id);
+                    const material = inp.dataset.material;
+                    const param = inp.dataset.param;
+                    const val = parseFloat(inp.value) || 0;
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.updateMaterialParam(material, param, val);
+                        updateObjectsPanel();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.manual-input').forEach(inp => {
+                inp.addEventListener('change', (e) => {
+                    const id = parseInt(inp.dataset.id);
+                    const material = inp.dataset.material;
+                    const val = inp.value;
+                    const building = buildings.find(b => b.id === id);
+                    if (building) {
+                        building.setManualMaterial(material, val);
+                        updateObjectsPanel();
+                    }
+                });
+            });
+        }
+
+        // ---------- Работники и метки ----------
+        async function loadWorkersFromJson() {
+            try {
+                const response = await fetch('https://ekbroof.ru/workers.json');
+                const data = await response.json();
+                workers = data.map(w => ({ ...w, assignedAreas: [] }));
+                updateWorkersPanel();
+                updateWorkerSelect();
+                document.getElementById('workerCount').innerText = workers.length;
+            } catch (e) {
+                alert('Ошибка загрузки списка работников');
+            }
+        }
+
+        function updateWorkerSelect() {
+            const select = document.getElementById('workerSelect');
+            select.innerHTML = '';
+            workers.forEach(w => {
+                const option = document.createElement('option');
+                option.value = w.name;
+                option.textContent = `${w.name} (${w.role})`;
+                select.appendChild(option);
+            });
+        }
+
+        function startAddWorkerMarker() {
+            if (workers.length === 0) {
+                alert('Сначала загрузите работников');
+                return;
+            }
+            isWorkerMarkerMode = true;
+            document.getElementById('workerMarkerPanel').style.display = 'block';
+            document.getElementById('workerMarkerStatus').innerText = 'Кликните на карту, чтобы поставить метку';
+        }
+
+        function cancelWorkerMarkerMode() {
+            isWorkerMarkerMode = false;
+            document.getElementById('workerMarkerPanel').style.display = 'none';
+        }
+
+        function addWorkerMarker(lat, lng, workerName) {
+            const worker = workers.find(w => w.name === workerName);
+            if (!worker) return;
+
+            const marker = L.marker([lat, lng], {
+                draggable: true,
+                icon: L.divIcon({
+                    className: 'worker-marker',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            }).addTo(map);
+
+            const markerId = Date.now() + Math.random();
+            const markerObj = {
+                id: markerId,
+                workerName: workerName,
+                lat: lat,
+                lng: lng,
+                marker: marker,
+                area: 0
+            };
+
+            marker.on('drag', (e) => {
+                const newPos = e.target.getLatLng();
+                markerObj.lat = newPos.lat;
+                markerObj.lng = newPos.lng;
+            });
+
+            marker.bindPopup(`<b>${workerName}</b><br>Площадь: ${markerObj.area} м²`);
+
+            workerMarkers.push(markerObj);
+            updateWorkersPanel();
+        }
+
+        function centerOnWorkerMarker(markerId) {
+            const markerObj = workerMarkers.find(m => m.id === markerId);
+            if (markerObj) {
+                map.setView([markerObj.lat, markerObj.lng], 18);
+            }
+        }
+
+        function deleteWorkerMarker(markerId) {
+            const idx = workerMarkers.findIndex(m => m.id === markerId);
+            if (idx !== -1) {
+                map.removeLayer(workerMarkers[idx].marker);
+                workerMarkers.splice(idx, 1);
+                updateWorkersPanel();
+            }
+        }
+
+        function updateWorkersPanel() {
+            const workerList = document.getElementById('workerList');
+            const markersList = document.getElementById('workerMarkersList');
+
+            let workerSummary = '';
+            workers.forEach(w => {
+                let totalArea = 0;
+                let totalEarn = 0;
+                buildings.forEach(b => {
+                    const wb = b.workers.find(wb => wb.name === w.name);
+                    if (wb) {
+                        totalArea += wb.areaShare;
+                        totalEarn += wb.areaShare * b.ratePerSqm;
+                    }
+                });
+                workerSummary += `
+                    <div class="worker-marker-item" style="border-left-color: #2c3e50;">
+                        <div class="worker-marker-info">
+                            <span class="worker-name">${w.name} (${w.role})</span>
+                            <span class="worker-area">Площадь: ${totalArea.toFixed(1)} м²</span>
+                            <span class="worker-earn">Заработок: ${totalEarn.toFixed(0)} ₽</span>
+                        </div>
+                    </div>
+                `;
+            });
+            workerList.innerHTML = workerSummary || '<p>Нет данных</p>';
+
+            if (workerMarkers.length === 0) {
+                markersList.innerHTML = '<p style="color:#94a3b8;">Метки не добавлены</p>';
+                return;
+            }
+
+            let markersHtml = '';
+            workerMarkers.forEach(m => {
+                markersHtml += `
+                    <div class="worker-marker-item" data-id="${m.id}">
+                        <div class="worker-marker-info">
+                            <span class="worker-name">${m.workerName}</span>
+                            <span class="worker-area">${m.area.toFixed(1)} м²</span>
+                        </div>
+                        <div>
+                            <button class="goto-btn" data-id="${m.id}">📍</button>
+                            <button class="icon-btn delete-worker-marker" data-id="${m.id}" style="font-size:16px;">🗑</button>
+                        </div>
+                    </div>
+                `;
+            });
+            markersList.innerHTML = markersHtml;
+
+            markersList.querySelectorAll('.goto-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseFloat(btn.dataset.id);
+                    centerOnWorkerMarker(id);
+                });
+            });
+            markersList.querySelectorAll('.delete-worker-marker').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseFloat(btn.dataset.id);
+                    deleteWorkerMarker(id);
+                });
+            });
+        }
+
+        // ---------- Ручной режим с undo/redo и кнопками ----------
+        function startManualMode() {
+            if (isManualMode) {
+                cancelManualMode();
+            } else {
+                isManualMode = true;
+                document.getElementById('manualStatusBar').style.display = 'flex';
+                manualPoints = [];
+                manualMarkers = [];
+                manualLines = [];
+                manualClosingLine = null;
+                manualHistory = [];
+                manualHistoryIndex = -1;
+                updateManualStatus();
+            }
+        }
+
+        function cancelManualMode() {
+            isManualMode = false;
+            document.getElementById('manualStatusBar').style.display = 'none';
+            manualMarkers.forEach(m => map.removeLayer(m));
+            manualLines.forEach(l => map.removeLayer(l));
+            if (manualClosingLine) map.removeLayer(manualClosingLine);
+            manualMarkers = [];
+            manualLines = [];
+            manualClosingLine = null;
+            manualPoints = [];
+        }
+
+        function finishManualMode() {
+            if (manualPoints.length < 3) {
+                alert('Нужно минимум 3 точки');
+                return;
+            }
+            const first = manualPoints[0];
+            const last = manualPoints[manualPoints.length-1];
+            if (first.lat !== last.lat || first.lng !== last.lng) {
+                manualPoints.push({ lat: first.lat, lng: first.lng });
+            }
+            addBuilding(manualPoints, 'manual', null);
+            cancelManualMode();
+        }
+
+        function deleteLastPoint() {
+            if (manualPoints.length > 0) {
+                undoManual(); // используем существующий механизм undo
+            }
+        }
+
+        function handleManualClick(lat, lng) {
+            if (!isManualMode) return;
+
+            const snapshot = {
+                points: manualPoints.map(p => ({ lat: p.lat, lng: p.lng }))
+            };
+            manualHistory = manualHistory.slice(0, manualHistoryIndex + 1);
+            manualHistory.push(snapshot);
+            manualHistoryIndex++;
+
+            manualPoints.push({ lat, lng });
+            const marker = L.marker([lat, lng], {
+                icon: L.divIcon({
+                    className: 'vertex-marker',
+                    iconSize: [14, 14],
+                    iconAnchor: [7, 7]
+                })
+            }).addTo(map);
+            manualMarkers.push(marker);
+
+            if (manualPoints.length > 1) {
+                const prev = manualPoints[manualPoints.length-2];
+                const line = L.polyline([[prev.lat, prev.lng], [lat, lng]], { color: '#C0B4A7', weight: 2 }).addTo(map);
+                manualLines.push(line);
+            }
+
+            if (manualPoints.length >= 3) {
+                if (manualClosingLine) map.removeLayer(manualClosingLine);
+                const first = manualPoints[0];
+                const last = manualPoints[manualPoints.length-1];
+                manualClosingLine = L.polyline([[last.lat, last.lng], [first.lat, first.lng]], { color: '#C0B4A7', weight: 2, dashArray: '5,5' }).addTo(map);
+            }
+            updateManualStatus();
+        }
+
+        function undoManual() {
+            if (manualHistoryIndex < 0) return;
+            manualHistoryIndex--;
+            restoreFromHistory();
+        }
+
+        function redoManual() {
+            if (manualHistoryIndex >= manualHistory.length - 1) return;
+            manualHistoryIndex++;
+            restoreFromHistory();
+        }
+
+        function restoreFromHistory() {
+            if (manualHistoryIndex < 0 || manualHistoryIndex >= manualHistory.length) return;
+            const snap = manualHistory[manualHistoryIndex];
+            manualMarkers.forEach(m => map.removeLayer(m));
+            manualLines.forEach(l => map.removeLayer(l));
+            if (manualClosingLine) map.removeLayer(manualClosingLine);
+            manualMarkers = [];
+            manualLines = [];
+            manualClosingLine = null;
+
+            manualPoints = snap.points.map(p => ({ lat: p.lat, lng: p.lng }));
+
+            manualPoints.forEach((pt, idx) => {
+                const marker = L.marker([pt.lat, pt.lng], {
+                    icon: L.divIcon({
+                        className: 'vertex-marker',
+                        iconSize: [14, 14],
+                        iconAnchor: [7, 7]
+                    })
+                }).addTo(map);
+                manualMarkers.push(marker);
+            });
+
+            for (let i = 0; i < manualPoints.length - 1; i++) {
+                const from = manualPoints[i];
+                const to = manualPoints[i+1];
+                const line = L.polyline([[from.lat, from.lng], [to.lat, to.lng]], { color: '#C0B4A7', weight: 2 }).addTo(map);
+                manualLines.push(line);
+            }
+
+            if (manualPoints.length >= 3) {
+                const first = manualPoints[0];
+                const last = manualPoints[manualPoints.length-1];
+                manualClosingLine = L.polyline([[last.lat, last.lng], [first.lat, first.lng]], { color: '#C0B4A7', weight: 2, dashArray: '5,5' }).addTo(map);
+            }
+            updateManualStatus();
+        }
+
+        function updateManualStatus() {
+            document.getElementById('manualStatusText').innerText = `Точек: ${manualPoints.length}`;
+        }
+
+        // ---------- Автоопределение здания ----------
+        async function fetchBuilding(lat, lng, radius = 15) {
+            const latR = radius / 111319.9;
+            const lngR = radius / (111319.9 * Math.cos(lat * Math.PI/180));
+            const bbox = `${lat - latR},${lng - lngR},${lat + latR},${lng + lngR}`;
+            const query = `[out:json];(way["building"](${bbox}););out geom;`;
+
+            const endpoints = [
+                'https://overpass-api.de/api/interpreter',
+                'https://overpass.kumi.systems/api/interpreter',
+                'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+            ];
+
+            for (let attempt = 0; attempt < 3; attempt++) {
+                for (const ep of endpoints) {
+                    try {
+                        const resp = await fetch(ep, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: 'data=' + encodeURIComponent(query)
+                        });
+                        if (resp.status === 429) continue;
+                        if (!resp.ok) continue;
+                        const data = await resp.json();
+                        if (data.elements && data.elements.length > 0) return data.elements[0];
+                    } catch (e) { /* ignore */ }
+                }
+                await new Promise(r => setTimeout(r, 1000 * (attempt+1)));
+            }
+            return null;
+        }
+
+        // ---------- Основной клик по карте ----------
+        map.on('click', async (e) => {
+            if (isManualMode) {
+                handleManualClick(e.latlng.lat, e.latlng.lng);
+                return;
+            }
+            if (isWorkerMarkerMode) {
+                const workerName = document.getElementById('workerSelect').value;
+                addWorkerMarker(e.latlng.lat, e.latlng.lng, workerName);
+                cancelWorkerMarkerMode();
+                return;
+            }
+
+            const buildingData = await fetchBuilding(e.latlng.lat, e.latlng.lng, 15);
+            if (buildingData && buildingData.geometry && buildingData.geometry.length >= 3) {
+                let coords = buildingData.geometry.map(g => ({ lat: g.lat, lng: g.lon }));
+                const first = coords[0];
+                const last = coords[coords.length-1];
+                if (first.lat !== last.lat || first.lng !== last.lng) {
+                    coords.push({ lat: first.lat, lng: first.lng });
+                }
+                addBuilding(coords, 'auto', buildingData.id);
+            } else {
+                alert('Здание не найдено. Переключитесь в ручной режим.');
+            }
+        });
+
+        map.on('dblclick', (e) => {
+            if (isManualMode) finishManualMode();
+        });
+
+        // ---------- Интерфейс ----------
+        document.getElementById('searchBtn').addEventListener('click', async () => {
+            const query = document.getElementById('addressInput').value.trim();
+            if (!query) return;
+
+            const coordsMatch = query.match(/^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/);
+            if (coordsMatch) {
+                const lat = parseFloat(coordsMatch[1]);
+                const lng = parseFloat(coordsMatch[3]);
+                map.setView([lat, lng], 18);
+                return;
+            }
+
+            try {
+                const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`, {
+                    headers: { 'User-Agent': 'RoofingCalculator/1.0' }
+                });
+                if (!resp.ok) throw new Error('HTTP error ' + resp.status);
+                const data = await resp.json();
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    map.setView([lat, lon], 18);
+                } else {
+                    alert('Адрес не найден');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Ошибка геокодирования. Проверьте интернет-соединение.');
+            }
+        });
+
+        document.getElementById('manualNewBtn').addEventListener('click', startManualMode);
+        document.getElementById('finishManualBtn').addEventListener('click', finishManualMode);
+        document.getElementById('deleteLastPointBtn').addEventListener('click', deleteLastPoint);
+        document.getElementById('undoPointBtn').addEventListener('click', undoManual);
+        document.getElementById('redoPointBtn').addEventListener('click', redoManual);
+
+        document.getElementById('addWorkerMarkerBtn').addEventListener('click', startAddWorkerMarker);
+        document.getElementById('cancelWorkerMarkerBtn').addEventListener('click', cancelWorkerMarkerMode);
+        document.getElementById('loadWorkersBtn').addEventListener('click', loadWorkersFromJson);
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(`tab-${tab}`).classList.add('active');
+            });
+        });
+
+        // Инициализация
+        updateObjectsPanel();
+        loadWorkersFromJson();
+    </script>
+</body>
+</html>
